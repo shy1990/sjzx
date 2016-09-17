@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.aftersale.dao.QhItemMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.QhItem" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="QUANTITY" property="quantity" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="FORM_ID" property="formId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, QUANTITY, REMARK, FORM_ID
+  </sql>
+  <select id="gainQhItemList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.QhItem">
+  		select  ID, NAME, QUANTITY, REMARK, FORM_ID from SJ_TB_QH_ITEM where FORM_ID = #{formId,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加取货单详单 -->
+  <insert id="addQhItrm" parameterType="com.sanji.sjzx.model.QhItem">
+      insert into SJ_TB_QH_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="quantity != null" >
+        QUANTITY,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="formId != null" >
+        FORM_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        #{formId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_QH_ITEM
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_QH_ITEM
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.QhItem" >
+    insert into SJ_TB_QH_ITEM (ID, NAME, QUANTITY, 
+      REMARK, FORM_ID)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{quantity,jdbcType=DECIMAL}, 
+      #{remark,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.QhItem" >
+    insert into SJ_TB_QH_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="quantity != null" >
+        QUANTITY,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="formId != null" >
+        FORM_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        #{formId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.QhItem" >
+    update SJ_TB_QH_ITEM
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        QUANTITY = #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        FORM_ID = #{formId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.QhItem" >
+    update SJ_TB_QH_ITEM
+    set NAME = #{name,jdbcType=VARCHAR},
+      QUANTITY = #{quantity,jdbcType=DECIMAL},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      FORM_ID = #{formId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

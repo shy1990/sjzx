@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.accessories.dao.AccessoriesMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Accessories" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="ACCESSORIES_NUM" property="accessoriesNum" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="DECIMAL" />
+    <result column="ORIGINAL_PRICE" property="originalPrice" jdbcType="DECIMAL" />
+    <result column="BRAND_ID" property="brandId" jdbcType="VARCHAR" />
+    <result column="CAT_ID" property="catId" jdbcType="VARCHAR" />
+    <result column="TMALL_URL" property="tmallUrl" jdbcType="VARCHAR" />
+    <result column="TMALL_PRICE" property="tmallPrice" jdbcType="DECIMAL" />
+    <result column="DEFAULT_IMG" property="defaultImg" jdbcType="VARCHAR" />
+    <result column="BATTERY_CAPACITY" property="batteryCapacity" jdbcType="VARCHAR" />
+    <result column="ACCESSORIES_VERSION" property="accessoriesVersion" jdbcType="VARCHAR" />
+    <result column="FILM_TYPE" property="filmType" jdbcType="VARCHAR" />
+    <result column="MATERIAL" property="material" jdbcType="VARCHAR" />
+    <result column="STYLES" property="styles" jdbcType="VARCHAR" />
+    <result column="COLOR_ID" property="colorId" jdbcType="VARCHAR" />
+    <result column="ACCESSORIES_STYLE" property="accessoriesStyle" jdbcType="VARCHAR" />
+    <result column="ISORIGINAL" property="isoriginal" jdbcType="VARCHAR" />
+    <result column="WEAR_TYPE" property="wearType" jdbcType="VARCHAR" />
+    <result column="ISWIRE" property="iswire" jdbcType="VARCHAR" />
+    <result column="STOCK" property="stock" jdbcType="DECIMAL" />
+    <result column="CLICK_RATE" property="clickRate" jdbcType="DECIMAL" />
+    <result column="SPEC_CODE" property="specCode" jdbcType="VARCHAR" />
+    <!-- 新增字段 -->
+    <result column="ISSHELVES" property="isshelves" jdbcType="VARCHAR" />
+    <result column="SHELVES_TIME" property="shelvesTime" jdbcType="TIMESTAMP"/>
+    <!-- 以下是关联字段  操作人、分类、品牌名称-->
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="catName" property="catName" jdbcType="VARCHAR" />
+    <result column="brandName" property="brandName" jdbcType="VARCHAR" />
+    <result column="colorName" property="colorName" jdbcType="VARCHAR"/>
+    <result column="goodsId" property="goodsId" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.sanji.sjzx.model.Accessories" extends="BaseResultMap" >
+    <result column="ACCESSORIES_DETAIL" property="accessoriesDetail" jdbcType="CLOB" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE,SPEC_CODE,ISSHELVES
+  </sql>
+  <sql id="Blob_Column_List" >
+    ACCESSORIES_DETAIL
+  </sql>
+  <!-- 根据规格代码查询acc条数 -->
+  <select id="gainAccBySpecCode" resultType="java.lang.Long" parameterType="java.lang.String">
+        select count(a.ID) from  sj_tb_accessories a where a.SPEC_CODE = #{specCode,jdbcType=VARCHAR} and a.ISSHELVES = 'true'
+  </select>
+  <!-- 批量更新acc -->
+  <update id="updateByAcc" parameterType="com.sanji.sjzx.model.Accessories">
+            update sj_tb_accessories a
+				<set>
+				  <if test="price != null" >
+  				    a.PRICE = #{price,jdbcType=DECIMAL},
+  			     </if>
+  			        <if test="price != null" >
+					a.STOCK = #{stock,jdbcType=DECIMAL}
+					</if>
+                </set>        
+                where a.SPEC_CODE = #{specCode,jdbcType=VARCHAR}
+  </update>
+  <!-- 获取配件列表 -->
+  <select id="gainAccessoriesList" resultType="com.sanji.sjzx.model.Accessories" parameterType="com.sanji.sjzx.model.Accessories">
+  	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (  
+
+           select a1.id,a1.name, a1.accessories_num as accessoriesNum,a1.spec_code as specCode,a1.disabled,a1.price, 
+           a1.isoriginal,a1.default_img as defaultImg,a1.isshelves,a1.stock,
+           a2.username as userName,
+           a3.name as brandName,
+           a4.name as catName,
+           a5.color_name as colorName 
+           from sj_tb_accessories a1 left outer join sj_tb_admin a2 on a1.user_id=a2.id                            
+                                     left outer join sj_tb_brand a3 on a1.brand_id=a3.id                              
+                                     left outer join sj_tb_cat a4 on a1.cat_id=a4.id                            
+                                     left outer join sj_tb_color a5 on a1.color_id=a5.id               
+                                     where a1.disabled='false'  
+                           <if test="name !=null and name !='' ">
+						   and a1.NAME like '%${name}%'
+						   </if>
+						   <if test="accessoriesNum !=null and accessoriesNum !='' ">
+						   and a1.ACCESSORIES_NUM like '%${accessoriesNum}%' 
+						   </if>
+						   <if test="specCode !=null and specCode !='' ">
+						   and a1.SPEC_CODE like '%${specCode}%' 
+						   </if>
+						   <if test="userName !=null and userName !='' ">
+						   and a2.username like '%${userName}%' 
+						   </if>
+						   <if test="brandName !=null and brandName !='' ">
+						   and a3.name =#{brandName,jdbcType=VARCHAR}
+						   </if>		
+						   <if test="catName !=null and catName !='' ">
+						   and a4.name =#{catName,jdbcType=VARCHAR}
+						   </if>								   	
+						   <if test="sort != null">
+						   order by ${sort}
+						   </if>
+						   <if test="order != null">
+						   ${order}
+						   </if>	  
+				
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取配件保护膜列表 -->
+  <select id="gainAccessoriesMaskList" resultType="com.sanji.sjzx.model.Accessories" parameterType="com.sanji.sjzx.model.Accessories">
+    	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (  
+
+           select a1.id,a1.name, a1.accessories_num as accessoriesNum, a1.disabled,a1.price, 
+           a1.isoriginal,
+           a2.username as userName,
+           a3.name as brandName,
+           a4.name as catName,
+           a5.color_name as colorName 
+           from sj_tb_accessories a1 left outer join sj_tb_admin a2 on a1.user_id=a2.id                            
+                                     left outer join sj_tb_brand a3 on a1.brand_id=a3.id                              
+                                     left outer join sj_tb_cat a4 on a1.cat_id=a4.id                            
+                                     left outer join sj_tb_color a5 on a1.color_id=a5.id               
+                                     where a1.disabled='false' and (a4.name like '%膜%' or a4.name like '%壳%')
+                           <if test="name !=null and name !='' ">
+						   and a1.NAME like '%${name}%'
+						   </if>
+						   <if test="accessoriesNum !=null and accessoriesNum !='' ">
+						   and a1.ACCESSORIES_NUM like '%${accessoriesNum}%' 
+						   </if>	
+						   <!-- <if test="brandName !=null and brandName !='' ">
+						   and a3.name =#{brandName,jdbcType=VARCHAR}
+						   </if>		
+						   <if test="catName !=null and catName !='' ">
+						   and a4.name =#{catName,jdbcType=VARCHAR}
+						   </if>	 -->							   	
+						   <if test="sort != null">
+						   order by ${sort}
+						   </if>
+						   <if test="order != null">
+						   ${order}
+						   </if>	  
+				
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取所有行数 -->
+  <select id="gainAccessoriesCount" resultType="Long">
+  	select count(ID) from SJ_TB_ACCESSORIES where disabled='false' 
+  </select>
+  <!-- 获取配件保护膜行数 -->
+  <select id="gainAccessoriesMaskCount" resultType="Long">
+  	select count(a.id) from sj_tb_accessories a left join sj_tb_cat c on a.cat_id = c.id where a.disabled='false' and 
+  	(c.name like '%膜%' or c.name like '%壳%')
+  </select>
+  <!-- 根据goodsId查询 -->
+  <select id="gainAccessoriesByGoodsId" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+	select a.id,a.accessories_num as accessoriesNum,a.price
+	from sj_tb_accessories a right outer join sj_tb_gift g on a.id=g.gift_id
+                       		 left outer join sj_tb_goods d on g.goods_id=d.id
+    where a.disabled='false' and g.goods_id=#{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据商品id获取被选中的配件贴膜信息 -->
+  <select id="gainAccessoriesMaskByGoodsId" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+    select a.id,a.name,a.accessories_num as accessoriesNum,a.price,a.cat_id as catId from sj_tb_accessories a   
+                          left outer join sj_tb_cat c on c.id=a.cat_id
+                          right outer join sj_tb_gift g on a.id=g.gift_id  
+            		           left outer join sj_tb_goods d on g.goods_id=d.id
+                          where a.disabled='false' and g.disabled='false' and g.goods_id=#{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加时根据配件名称查询是否存在此配件名称 -->
+  <select id="gainAccessoriesByName" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+  	select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and NAME=#{name,jdbcType=VARCHAR}  	
+  </select>
+  <!-- 添加时根据配件编号查询是否存在此配件编号 -->
+  <select id="gainAccessoriesByNum" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+  	select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and ACCESSORIES_NUM=#{accessoriesNum,jdbcType=VARCHAR}  	
+  </select>
+  <!-- 添加时根据规格代码查询是否存在此规格代码 -->
+  <select id="gainAccessoriesBySpecCode" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+    select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and SPEC_CODE=#{specCode,jdbcType=VARCHAR}  	
+  </select>
+  <!-- 根据id获取配件信息 -->
+  <select id="gainAccessoriesById" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.lang.String">
+	  select a1.id as id,a1.name as name, a1.accessories_num as accessoriesNum, a1.type as type, 
+	  a1.disabled as disabled,a1.create_time as createTime, a1.modify_time as modifyTime, a1.user_id as userId, 
+	  a1.price as price,a1.original_price as originalPrice, a1.brand_id as brandId, a1.cat_id as catId, 
+	  a1.tmall_url as tmallUrl,a1.tmall_price as tmallPrice, a1.default_img as defaultImg, 
+	  a1.battery_capacity as batteryCapacity,a1.accessories_version as accessoriesVersion, a1.film_type as filmType,
+	  a1.material as material,a1.styles as styles, a1.color_id as colorId, a1.accessories_style as accessoriesStyle,
+	  a1.isoriginal as isoriginal, a1.wear_type as wearType, a1.iswire as iswire, a1.accessories_detail as accessoriesDetail,
+	  a1.stock as stock,a1.click_rate as clickRate,a1.spec_code as specCode,a1.isshelves,
+	  a2.username as userName,
+	  a3.name as brandName,a4.name as catName,
+	  a5.color_name as colorName 
+	  from sj_tb_accessories a1 left outer join sj_tb_admin a2 on a1.user_id=a2.id                            
+	                            left outer join sj_tb_brand a3 on a1.brand_id=a3.id                              
+	                            left outer join sj_tb_cat a4 on a1.cat_id=a4.id                            
+	                            left outer join sj_tb_color a5 on a1.color_id=a5.id               
+	  where a1.disabled='false' and a1.ID=#{id,jdbcType=VARCHAR}  	
+  </select>
+  <!-- 修改时根据id和配件名称查询是否存在此配件名称 -->
+  <select id="gainAccessoriesByIdandName" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.util.Map">
+    select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and ID!=#{id,jdbcType=VARCHAR} and NAME=#{name,jdbcType=VARCHAR} 	
+  </select>
+  <!-- 修改时根据id和配件编号查询是否存在此配件名称 -->
+  <select id="gainAccessoriesByIdandNum" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.util.Map">
+    select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and ID!=#{id,jdbcType=VARCHAR} and ACCESSORIES_NUM=#{accessoriesNum,jdbcType=VARCHAR} 	
+  </select>
+  <!-- 修改时根据id和规格代码查询是否存在此规格代码 -->
+  <select id="gainAccessoriesByIdandSpecCode" resultType="com.sanji.sjzx.model.Accessories"  parameterType="java.util.Map">
+    select 
+  	    ID, NAME, ACCESSORIES_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, PRICE, 
+	    ORIGINAL_PRICE, BRAND_ID, CAT_ID, TMALL_URL, TMALL_PRICE, DEFAULT_IMG, BATTERY_CAPACITY, 
+	    ACCESSORIES_VERSION, FILM_TYPE, MATERIAL, STYLES, COLOR_ID, ACCESSORIES_STYLE, ISORIGINAL, 
+	    WEAR_TYPE, ISWIRE, STOCK, CLICK_RATE, ACCESSORIES_DETAIL,SPEC_CODE,ISSHELVES
+	from SJ_TB_ACCESSORIES
+	where disabled='false' and ID!=#{id,jdbcType=VARCHAR} and SPEC_CODE=#{specCode,jdbcType=VARCHAR} 	
+  
+  </select>
+  <!-- 根据配件id查询关联的赠品 -->
+  <select id="gainGiftByAccId" resultType="com.sanji.sjzx.model.Gift" parameterType="java.lang.String">
+  	select g.id,g.goods_id,g.gift_id,g.gift_price,a.id from sj_tb_gift g left outer join sj_tb_accessories a on g.gift_id=a.id
+	where a.disabled='false' and a.ID= #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加配件信息 -->
+  <insert id="addAccessories" parameterType="com.sanji.sjzx.model.Accessories" >
+    insert into SJ_TB_ACCESSORIES
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="accessoriesNum != null" >
+        ACCESSORIES_NUM,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="price != null" >
+        PRICE,
+      </if>
+      <if test="originalPrice != null" >
+        ORIGINAL_PRICE,
+      </if>
+      <if test="brandId != null" >
+        BRAND_ID,
+      </if>
+      <if test="catId != null" >
+        CAT_ID,
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL,
+      </if>
+      <if test="tmallPrice != null" >
+        TMALL_PRICE,
+      </if>
+      <if test="defaultImg != null" >
+        DEFAULT_IMG,
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY,
+      </if>
+      <if test="accessoriesVersion != null" >
+        ACCESSORIES_VERSION,
+      </if>
+      <if test="filmType != null" >
+        FILM_TYPE,
+      </if>
+      <if test="material != null" >
+        MATERIAL,
+      </if>
+      <if test="styles != null" >
+        STYLES,
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID,
+      </if>
+      <if test="accessoriesStyle != null" >
+        ACCESSORIES_STYLE,
+      </if>
+      <if test="isoriginal != null" >
+        ISORIGINAL,
+      </if>
+      <if test="wearType != null" >
+        WEAR_TYPE,
+      </if>
+      <if test="iswire != null" >
+        ISWIRE,
+      </if>
+      <if test="stock != null" >
+        STOCK,
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE,
+      </if>
+      <if test="accessoriesDetail != null" >
+        ACCESSORIES_DETAIL,
+      </if>
+      <if test="specCode != null">
+      	SPEC_CODE,
+      </if>
+      <if test="isshelves !=null">
+      	ISSHELVES,
+      </if>
+      <if test="shelvesTime !=null">
+      	SHELVES_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesNum != null" >
+        #{accessoriesNum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="originalPrice != null" >
+        #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null" >
+        #{catId,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallUrl != null" >
+        #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallPrice != null" >
+        #{tmallPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="defaultImg != null" >
+        #{defaultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryCapacity != null" >
+        #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesVersion != null" >
+        #{accessoriesVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="filmType != null" >
+        #{filmType,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="styles != null" >
+        #{styles,jdbcType=VARCHAR},
+      </if>
+      <if test="colorId != null" >
+        #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesStyle != null" >
+        #{accessoriesStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="isoriginal != null" >
+        #{isoriginal,jdbcType=VARCHAR},
+      </if>
+      <if test="wearType != null" >
+        #{wearType,jdbcType=VARCHAR},
+      </if>
+      <if test="iswire != null" >
+        #{iswire,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=DECIMAL},
+      </if>
+      <if test="clickRate != null" >
+        #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="accessoriesDetail != null" >
+        #{accessoriesDetail,jdbcType=CLOB},
+      </if>
+      <if test="specCode !=null">
+      	#{specCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isshelves !=null">
+      	#{isshelves,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesTime !=null">
+      	#{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <!-- 修改配件信息 -->
+  <update id="updateAccessories" parameterType="com.sanji.sjzx.model.Accessories" >
+    update SJ_TB_ACCESSORIES
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesNum != null" >
+        ACCESSORIES_NUM = #{accessoriesNum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME = #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        PRICE = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="originalPrice != null" >
+        ORIGINAL_PRICE = #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="brandId != null" >
+        BRAND_ID = #{brandId,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null" >
+        CAT_ID = #{catId,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL = #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallPrice != null" >
+        TMALL_PRICE = #{tmallPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="defaultImg != null" >
+        DEFAULT_IMG = #{defaultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY = #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesVersion != null" >
+        ACCESSORIES_VERSION = #{accessoriesVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="filmType != null" >
+        FILM_TYPE = #{filmType,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        MATERIAL = #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="styles != null" >
+        STYLES = #{styles,jdbcType=VARCHAR},
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID = #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesStyle != null" >
+        ACCESSORIES_STYLE = #{accessoriesStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="isoriginal != null" >
+        ISORIGINAL = #{isoriginal,jdbcType=VARCHAR},
+      </if>
+      <if test="wearType != null" >
+        WEAR_TYPE = #{wearType,jdbcType=VARCHAR},
+      </if>
+      <if test="iswire != null" >
+        ISWIRE = #{iswire,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        STOCK = #{stock,jdbcType=DECIMAL},
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE = #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="accessoriesDetail != null" >
+        ACCESSORIES_DETAIL = #{accessoriesDetail,jdbcType=CLOB},
+      </if>
+      <if test="specCode != null">
+      	SPEC_CODE = #{specCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isshelves != null">
+      	ISSHELVES = #{isshelves,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesTime !=null">
+      	SHELVES_TIME = #{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!--批量或单条删除配件信息(物理删除) -->
+  <delete id="dropAccessories" parameterType="java.util.List">
+    <![CDATA[delete from SJ_TB_ACCESSORIES
+    where ID in ]]>
+    <foreach collection="list" item="aids"  open="(" separator="," close=")">#{aids}</foreach> 
+  </delete>
+  
+  <update id="updatePriceByCode" parameterType="com.sanji.sjzx.model.Accessories">
+  update SJ_TB_ACCESSORIES
+    <set >
+      <if test="price != null" >
+        PRICE = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="originalPrice != null" >
+        ORIGINAL_PRICE = #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL = #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallPrice != null" >
+        TMALL_PRICE = #{tmallPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY = #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesVersion != null" >
+        ACCESSORIES_VERSION = #{accessoriesVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="filmType != null" >
+        FILM_TYPE = #{filmType,jdbcType=VARCHAR},
+      </if>
+      <if test="material != null" >
+        MATERIAL = #{material,jdbcType=VARCHAR},
+      </if>
+      <if test="styles != null" >
+        STYLES = #{styles,jdbcType=VARCHAR},
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID = #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesStyle != null" >
+        ACCESSORIES_STYLE = #{accessoriesStyle,jdbcType=VARCHAR},
+      </if>
+      <if test="isoriginal != null" >
+        ISORIGINAL = #{isoriginal,jdbcType=VARCHAR},
+      </if>
+      <if test="wearType != null" >
+        WEAR_TYPE = #{wearType,jdbcType=VARCHAR},
+      </if>
+      <if test="iswire != null" >
+        ISWIRE = #{iswire,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        STOCK = #{stock,jdbcType=DECIMAL},
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE = #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="accessoriesDetail != null" >
+        ACCESSORIES_DETAIL = #{accessoriesDetail,jdbcType=CLOB},
+      </if>
+    </set>
+    where SPEC_CODE = #{specCode,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据配件id下架配件，修改可用状态，修改库存为0，修改价格为0，修改上下架状态，添加下架时 -->
+  <update id="updateShelves" parameterType="com.sanji.sjzx.model.Accessories">
+  	update SJ_TB_ACCESSORIES
+  		<set>
+	     	<if test="disabled != null" >
+	     		DISABLED = #{disabled,jdbcType=VARCHAR},
+	     	</if>
+	     	<if test="stock !=null">
+	     		STOCK = #{stock,jdbcType=DECIMAL},
+	     	</if>
+	     	<if test="price !=null">
+	     		PRICE = #{price,jdbcType=DECIMAL},
+	     	</if>
+	     	<if test="isshelves != null">
+	     		ISSHELVES = #{isshelves,jdbcType=VARCHAR},
+	     	</if>
+	     	<if test="shelvesTime != null">
+	     		SHELVES_TIME = #{shelvesTime,jdbcType=TIMESTAMP},
+	     	</if>
+     	</set>
+     	where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 获取配件仓库列表即所有下架配件信息 -->
+  <select id="gainShelvesList" resultType="com.sanji.sjzx.model.Accessories" parameterType="com.sanji.sjzx.model.Accessories">
+  	  	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (  
+
+           select a1.id,a1.name, a1.accessories_num as accessoriesNum, a1.disabled,a1.price, a1.stock,
+           a1.isshelves,a1.shelves_time as shelvesTime,
+           a1.isoriginal,a1.default_img as defaultImg,
+           a2.username as userName,
+           a3.name as brandName,
+           a4.name as catName,
+           a5.color_name as colorName 
+           from sj_tb_accessories a1 left outer join sj_tb_admin a2 on a1.user_id=a2.id                            
+                                     left outer join sj_tb_brand a3 on a1.brand_id=a3.id                              
+                                     left outer join sj_tb_cat a4 on a1.cat_id=a4.id                            
+                                     left outer join sj_tb_color a5 on a1.color_id=a5.id               
+                                     where a1.disabled='true'  
+                           <if test="name !=null and name !='' ">
+						   and a1.NAME like '%${name}%'
+						   </if>
+						   <if test="accessoriesNum !=null and accessoriesNum !='' ">
+						   and a1.ACCESSORIES_NUM like '%${accessoriesNum}%' 
+						   </if>	
+						   <if test="brandName !=null and brandName !='' ">
+						   and a3.name =#{brandName,jdbcType=VARCHAR}
+						   </if>		
+						   <if test="catName !=null and catName !='' ">
+						   and a4.name =#{catName,jdbcType=VARCHAR}
+						   </if>								   	
+						   <if test="sort != null">
+						   order by ${sort}
+						   </if>
+						   <if test="order != null">
+						   ${order}
+						   </if>	  
+				
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取下架列表行数 -->
+  <select id="gainShelvesCount" resultType="Long">
+  	select count(ID) from SJ_TB_ACCESSORIES where disabled='true'
+  </select>
+  <!-- 配件仓库中的下架配件进行上架恢复时，判断如果配件价格==0，需要修改价格大于0 -->
+  <update id="updatePrice" parameterType="com.sanji.sjzx.model.Accessories">
+  	update SJ_TB_ACCESSORIES
+  		<set>
+  		    <if test="name != null" >
+		        NAME = #{name,jdbcType=VARCHAR},
+		    </if>
+		    <if test="accessoriesNum != null" >
+		        ACCESSORIES_NUM = #{accessoriesNum,jdbcType=VARCHAR},
+		    </if>
+  			<if test="price != null" >
+  				PRICE = #{price,jdbcType=DECIMAL},
+  			</if>
+  			<if test="stock != null" >
+        		STOCK = #{stock,jdbcType=DECIMAL},
+      		</if>
+      		<if test="colorId != null" >
+        		COLOR_ID = #{colorId,jdbcType=VARCHAR},
+     		</if>
+  		</set>	
+  		where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 配件仓库中的下架配件进行上架恢复 -->
+  <update id="updateRecover" parameterType="com.sanji.sjzx.model.Accessories">
+  	update SJ_TB_ACCESSORIES
+  		<set>
+	     	<if test="disabled != null" >
+	     		DISABLED = #{disabled,jdbcType=VARCHAR},
+	     	</if>
+	     	<if test="isshelves != null">
+	     		ISSHELVES = #{isshelves,jdbcType=VARCHAR},
+	     	</if>
+     	</set>
+     	where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据配件id获取相应的下架配件信息 -->
+  <select id="gainShelvesById" resultType="com.sanji.sjzx.model.Accessories" parameterType="java.lang.String">
+  	select a.id,a.name,a.accessories_num as accessoriesNum,a.price,a.stock,a.isshelves,a.color_id as colorId,
+  	c.color_name as colorName
+    from sj_tb_accessories a
+    left outer join sj_tb_color c on a.color_id=c.id     
+    where a.disabled='true' and a.id = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据条件查询获取acc数据用于导出 -->
+  <select id="gainAccByExport" resultType="com.sanji.sjzx.model.Accessories" parameterType="com.sanji.sjzx.model.Accessories">
+  	select a1.id,a1.name, a1.accessories_num as accessoriesNum,a1.spec_code as specCode,a1.disabled,a1.price, 
+           a1.isoriginal,a1.default_img as defaultImg,a1.isshelves,a1.stock,
+           a2.username as userName,
+           a3.name as brandName,
+           a4.name as catName,
+           a5.color_name as colorName 
+           from sj_tb_accessories a1 left outer join sj_tb_admin a2 on a1.user_id=a2.id                            
+                                     left outer join sj_tb_brand a3 on a1.brand_id=a3.id                              
+                                     left outer join sj_tb_cat a4 on a1.cat_id=a4.id                            
+                                     left outer join sj_tb_color a5 on a1.color_id=a5.id               
+           where a1.disabled='false'  
+           <if test="name !=null and name !='' ">
+		   and a1.NAME like '%${name}%'
+		   </if>
+		   <if test="accessoriesNum !=null and accessoriesNum !='' ">
+		   and a1.ACCESSORIES_NUM like '%${accessoriesNum}%' 
+		   </if>
+		   <if test="specCode !=null and specCode !='' ">
+		   and a1.SPEC_CODE like '%${specCode}%' 
+		   </if>
+		   <if test="userName !=null and userName !='' ">
+		   and a2.username like '%${userName}%' 
+		   </if>
+		   <if test="brandName !=null and brandName !='' ">
+		   and a3.name =#{brandName,jdbcType=VARCHAR}
+		   </if>		
+		   <if test="catName !=null and catName !='' ">
+		   and a4.name =#{catName,jdbcType=VARCHAR}
+		   </if>	
+  </select>
+  
+</mapper>

@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.goodssku.dao.GoodsskuMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.GoodsSku" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="SKU_NUM" property="skuNum" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="DECIMAL" />
+    <result column="ORIGINAL_PRICE" property="originalPrice" jdbcType="DECIMAL" />
+    <result column="TMALL_PRICE" property="tmallPrice" jdbcType="DECIMAL" />
+    <result column="EDITION" property="edition" jdbcType="VARCHAR" />
+    <result column="STANDARD" property="standard" jdbcType="VARCHAR" />
+    <result column="COLOR_ID" property="colorId" jdbcType="VARCHAR" />
+    <result column="STORAGE" property="storage" jdbcType="VARCHAR" />
+    <result column="GOODS_ID" property="goodsId" jdbcType="VARCHAR" />
+    <result column="STOCK" property="stock" jdbcType="NUMERIC" />
+    <result column="SHELVES" property="shelves" jdbcType="VARCHAR" />
+    <result column="NETWORK_THREE" property="networkThree" jdbcType="VARCHAR" />
+    <result column="NETWORK_FOUR" property="networkFour" jdbcType="VARCHAR" />
+    <result column="SUPPORT_CHANNEL" property="supportChannel" jdbcType="VARCHAR" />
+    <result column="NET_SUIT_TYPE" property="netsuitType" jdbcType="VARCHAR" />
+    <!-- 新添字段 -->
+    <result column="CHANGE_NUM" property="changeNum" jdbcType="NUMERIC" />
+    <result column="CHANGE_PRICE" property="changePrice" jdbcType="DECIMAL" />
+    <result column="NET_MODEL" property="netModel" jdbcType="VARCHAR"/>
+    <result column="SKU_CODE" property="skuCode" jdbcType="VARCHAR"/>
+    <result column="IS_DELETE" property="isDelete" jdbcType="VARCHAR"/>
+    <result column="SHELVES_TIME" property="shelvesTime" jdbcType="TIMESTAMP"/>
+    <result column="SHELVES_TIME" property="shelvesTime" jdbcType="TIMESTAMP"/>
+    <result column="IS_CHECKED" property="isChecked" jdbcType="TIMESTAMP"/>
+    <!-- 以下是关联数据 -->
+    <result column="colorName" property="colorName" jdbcType="VARCHAR"/>
+    <result column="goodsName" property="goodsName" jdbcType="VARCHAR"/>
+    <result column="brandName" property="brandName" jdbcType="VARCHAR"/>
+    <result column="CPU_NUMBER" property="cpuNumber" jdbcType="VARCHAR" />
+    <result column="regionsName" property="regionsName" jdbcType="VARCHAR" />
+     <!-- 以下是临时字段 -->
+    <result column="TIMEINTERVAL" property="timeInterval" jdbcType="VARCHAR"/>
+    <!-- 新添字段 -->
+    <result column="MACHINE_TYPE" property="machineType" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SKU_NUM, PRICE, ORIGINAL_PRICE, TMALL_PRICE, EDITION, STANDARD, COLOR_ID, STORAGE, 
+    GOODS_ID, STOCK, SHELVES, NETWORK_THREE, NETWORK_FOUR,SUPPORT_CHANNEL,NET_SUIT_TYPE,
+    CHANGE_NUM,CHANGE_PRICE,NET_MODEL,SKU_CODE,IS_DELETE,SHELVES_TIME,MACHINE_TYPE
+  </sql>
+   <!-- 批量修改单品信息(设置ischecked 的值为1) -->      
+   <update id="updateGoodsSkuIsCheckedByIds" parameterType="java.util.List">
+  	update SJ_TB_GOODS_SKU 
+  	SET 
+  		IS_CHECKED = '1'
+    where ID in
+    <foreach collection="list" index="index" item="sid" open="(" separator="," close=")"> 
+		#{sid} 
+	</foreach>
+  </update> 
+   <!-- 批量修改单品信息 (设置ischecked的值为0)-->   
+  <update id="updateGoodsSkuIsChecked" >
+  	update SJ_TB_GOODS_SKU 
+  	SET 
+  		IS_CHECKED = '0'
+  </update> 
+  <select id="gainSkuByIdAndSkuNum" resultMap="BaseResultMap" parameterType="java.util.Map">
+      select ID, SKU_CODE, PRICE from sj_tb_goods_sku where ID =#{id,jdbcType=VARCHAR} and SKU_NUM=#{skuNum,jdbcType=VARCHAR}   	
+  </select>
+  <!-- 获取sku列表-->
+  <select id="gainSkuList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.GoodsSku">
+     
+     select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+	      select b.name as brandName,r.name as regionsName,sku.id as id,c.color_name as colorName ,g.name as goodsName,sku.standard as standard,g.cpu_number as cpuNumber, sku.storage as storage, sku.sku_num as skuNum,sku.sku_code as skuCode  from sj_tb_goods_sku sku left join sj_tb_goods g on sku.goods_id = g.id left join sj_tb_color c on sku.color_id = c.id left join sj_tb_brand b on g.brand_id = b.id left join sj_tb_regions r on  substr(sku.sku_code,8) = r.id
+		       where 1=1
+		      
+		        <if test="goodsName != null">
+		          and lower(g.name) like '%${goodsName}%'
+		        </if>
+		        <if test="standard != null">
+		          and sku.standard like '%${standard}%'
+		        </if>
+		        <if test="machineType != null">
+		          and sku.machine_type like '%${machineType}%'
+		        </if>
+		        <if test="brandName != null">
+		         and b.name like '%${brandName}%'
+		        </if>
+		        <if test="regional != null and regional != ''">
+		         and sku.SKU_CODE  like '%${regional}%'
+		        </if> 
+		        order by sku.IS_CHECKED desc
+		      
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取sku列表总数-->
+   <select id="gainSkuListCount" resultType="java.lang.Long" parameterType="com.sanji.sjzx.model.GoodsSku">
+    
+    select count(sku.id) from sj_tb_goods_sku sku left join sj_tb_goods g on sku.goods_id = g.id left join sj_tb_color c on sku.color_id = c.id left join sj_tb_brand b on g.brand_id = b.id
+              <where>
+		        <if test="standard != null">
+		           sku.standard like '%${standard}%'
+		        </if>
+		        <if test="machineType != null">
+		          and sku.machine_type like '%${machineType}%'
+		        </if>
+		        <if test="brandName != null">
+		         and b.name like '%${brandName}%'
+		        </if>
+		        <if test="regional != null  and regional != ''">
+		         and sku.SKU_CODE  like '%${regional}%'
+		        </if> 
+		      </where>  
+  </select> 
+  <!-- 获取sku零库存总数 -->
+  <select id="gainSkuOutOfStockCount" resultType="java.lang.Long" parameterType="com.sanji.sjzx.model.GoodsSku">
+    	select count(sku.ID) from sj_tb_goods_sku sku left join sj_tb_color c on sku.color_id = c.id left join sj_tb_goods g on sku.goods_id = g.id  left join sj_tb_brand b on g.brand_id = b.id
+	          where <![CDATA[ sku.stock <= 0]]> 
+	           <if test="goodsName != null and goodsName != ''">
+	           and g.name like '%${goodsName}%' 
+	           </if>
+	           <if test="brandName != null and brandName != ''">
+	            and b.name = #{brandName,jdbcType=VARCHAR}
+	           </if>
+	           <if test="skuNum != null and skuNum != ''">
+	            and sku.SKU_CODE = #{skuCode,jdbcType=VARCHAR}
+	           </if>
+	           <if test="timeInterval != null and  timeInterval !='' and timeInterval == 1">
+	            and <![CDATA[trunc(sku.SHELVES_TIME)]]> = <![CDATA[trunc(Sysdate)]]> 
+	           </if>
+	           <if test="timeInterval != null and  timeInterval !='' and timeInterval !=1 and timeInterval != -30">
+	            and <![CDATA[trunc(sku.SHELVES_TIME) <= trunc(Sysdate)]]> and trunc(sku.SHELVES_TIME) >= <![CDATA[trunc(Sysdate)-#{timeInterval,jdbcType=VARCHAR}]]>
+	           </if>
+	            <if test="timeInterval != null and  timeInterval !='' and timeInterval == -30">
+	            and <![CDATA[trunc(sku.SHELVES_TIME) <= trunc(Sysdate) + #{timeInterval,jdbcType=VARCHAR}]]> 
+	           </if>
+  </select>
+  <!-- 获取sku零库存列表 -->
+  <select id="gainSkuOutOfStockList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.GoodsSku">
+       select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+	  		select g.name as goodsName, b.name as brandName, sku.sku_num as skuNum,sku.sku_code as skuCode ,sku.stock as stock, to_char(sku.shelves_time,'yyyy-mm-dd hh24:mi:ss') as shelvesTime,c.color_name as colorName from sj_tb_goods_sku sku left join sj_tb_color c on sku.color_id = c.id left join sj_tb_goods g on sku.goods_id = g.id  left join sj_tb_brand b on g.brand_id = b.id
+	          where <![CDATA[ sku.stock <= 0]]> 
+	           <if test="goodsName != null and goodsName != ''">
+	           and g.name like '%${goodsName}%' 
+	           </if>
+	           <if test="brandName != null and brandName != ''">
+	            and b.name = #{brandName,jdbcType=VARCHAR}
+	           </if>
+	           <if test="skuNum != null and skuNum != ''">
+	            and sku.SKU_CODE = #{skuCode,jdbcType=VARCHAR}
+	           </if>
+	           <if test="timeInterval != null and  timeInterval !='' and timeInterval == 1">
+	            and <![CDATA[trunc(sku.SHELVES_TIME)]]> = <![CDATA[trunc(Sysdate)]]> 
+	           </if>
+	          
+	           <if test="timeInterval != null and  timeInterval !='' and  timeInterval !=1 and timeInterval != -30 ">
+	             and <![CDATA[trunc(sku.SHELVES_TIME) <= trunc(Sysdate)]]> and trunc(sku.SHELVES_TIME) >= <![CDATA[trunc(Sysdate)-#{timeInterval,jdbcType=VARCHAR}]]>
+	           </if>
+	            <if test="timeInterval != null and  timeInterval !='' and timeInterval == -30">
+	            and <![CDATA[trunc(sku.SHELVES_TIME) <= trunc(Sysdate) + #{timeInterval,jdbcType=VARCHAR}]]> 
+	           </if>
+	           
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+
+  <!--根据条件查询SKU用于导出  -->
+  <select id="gainGoosdSKUByExport" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="com.sanji.sjzx.model.Goods">
+  select s.sku_num as skuNum,s.sku_code as skuCode,s.stock,s.price,g.name as goodsName,c.color_name as colorName
+  	from sj_tb_goods_sku s,sj_tb_goods g,sj_tb_color c,sj_tb_admin a,sj_tb_brand b
+ 	where s.goods_id = g.id(+) and g.user_id = a.id(+) and g.brand_id = b.id(+) and s.color_id = c.id(+) and g.disabled = 'false'
+	 <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and s.sku_code like '%${goodsNum}%'
+      </if>     
+      <if test="skuNum !=null and skuNum!=''">
+    		and s.sku_num like '%${skuNum}%'
+      </if>     
+      
+      <if test="brandName !=null and brandName!=''">
+    		and b.name=#{brandName,jdbcType=VARCHAR}
+      </if>  
+      <if test="userName !=null and userName!=''">
+    		and a.truename like '%${userName}%'
+      </if>  
+
+  </select>
+  
+
+  <!-- 根据商品id获取该id下所有的单品信息 -->
+  <select id="gainSkuByGoodsId" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.lang.String">
+  	select     
+	  	a1.ID, a1.SKU_NUM as skuNum, a1.PRICE, a1.ORIGINAL_PRICE as originalPrice, 
+	  	a1.TMALL_PRICE as tmallPrice, a1.EDITION,  a1.STANDARD, 
+	  	a1.COLOR_ID as colorId,a1.STORAGE,a1.GOODS_ID as goodsId,a1.STOCK,
+	  	a1.SHELVES,a1.NETWORK_THREE as networkThree,a1.NETWORK_FOUR as networkFour,
+	  	a1.SUPPORT_CHANNEL as supportChannel,a1.NET_SUIT_TYPE as netsuitType,
+	  	a1.CHANGE_NUM as changeNum,a1.CHANGE_PRICE as changePrice,a1.NET_MODEL as netModel,
+	  	a1.SKU_CODE as skuCode,
+	  	a1.IS_DELETE as isDelete,a1.SHELVES_TIME as shelvesTime,a1.MACHINE_TYPE as machineType,
+	  	a2.COLOR_NAME as colorName	  	
+  	from SJ_TB_GOODS_SKU a1 left outer join SJ_TB_COLOR a2 on a1.color_id=a2.id
+  	where a1.goods_id=#{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据商品id获取该id下在宝贝仓库中所有的下架的单品信息 -->
+  <select id="gainRecycelSkuByGoodsId" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.lang.String">
+  	select     
+	  	a1.ID, a1.SKU_NUM as skuNum, a1.PRICE, a1.ORIGINAL_PRICE as originalPrice, 
+	  	a1.TMALL_PRICE as tmallPrice, a1.EDITION,  a1.STANDARD, 
+	  	a1.COLOR_ID as colorId,a1.STORAGE,a1.GOODS_ID as goodsId,a1.STOCK,
+	  	a1.SHELVES,a1.NETWORK_THREE as networkThree,a1.NETWORK_FOUR as networkFour,
+	  	a1.SUPPORT_CHANNEL as supportChannel,a1.NET_SUIT_TYPE as netsuitType,
+	  	a1.CHANGE_NUM as changeNum,a1.CHANGE_PRICE as changePrice,a1.NET_MODEL as netModel,
+	  	a1.SKU_CODE as skuCode,
+	  	a1.IS_DELETE as isDelete,
+	  	a1.SHELVES_TIME as shelvesTime,
+	  	a2.COLOR_NAME as colorName	  	
+  	from SJ_TB_GOODS_SKU a1 left outer join SJ_TB_COLOR a2 on a1.color_id=a2.id
+  	where a1.SHELVES='false' and a1.goods_id=#{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 获取所有颜色 -->
+  <select id="gainSkuColorName" resultType="com.sanji.sjzx.model.GoodsSku">
+  	select id as colorId,color_name as colorName from sj_tb_color		
+  </select>
+   <!-- 批量添加数据 -->
+  <insert id="addGoodsSkuList" parameterType="java.util.List">
+  	insert into SJ_TB_GOODS_SKU
+    	(ID,SKU_NUM,PRICE,ORIGINAL_PRICE,TMALL_PRICE,EDITION,STANDARD,COLOR_ID,STORAGE,GOODS_ID,STOCK,
+    	SHELVES,NETWORK_THREE,NETWORK_FOUR,SUPPORT_CHANNEL,NET_SUIT_TYPE,CHANGE_NUM,CHANGE_PRICE,NET_MODEL
+    	,SKU_CODE,IS_DELETE,SHELVES_TIME,MACHINE_TYPE)
+         <foreach collection="list" item="item" index="index" separator="union all" >  
+         select #{item.id,jdbcType=VARCHAR},#{item.skuNum,jdbcType=VARCHAR},#{item.price,jdbcType=DECIMAL},#{item.originalPrice,jdbcType=DECIMAL},#{item.tmallPrice,jdbcType=DECIMAL},#{item.edition,jdbcType=VARCHAR},#{item.standard,jdbcType=VARCHAR},
+         #{item.colorId,jdbcType=VARCHAR},#{item.storage,jdbcType=VARCHAR},#{item.goodsId,jdbcType=VARCHAR},#{item.stock,jdbcType=NUMERIC},#{item.shelves,jdbcType=VARCHAR},#{item.networkThree,jdbcType=VARCHAR},#{item.networkFour,jdbcType=VARCHAR},
+         #{item.supportChannel,jdbcType=VARCHAR},#{item.netsuitType,jdbcType=VARCHAR},#{item.changeNum,jdbcType=NUMERIC},#{item.changePrice,jdbcType=DECIMAL},#{item.netModel,jdbcType=VARCHAR},#{item.skuCode,jdbcType=VARCHAR},
+         #{item.isDelete,jdbcType=VARCHAR},#{item.shelvesTime,jdbcType=TIMESTAMP},#{item.machineType,jdbcType=VARCHAR} from dual
+    	</foreach>  
+  </insert>
+  <!-- 添加单条单品 -->
+  <insert id="addGoodsSku" parameterType="com.sanji.sjzx.model.GoodsSku">
+    insert into SJ_TB_GOODS_SKU
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="skuNum != null" >
+        SKU_NUM,
+      </if>
+      <if test="price != null" >
+        PRICE,
+      </if>
+      <if test="originalPrice != null" >
+        ORIGINAL_PRICE,
+      </if>
+      <if test="tmallPrice != null" >
+        TMALL_PRICE,
+      </if>
+      <if test="edition != null" >
+        EDITION,
+      </if>
+      <if test="standard != null" >
+        STANDARD,
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID,
+      </if>
+      <if test="storage != null" >
+        STORAGE,
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID,
+      </if>
+      <if test="stock != null" >
+        STOCK,
+      </if>
+      <if test="shelves != null" >
+        SHELVES,
+      </if>
+      <if test="networkThree != null" >
+        NETWORK_THREE,
+      </if>
+      <if test="networkFour != null" >
+        NETWORK_FOUR,
+      </if>
+      <if test="supportChannel != null" >
+        SUPPORT_CHANNEL,
+      </if>
+      <if test="netsuitType != null" >
+        NET_SUIT_TYPE,
+      </if>
+      <if test="changeNum != null">
+      	CHANGE_NUM,
+      </if>
+      <if test="changePrice != null">
+      	CHANGE_PRICE,
+      </if>
+      <if test="netModel != null">
+      	NET_MODEL,
+      </if>
+      <if test="skuCode != null">
+      	SKU_CODE,
+      </if>
+      <if test="isDelete != null">
+      	IS_DELETE,
+      </if>
+      <if test="shelvesTime !=null">
+      	SHELVES_TIME,
+      </if>
+      <if test="machineType !=null">
+      	MACHINE_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="skuNum != null" >
+        #{skuNum,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="originalPrice != null" >
+        #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tmallPrice != null" >
+        #{tmallPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="edition != null" >
+        #{edition,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null" >
+        #{standard,jdbcType=VARCHAR},
+      </if>
+      <if test="colorId != null" >
+        #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="storage != null" >
+        #{storage,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        #{stock,jdbcType=NUMERIC},
+      </if>
+      <if test="shelves != null" >
+        #{shelves,jdbcType=VARCHAR},
+      </if>
+      <if test="networkThree != null" >
+        #{networkThree,jdbcType=VARCHAR},
+      </if>
+      <if test="networkFour != null" >
+        #{networkFour,jdbcType=VARCHAR},
+      </if>
+      <if test="supportChannel != null" >
+        #{supportChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="netsuitType != null" >
+        #{netsuitType,jdbcType=VARCHAR},
+      </if>
+      <if test="changeNum != null">
+      	#{changeNum,jdbcType=NUMERIC},
+      </if>
+      <if test="changePrice != null">
+      	#{changePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="netModel != null">
+      	#{netModel,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null">
+      	#{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+      	#{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesTime != null">
+      	#{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="machineType !=null">
+      	#{machineType,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <!-- 添加时根据skuCode查询是否存在该单品 -->
+  <select id="gainSkuBySkuCode" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.lang.String">
+   select ID, SKU_CODE from sj_tb_goods_sku where SKU_CODE=#{skuCode,jdbcType=VARCHAR}
+  </select> 
+  <!-- 添加时根据skuNum查询是否存在该单品 -->
+  <select id="gainSkuBySkuNum" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.lang.String">
+   select ID, SKU_NUM from sj_tb_goods_sku where SKU_NUM=#{skuNum,jdbcType=VARCHAR}
+  </select> 
+  <!-- 修改时根据skuCode查询是否存在该单品 -->
+  <select id="gainSkuBySkuCodeandId" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.util.Map">
+  	select ID, SKU_CODE from sj_tb_goods_sku where ID!=#{id,jdbcType=VARCHAR} and SKU_CODE=#{skuCode,jdbcType=VARCHAR}   	
+  </select>
+  <!-- 修改时根据skuNum查询是否存在该单品 -->
+  <select id="gainSkuBySkuNumandId" resultType="com.sanji.sjzx.model.GoodsSku" parameterType="java.util.Map">
+  	select ID, SKU_NUM from sj_tb_goods_sku where ID!=#{id,jdbcType=VARCHAR} and SKU_NUM=#{skuNum,jdbcType=VARCHAR} 
+  </select>
+  <!-- 批量修改单品信息 -->      
+  <update id="updateGoodsSkuList" parameterType="java.util.List">
+  	update SJ_TB_GOODS_SKU 
+  	SET 
+  		ID = #{id,jdbcType=VARCHAR},
+        SKU_NUM = #{skuNum,jdbcType=VARCHAR},
+        STOCK = #{stock,jdbcType=NUMERIC},
+        PRICE = #{price,jdbcType=DECIMAL},
+        ORIGINAL_PRICE = #{originalPrice,jdbcType=DECIMAL},
+        TMALL_PRICE = #{tmallPrice,jdbcType=DECIMAL},
+        EDITION = #{edition,jdbcType=VARCHAR},
+        STANDARD = #{standard,jdbcType=VARCHAR},
+        COLOR_ID = #{colorId,jdbcType=VARCHAR},
+        STORAGE = #{storage,jdbcType=VARCHAR},
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+        CHANGE_NUM = #{changeNum,jdbcType=NUMERIC},
+        CHANGE_PRICE = #{changePrice,jdbcType=DECIMAL},
+        NET_MODEL = #{netModel,jdbcType=VARCHAR},
+        NET_SUIT_TYPE = #{netsuitType,jdbcType=VARCHAR},
+        SKU_CODE = #{skuCode,jdbcType=VARCHAR},
+        IS_DELETE = #{isDelete,jdbcType=VARCHAR},
+        SHELVES_TIME = #{shelvesTime,jdbcType=TIMESTAMP},
+        MACHINE_TYPE = #{machineType,jdbcType=VARCHAR}
+    where ID in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+		${item.id} 
+	</foreach>
+  </update>
+  <!-- 修改单条单品信息 -->
+  <update id="updateGoodsSku">
+  	update SJ_TB_GOODS_SKU
+    <set >
+      <if test="skuNum != null" >
+        SKU_NUM = #{skuNum,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        PRICE = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="originalPrice != null" >
+        ORIGINAL_PRICE = #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tmallPrice != null" >
+        TMALL_PRICE = #{tmallPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="edition != null" >
+        EDITION = #{edition,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null" >
+        STANDARD = #{standard,jdbcType=VARCHAR},
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID = #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="storage != null" >
+        STORAGE = #{storage,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        STOCK = #{stock,jdbcType=NUMERIC},
+      </if>
+      <if test="shelves != null" >
+        SHELVES = #{shelves,jdbcType=VARCHAR},
+      </if>
+      <if test="networkThree != null" >
+        NETWORK_THREE = #{networkThree,jdbcType=VARCHAR},
+      </if>
+      <if test="networkFour != null" >
+        NETWORK_FOUR = #{networkFour,jdbcType=VARCHAR},
+      </if>
+      <if test="supportChannel != null" >
+        SUPPORT_CHANNEL = #{supportChannel,jdbcType=VARCHAR},
+      </if>
+      <if test="netsuitType != null" >
+        NET_SUIT_TYPE = #{netsuitType,jdbcType=VARCHAR},
+      </if>
+      <if test="changeNum != null">
+      	CHANGE_NUM = #{changeNum,jdbcType=NUMERIC},
+      </if>
+      <if test="changePrice != null">
+      	CHANGE_PRICE = #{changePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="netModel != null">
+      	NET_MODEL = #{netModel,jdbcType=VARCHAR},
+      </if>
+      <if test="skuCode != null">
+      	SKU_CODE = #{skuCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null">
+      	IS_DELETE = #{isDelete,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesTime != null">
+      	SHELVES_TIME = #{shelvesTime,jdbcType=TIMESTAMP},
+      </if> 
+      <if test="machineType != null">
+      	MACHINE_TYPE = #{machineType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 批量删除单品信息(物理删除) -->
+  <delete id="dropGoodsSku" parameterType="java.util.List">
+    <![CDATA[delete from SJ_TB_GOODS_SKU
+    where GOODS_ID in ]]>
+    <foreach collection="list" item="gids"  open="(" separator="," close=")">#{gids}</foreach> 
+  </delete> 
+  <!-- 单条删除单品信息(物理删除) -->
+  <delete id="dropGoodsSkuById" parameterType="java.lang.String">
+  	delete from SJ_TB_GOODS_SKU where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <!-- 根据SKU编码更新价格以及库存 -->
+  <update id="updatePriceByNum" parameterType="com.sanji.sjzx.model.GoodsSku">
+  	update SJ_TB_GOODS_SKU 
+  	<set>
+  		<if test="price != null" >
+        	PRICE = #{price,jdbcType=DECIMAL},
+		</if>
+  		<if test="originalPrice != null" >
+        	 ORIGINAL_PRICE = #{originalPrice,jdbcType=DECIMAL},
+		</if>
+  		<if test="tmallPrice != null" >
+        	 TMALL_PRICE = #{tmallPrice,jdbcType=DECIMAL},
+		</if>
+  		<if test="stock != null" >
+	        STOCK = #{stock,jdbcType=NUMERIC},
+	    </if>
+  	</set> 
+    where SKU_NUM = #{skuNum,jdbcType=VARCHAR}
+  </update>
+  <!-- 把将要放到宝贝仓库的单品进行修改单条单品价格库存信息 -->
+  <update id="updateSkuPriceandStock">
+  	update SJ_TB_GOODS_SKU
+    <set >
+      <if test="skuNum != null" >
+        SKU_NUM = #{skuNum,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        PRICE = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="colorId != null" >
+        COLOR_ID = #{colorId,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+      </if>
+      <if test="stock != null" >
+        STOCK = #{stock,jdbcType=NUMERIC},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 把放入宝贝仓库的单品修改为下架 ，显示修改时间-->
+  <update id="updateShelves">
+  	update SJ_TB_GOODS_SKU
+    <set >
+      <if test="shelves != null" >
+        SHELVES = #{shelves,jdbcType=VARCHAR},
+      </if>
+      <if test="shelvesTime != null">
+      	SHELVES_TIME = #{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 恢复放入宝贝仓库的单品修改为上架 -->
+  <update id="recycleSheleves">
+  	update SJ_TB_GOODS_SKU
+  	<set>
+	 	<if test="shelves != null" >
+	       SHELVES = #{shelves,jdbcType=VARCHAR},
+	    </if>
+  	</set>
+  	where ID = #{id,jdbcType=VARCHAR}
+  </update>
+
+</mapper>

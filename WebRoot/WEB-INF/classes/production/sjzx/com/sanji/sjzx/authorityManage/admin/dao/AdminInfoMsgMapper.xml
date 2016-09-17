@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.authorityManage.admin.dao.AdminInfoMsgMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.AdminInfoMsg" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="REGIONS" property="regions" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USER_ID, TYPE, REGIONS
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ADMIN_INFOMSG
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="gainInfoMsgByUserId" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.AdminInfoMsg" >
+  select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ADMIN_INFOMSG t
+    where t.user_id = #{userId,jdbcType=VARCHAR} and t.type = #{type,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteByUserIdAndType" parameterType="com.sanji.sjzx.model.AdminInfoMsg">
+   delete from SJ_TB_ADMIN_INFOMSG t
+    where t.user_id = #{userId,jdbcType=VARCHAR} and t.type = #{type,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="addMsgAuthors" parameterType="java.util.List" >
+  	insert into SJ_TB_ADMIN_INFOMSG (ID, USER_ID, TYPE, REGIONS)
+    <foreach collection="list" item="rm" index="index" separator="union all">
+		select #{rm.id,jdbcType=VARCHAR}, #{rm.userId,jdbcType=VARCHAR}, #{rm.type,jdbcType=VARCHAR}, 
+	      #{rm.regions,jdbcType=TIMESTAMP}
+	    from dual
+    </foreach>
+  
+  </insert>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_ADMIN_INFOMSG
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.AdminInfoMsg" >
+    insert into SJ_TB_ADMIN_INFOMSG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="regions != null" >
+        REGIONS,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="regions != null" >
+        #{regions,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+</mapper>

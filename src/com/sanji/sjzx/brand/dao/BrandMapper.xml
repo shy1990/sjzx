@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.brand.dao.BrandMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Brand" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="PID" property="pid" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" /> 
+    <result column="PIC" property="pic" jdbcType="VARCHAR" /> 
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" /> 
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="P_ORDER" property="p_order" jdbcType="DECIMAL" />
+    <result column="GRADE" property="grade" jdbcType="DECIMAL" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.sanji.sjzx.model.Brand" extends="BaseResultMap" >
+    <result column="PTREE" property="ptree" jdbcType="CLOB" />
+  </resultMap>
+  <sql id="Blob_Column_List" >
+    PTREE
+  </sql>  
+  <sql id="Base_Column_List" >
+    ID, PID, NAME, PIC, REMARK, DISABLED, GRADE, P_ORDER
+  </sql>
+  <!-- 获取分类为手机的商品的品牌 -->
+  <select id="gainSkuBrandName" resultMap="BaseResultMap">
+     select b.name from sj_tb_brand b left join sj_tb_goods g on g.brand_id = b.id  left join sj_tb_cat c on g.cat_id = c.id where c.name = '手机' group by b.name
+  </select>
+  <!-- 获取所有单品品牌列表 -->
+  <select id="gainAllGoodsBrand" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.Brand">
+  		select name from sj_tb_brand where id in (select g.brand_id from sj_tb_goods g left join sj_tb_cat c on g.cat_id = c.id and c.name = '手机')
+  </select>
+  <!-- 获取品牌列表 -->
+  <select id="gainBrandList1" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+     from SJ_TB_BRAND
+     where DISABLED = 'false' and GRADE !=1 
+     <if test="sort != null">
+	  order by ${sort}
+	 </if>
+	 <if test="order != null">
+	 ${order}
+	 </if>		
+  </select>
+  <!-- 获取品牌列表 -->
+  <select id="gainBrandList" resultMap="ResultMapWithBLOBs">
+    select id,pid,name from SJ_TB_BRAND
+    where DISABLED = 'false'
+  </select>
+  <!-- 获取所有品牌 -->
+  <select id="gainBrandAll" resultType="com.sanji.sjzx.model.Brand"> 
+  	select ID as brandId, NAME as brandName from SJ_TB_BRAND 
+  	where DISABLED = 'false' and GRADE = 2
+  </select> 
+  
+  <!-- 查询总行数 -->
+  <select id="gainBrandAllCount" resultType="Long"> 
+  	select count(ID) from SJ_TB_BRAND where DISABLED = 'false'
+  </select> 
+  <!-- 根据主键查询 -->
+  <select id="gainBrandById" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SJ_TB_BRAND
+    where DISABLED = 'false' and ID = #{pid,jdbcType=VARCHAR}
+  </select> 
+  
+  <!-- 根据父id查询子信息 -->
+  <select id="gainChildBrandListByPid" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from SJ_TB_BRAND
+    where DISABLED = 'false' and PID = #{pid,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 获取模块根节点 -->
+  <select id="gainRootBrand" resultMap="ResultMapWithBLOBs"> 
+  	select * from SJ_TB_BRAND where DISABLED = 'false' and GRADE = 2
+  </select> 
+    
+  <!-- 根据品牌名称查询 -->
+  <select id="gainBrandByName" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String"> 
+  	select * from SJ_TB_BRAND where "NAME" = #{name,jdbcType=VARCHAR} and DISABLED = 'false'
+  </select>  
+      
+  <!-- 品牌信息修改时,查询除此品牌的所有品牌-->
+  <select id="gainBrandForExceptUsername" resultMap="ResultMapWithBLOBs" parameterType="java.util.Map"> 
+  	select * from SJ_TB_BRAND b where b.DISABLED = 'false' and ID != #{id,jdbcType=VARCHAR} and NAME=#{name,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 添加品牌 -->
+  <insert id="addBrand" parameterType="com.sanji.sjzx.model.Brand" >
+    insert into SJ_TB_BRAND
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="pid != null" >
+        PID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="pic != null" >
+        PIC,
+      </if>
+      <if test="ptree != null" >
+        PTREE,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="grade != null" >
+        GRADE,
+      </if>
+      <if test="p_order != null" >
+        P_ORDER,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+   
+     </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null" >
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="ptree != null" >
+        #{ptree,jdbcType=CLOB},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=DECIMAL},
+      </if>
+      <if test="p_order != null" >
+        #{p_order,jdbcType=DECIMAL},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      
+    </trim>
+  </insert>
+  
+  <!-- 修改品牌 -->
+  <update id="modifyBrand" parameterType="com.sanji.sjzx.model.Brand" >
+    update SJ_TB_BRAND
+    <set >
+      <if test="pid != null" >
+        PID = #{pid,jdbcType=VARCHAR},
+      </if>	
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="pic != null" >
+        PIC = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="ptree != null" >
+        PTREE = #{ptree,jdbcType=CLOB},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="grade != null" >
+        GRADE = #{grade,jdbcType=DECIMAL},
+      </if>
+      <if test="p_order != null" >
+        P_ORDER = #{p_order,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update> 
+
+  <!-- 删除品牌(物理删除) -->
+  <delete id="dropBrand" parameterType="java.lang.String">   
+  	delete from SJ_TB_BRAND
+    where ID = #{id,jdbcType=VARCHAR}       
+  </delete> 
+</mapper>

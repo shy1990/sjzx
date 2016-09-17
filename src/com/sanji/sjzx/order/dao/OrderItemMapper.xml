@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.order.dao.OrderItemMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.OrderItem" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="TARGET_ID" property="targetId" jdbcType="VARCHAR" />
+    <result column="TARGET_TYPE" property="targetType" jdbcType="VARCHAR" />
+    <result column="MARKETBALE_PRICE" property="marketbalePrice" jdbcType="DECIMAL" />
+    <result column="DEAL_PRICE" property="dealPrice" jdbcType="DECIMAL" />
+    <result column="AMOUNT" property="amount" jdbcType="DECIMAL" />
+    <result column="NUMS" property="nums" jdbcType="DECIMAL" />
+    <result column="SALE_ACTIVE_ID" property="saleActiveId" jdbcType="VARCHAR" />
+    <result column="SALE_ACTIVE_REDUCE_MONEY" property="saleActiveReduceMoney" jdbcType="DECIMAL" />
+    <result column="MEMBERLV_REDCE_MONEY" property="memberlvRedceMoney" jdbcType="DECIMAL" />
+    <result column="MEMBERLV_DISCOUNT" property="memberlvDiscount" jdbcType="DECIMAL" />
+    <result column="APPRAISE" property="appraise" jdbcType="VARCHAR" />
+    <result column="ISGIFT" property="isgift" jdbcType="VARCHAR" />
+    <result column="ROOT_NUM" property="rootNum" jdbcType="DECIMAL" />
+    <result column="ORDER_ID" property="orderId" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="BRANDNAME" property="brandName" jdbcType="VARCHAR" />
+    <result column="TH_STATUS" property="thStatus" jdbcType="VARCHAR" />
+    <!-- 关联字段 -->
+    <result column="SHOP_NAME" property="shopName" jdbcType="VARCHAR" />
+    <result column="STANDARD" property="standard" jdbcType="VARCHAR" />
+     <result column="STORAGE" property="storage" jdbcType="VARCHAR" />
+    <result column="VERSION" property="version" jdbcType="VARCHAR" />
+    <result column="STYLES" property="styles" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TARGET_ID, TARGET_TYPE, MARKETBALE_PRICE, DEAL_PRICE, AMOUNT, NUMS, SALE_ACTIVE_ID, 
+    SALE_ACTIVE_REDUCE_MONEY, MEMBERLV_REDCE_MONEY, MEMBERLV_DISCOUNT, APPRAISE, ISGIFT, 
+    ROOT_NUM, ORDER_ID,TH_STATUS
+  </sql>
+
+<update id="updateOrderItemStateByMap"  parameterType="map">
+    <![CDATA[update SJ_TB_ORDER_ITEMS  set TH_STATUS = #{thStatus}
+  		where ID in ]]>
+  	 		<foreach collection="ids" item="v"  open="(" separator="," close=")">#{v}</foreach>
+</update>
+ 
+  <!-- 根据id查询订单项 -->
+  <select id="gainOrderItemById" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.OrderItem">
+  select * from (
+  
+	  select item.ID,item.target_id,  item.MARKETBALE_PRICE,item.DEAL_PRICE,item.NUMS,item.SALE_ACTIVE_REDUCE_MONEY,item.MEMBERLV_REDCE_MONEY,item.MEMBERLV_DISCOUNT,item.ROOT_NUM,g.name as name, item.target_type as targetType,gc.color_name as colorName ,gb.name as brandName ,a.shop_name as shopName ,sku.standard as standard,sku.storage as storage from SJ_TB_ORDER_ITEMS item
+	
+	  left join sj_tb_goods_sku  sku on item.target_id = sku.id  left join sj_tb_goods g on g.id = sku.goods_id left join sj_tb_color gc on sku.color_id=gc.id
+	  
+	  left join sj_tb_brand gb on g.brand_id=gb.id left join sj_tb_order o on item.order_id = o.id left join sj_tb_app a on o.member_id = a.member_id where item.target_type = 'sku'  and   item.ORDER_ID = #{id,jdbcType=VARCHAR}
+	union
+	select item.ID,item.target_id, ig.price as marketbalePrice,item.DEAL_PRICE,item.NUMS,item.SALE_ACTIVE_REDUCE_MONEY,item.MEMBERLV_REDCE_MONEY,item.MEMBERLV_DISCOUNT,item.ROOT_NUM,ig.name as name, item.target_type as targetType,ig.pic ,ig.type ,a.shop_name as shopName ,ig.integral_code,ig.spec_code  from SJ_TB_ORDER_ITEMS item
+	
+	  left join sj_tb_integral_goods  ig on item.target_id = ig.id  
+	  
+	  left join sj_tb_order o on item.order_id = o.id left join sj_tb_app a on o.member_id = a.member_id where item.target_type = 'point'  and   item.ORDER_ID = #{id,jdbcType=VARCHAR}
+	union 
+	
+	select item.ID,item.target_id, item.MARKETBALE_PRICE,item.DEAL_PRICE,item.NUMS,item.SALE_ACTIVE_REDUCE_MONEY,item.MEMBERLV_REDCE_MONEY,item.MEMBERLV_DISCOUNT,item.ROOT_NUM,a.name as name,item.target_type as targetType,gc.color_name as colorName ,gb.name as brandName,p.shop_name as shopName, a.accessories_version as version,a.styles as styles from SJ_TB_ORDER_ITEMS item
+	
+	left join sj_tb_accessories  a on a.id =  item.target_id  left join sj_tb_color gc on a.color_id=gc.id
+	
+	left join sj_tb_brand gb on a.brand_id=gb.id left join sj_tb_order o on item.order_id = o.id left join sj_tb_app p on o.member_id = p.member_id where  item.target_type = 'accessories'  and   item.ORDER_ID = #{id,jdbcType=VARCHAR}
+	union
+	
+	
+	   select item.ID,item.target_id, item.MARKETBALE_PRICE,item.DEAL_PRICE,item.NUMS,item.SALE_ACTIVE_REDUCE_MONEY,item.MEMBERLV_REDCE_MONEY,item.MEMBERLV_DISCOUNT,item.ROOT_NUM,a.name as name, item.target_type as targetType,gc.color_name as colorName,gb.name as brandName,p.shop_name,a.accessories_version as version,a.styles as styles from SJ_TB_ORDER_ITEMS item
+	    
+	    left join sj_tb_gift gift on item.target_id = gift.id left join sj_tb_accessories a  on gift.gift_id = a.id left join  sj_tb_goods g on gift.goods_id = g.id left join sj_tb_color gc on a.color_id = gc.id left join sj_tb_brand gb on a.brand_id = gb.id  left join sj_tb_order o on item.order_id = o.id left join sj_tb_app p on o.member_id = p.member_id where item.target_type = 'gift'  and   item.ORDER_ID = #{id,jdbcType=VARCHAR} 
+  
+  ) i order by i.targettype desc
+  
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ORDER_ITEMS
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_ORDER_ITEMS
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.OrderItem" >
+    insert into SJ_TB_ORDER_ITEMS (ID, TARGET_ID, TARGET_TYPE, 
+      MARKETBALE_PRICE, DEAL_PRICE, AMOUNT, 
+      NUMS, SALE_ACTIVE_ID, SALE_ACTIVE_REDUCE_MONEY, 
+      MEMBERLV_REDCE_MONEY, MEMBERLV_DISCOUNT, APPRAISE, 
+      ISGIFT, ROOT_NUM, ORDER_ID
+      )
+    values (#{id,jdbcType=VARCHAR}, #{targetId,jdbcType=VARCHAR}, #{targetType,jdbcType=VARCHAR}, 
+      #{marketbalePrice,jdbcType=DECIMAL}, #{dealPrice,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, 
+      #{nums,jdbcType=DECIMAL}, #{saleActiveId,jdbcType=VARCHAR}, #{saleActiveReduceMoney,jdbcType=DECIMAL}, 
+      #{memberlvRedceMoney,jdbcType=DECIMAL}, #{memberlvDiscount,jdbcType=DECIMAL}, #{appraise,jdbcType=VARCHAR}, 
+      #{isgift,jdbcType=VARCHAR}, #{rootNum,jdbcType=DECIMAL}, #{orderId,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.OrderItem" >
+    insert into SJ_TB_ORDER_ITEMS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="targetId != null" >
+        TARGET_ID,
+      </if>
+      <if test="targetType != null" >
+        TARGET_TYPE,
+      </if>
+      <if test="marketbalePrice != null" >
+        MARKETBALE_PRICE,
+      </if>
+      <if test="dealPrice != null" >
+        DEAL_PRICE,
+      </if>
+      <if test="amount != null" >
+        AMOUNT,
+      </if>
+      <if test="nums != null" >
+        NUMS,
+      </if>
+      <if test="saleActiveId != null" >
+        SALE_ACTIVE_ID,
+      </if>
+      <if test="saleActiveReduceMoney != null" >
+        SALE_ACTIVE_REDUCE_MONEY,
+      </if>
+      <if test="memberlvRedceMoney != null" >
+        MEMBERLV_REDCE_MONEY,
+      </if>
+      <if test="memberlvDiscount != null" >
+        MEMBERLV_DISCOUNT,
+      </if>
+      <if test="appraise != null" >
+        APPRAISE,
+      </if>
+      <if test="isgift != null" >
+        ISGIFT,
+      </if>
+      <if test="rootNum != null" >
+        ROOT_NUM,
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="targetId != null" >
+        #{targetId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetType != null" >
+        #{targetType,jdbcType=VARCHAR},
+      </if>
+      <if test="marketbalePrice != null" >
+        #{marketbalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealPrice != null" >
+        #{dealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="nums != null" >
+        #{nums,jdbcType=DECIMAL},
+      </if>
+      <if test="saleActiveId != null" >
+        #{saleActiveId,jdbcType=VARCHAR},
+      </if>
+      <if test="saleActiveReduceMoney != null" >
+        #{saleActiveReduceMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="memberlvRedceMoney != null" >
+        #{memberlvRedceMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="memberlvDiscount != null" >
+        #{memberlvDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="appraise != null" >
+        #{appraise,jdbcType=VARCHAR},
+      </if>
+      <if test="isgift != null" >
+        #{isgift,jdbcType=VARCHAR},
+      </if>
+      <if test="rootNum != null" >
+        #{rootNum,jdbcType=DECIMAL},
+      </if>
+      <if test="orderId != null" >
+        #{orderId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.OrderItem" >
+    update SJ_TB_ORDER_ITEMS
+    <set >
+      <if test="targetId != null" >
+        TARGET_ID = #{targetId,jdbcType=VARCHAR},
+      </if>
+      <if test="targetType != null" >
+        TARGET_TYPE = #{targetType,jdbcType=VARCHAR},
+      </if>
+      <if test="marketbalePrice != null" >
+        MARKETBALE_PRICE = #{marketbalePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="dealPrice != null" >
+        DEAL_PRICE = #{dealPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        AMOUNT = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="nums != null" >
+        NUMS = #{nums,jdbcType=DECIMAL},
+      </if>
+      <if test="saleActiveId != null" >
+        SALE_ACTIVE_ID = #{saleActiveId,jdbcType=VARCHAR},
+      </if>
+      <if test="saleActiveReduceMoney != null" >
+        SALE_ACTIVE_REDUCE_MONEY = #{saleActiveReduceMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="memberlvRedceMoney != null" >
+        MEMBERLV_REDCE_MONEY = #{memberlvRedceMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="memberlvDiscount != null" >
+        MEMBERLV_DISCOUNT = #{memberlvDiscount,jdbcType=DECIMAL},
+      </if>
+      <if test="appraise != null" >
+        APPRAISE = #{appraise,jdbcType=VARCHAR},
+      </if>
+      <if test="isgift != null" >
+        ISGIFT = #{isgift,jdbcType=VARCHAR},
+      </if>
+      <if test="rootNum != null" >
+        ROOT_NUM = #{rootNum,jdbcType=DECIMAL},
+      </if>
+      <if test="orderId != null" >
+        ORDER_ID = #{orderId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.OrderItem" >
+    update SJ_TB_ORDER_ITEMS
+    set TARGET_ID = #{targetId,jdbcType=VARCHAR},
+      TARGET_TYPE = #{targetType,jdbcType=VARCHAR},
+      MARKETBALE_PRICE = #{marketbalePrice,jdbcType=DECIMAL},
+      DEAL_PRICE = #{dealPrice,jdbcType=DECIMAL},
+      AMOUNT = #{amount,jdbcType=DECIMAL},
+      NUMS = #{nums,jdbcType=DECIMAL},
+      SALE_ACTIVE_ID = #{saleActiveId,jdbcType=VARCHAR},
+      SALE_ACTIVE_REDUCE_MONEY = #{saleActiveReduceMoney,jdbcType=DECIMAL},
+      MEMBERLV_REDCE_MONEY = #{memberlvRedceMoney,jdbcType=DECIMAL},
+      MEMBERLV_DISCOUNT = #{memberlvDiscount,jdbcType=DECIMAL},
+      APPRAISE = #{appraise,jdbcType=VARCHAR},
+      ISGIFT = #{isgift,jdbcType=VARCHAR},
+      ROOT_NUM = #{rootNum,jdbcType=DECIMAL},
+      ORDER_ID = #{orderId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.gyts.dao.GytsMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Gyts" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="MAIL" property="mail" jdbcType="VARCHAR" />
+    <result column="ITEM" property="item" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="VARCHAR" />
+    <result column="SKU" property="sku" jdbcType="VARCHAR" />
+    <result column="NUMS" property="nums" jdbcType="VARCHAR" />
+    <result column="RECEIVER_NAME" property="receiverName" jdbcType="VARCHAR" />
+    <result column="RECEIVER_ADDRESS" property="receiverAddress" jdbcType="VARCHAR" />
+    <result column="RECEIVER_STATE" property="receiverState" jdbcType="VARCHAR" />
+    <result column="RECEIVER_CITY" property="receiverCity" jdbcType="VARCHAR" />
+    <result column="RECEIVER_DISTRICT" property="receiverDistrict" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_TYPE" property="logisticsType" jdbcType="VARCHAR" />
+    <result column="OUTER_TID" property="outerTid" jdbcType="VARCHAR" />
+    <result column="OUTER_SHOP_CODE" property="outerShopCode" jdbcType="VARCHAR" />
+    <result column="RECEIVER_PHONE" property="receiverPhone" jdbcType="VARCHAR" />
+    <result column="RECEIVER_MOBILE" property="receiverMobile" jdbcType="VARCHAR" />
+    <result column="OUTER_DDLY" property="outerDdly" jdbcType="VARCHAR" />
+    <result column="BUYER_MESSAGE" property="buyerMessage" jdbcType="VARCHAR" />
+    <result column="STORE_CODE" property="storeCode" jdbcType="VARCHAR" />
+    <result column="RECEIVER_ZIP" property="receiverZip" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_FEE" property="logisticsFee" jdbcType="VARCHAR" />
+    <result column="FPTT" property="fptt" jdbcType="VARCHAR" />
+    <result column="SYFP" property="syfp" jdbcType="VARCHAR" />
+    <result column="LXDM" property="lxdm" jdbcType="VARCHAR" />
+    <result column="TICKET_NO" property="ticketNo" jdbcType="VARCHAR" />
+    <result column="PAY_CODES" property="payCodes" jdbcType="VARCHAR" />
+    <result column="PAY_MONEYS" property="payMoneys" jdbcType="VARCHAR" />
+    <result column="PAY_DATATIMES" property="payDatatimes" jdbcType="VARCHAR" />
+    <result column="AUTOSPLIT" property="autosplit" jdbcType="VARCHAR" />
+    <result column="TRADE_MEMO" property="tradeMemo" jdbcType="VARCHAR" />
+    <result column="TOVERIFY" property="toverify" jdbcType="VARCHAR" />
+    <result column="IS_COD" property="isCod" jdbcType="VARCHAR" />
+    <result column="YGDM" property="ygdm" jdbcType="VARCHAR" />
+    <result column="INVOICE_CONTENT" property="invoiceContent" jdbcType="VARCHAR" />
+    <result column="INVOICE_AMOUNT" property="invoiceAmount" jdbcType="VARCHAR" />
+    <result column="INVOICE_NUMBER" property="invoiceNumber" jdbcType="VARCHAR" />
+    <result column="INVOICE_DATE" property="invoiceDate" jdbcType="VARCHAR" />
+    <result column="YFRQ" property="yfrq" jdbcType="VARCHAR" />
+    <result column="TB_BZ" property="tbBz" jdbcType="VARCHAR" />
+    <result column="COD_FEE" property="codFee" jdbcType="VARCHAR" />
+    <result column="TOTAL_DISCOUNT_FEE" property="totalDiscountFee" jdbcType="VARCHAR" />
+    <result column="PAY_TRADE_IDS" property="payTradeIds" jdbcType="VARCHAR" />
+    <result column="PAY_ACCOUNTS" property="payAccounts" jdbcType="VARCHAR" />
+    <result column="PAY_MEMOS" property="payMemos" jdbcType="VARCHAR" />
+    <result column="CREATED" property="created" jdbcType="VARCHAR" />
+    <result column="TID" property="tid" jdbcType="VARCHAR" />
+    <result column="ERROR" property="error" jdbcType="VARCHAR" />
+    <result column="ADD_TIME" property="addTime" jdbcType="TIMESTAMP"/>
+    <!-- 辅助字段 -->
+    <result column="tsTime" property="tsTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MAIL, ITEM, PRICE, SKU, NUMS, RECEIVER_NAME, RECEIVER_ADDRESS, RECEIVER_STATE, RECEIVER_CITY, 
+    RECEIVER_DISTRICT, LOGISTICS_TYPE, OUTER_TID, OUTER_SHOP_CODE, RECEIVER_PHONE, RECEIVER_MOBILE, 
+    OUTER_DDLY, BUYER_MESSAGE, STORE_CODE, RECEIVER_ZIP, LOGISTICS_FEE, FPTT, SYFP, LXDM, 
+    TICKET_NO, PAY_CODES, PAY_MONEYS, PAY_DATATIMES, AUTOSPLIT, TRADE_MEMO, TOVERIFY, 
+    IS_COD, YGDM, INVOICE_CONTENT, INVOICE_AMOUNT, INVOICE_NUMBER, INVOICE_DATE, YFRQ, 
+    TB_BZ, COD_FEE, TOTAL_DISCOUNT_FEE, PAY_TRADE_IDS, PAY_ACCOUNTS, PAY_MEMOS, CREATED, 
+    TID, ERROR, ADD_TIME
+  </sql>
+  <!-- 获取推送订单的分页列表 -->
+  <select id="gainGytsList" resultType="com.sanji.sjzx.model.Gyts" parameterType="com.sanji.sjzx.model.Gyts">
+  	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (  
+			select 
+			    g.ID, g.MAIL, g.ITEM, g.PRICE, g.SKU, g.NUMS, g.RECEIVER_NAME as receiverName, g.RECEIVER_ADDRESS as receiverAddress,
+			    g.RECEIVER_STATE as receiverState, g.RECEIVER_CITY as receiverCity, g.RECEIVER_DISTRICT as receiverDistrict, 
+			    g.LOGISTICS_TYPE as logisticsType, g.OUTER_TID as outerTid, g.OUTER_SHOP_CODE as outerShopCode, 
+			    g.RECEIVER_PHONE as receiverPhone, g.RECEIVER_MOBILE as receiverMobile, g.OUTER_DDLY as outerDdly, 
+			    g.BUYER_MESSAGE as buyerMessage, g.STORE_CODE as storeCode, g.RECEIVER_ZIP as receiverZip, 
+			    g.LOGISTICS_FEE as logistics, g.FPTT, g.SYFP, g.LXDM, g.TICKET_NO as ticketNo, g.PAY_CODES as payCodes, 
+			    g.PAY_MONEYS as payMoneys, g.PAY_DATATIMES as payDataTimes, g.AUTOSPLIT, g.TRADE_MEMO as tradeMemo, 
+			    g.TOVERIFY, g.IS_COD as isCod, g.YGDM, g.INVOICE_CONTENT as invoiceContent, g.INVOICE_AMOUNT as invoiceAmount, 
+			    g.INVOICE_NUMBER as invoiceNumber, g.INVOICE_DATE as invoiceDate, g.YFRQ, g.TB_BZ as tbBz, g.COD_FEE as codFee, 
+			    g.TOTAL_DISCOUNT_FEE as totalDiscount, g.PAY_TRADE_IDS as payTradeIds, g.PAY_ACCOUNTS as payAccounts, 
+			    g.PAY_MEMOS as payMemos, g.CREATED, g.TID, g.ERROR, g.ADD_TIME as addTime
+		    from sj_tb_gyts g
+		    where 1=1
+		    <if test="outerTid !=null and outerTid !=''">
+            	and lower(g.OUTER_TID) like lower('%${outerTid}%')
+            </if>
+            <if test="tid !=null and tid !=''">
+            	and lower(g.tid) like lower('%${tid}%')
+            </if>
+            <if test="item !=null and item !=''">
+            	and lower(g.item) like lower('%${item}%')
+            </if>
+		    <if test="sku !=null and sku !=''">
+		    	and lower(g.sku) like lower('%${sku}%')
+		    </if>
+		    <if test="mail !=null and mail !=''">
+		    	and lower(g.mail) like lower('%${mail}%')
+		    </if>
+		    
+<!-- 			<if test="_orderStartTime != null">
+				and g.created &gt;= #{_orderStartTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_orderEndTime != null">
+				and g.created &lt;= #{_orderEndTime,jdbcType=TIMESTAMP}
+			</if>
+ -->		  	<if test="_startTime != null">
+				and g.ADD_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_endTime != null">
+				and g.ADD_TIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="sort != null">
+				order by ${sort}
+			</if>
+			<if test="order != null">
+				${order}
+			</if>		
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取推送订单的行数 -->
+  <select id="gainGytsCount" resultType="Long">
+  	select count(ID) from sj_tb_gyts
+  </select>
+
+  <!-- 添加推送订单 -->
+  <insert id="addGyts" parameterType="com.sanji.sjzx.model.Gyts" >
+    insert into SJ_TB_GYTS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="mail != null" >
+        MAIL,
+      </if>
+      <if test="item != null" >
+        ITEM,
+      </if>
+      <if test="price != null" >
+        PRICE,
+      </if>
+      <if test="sku != null" >
+        SKU,
+      </if>
+      <if test="nums != null" >
+        NUMS,
+      </if>
+      <if test="receiverName != null" >
+        RECEIVER_NAME,
+      </if>
+      <if test="receiverAddress != null" >
+        RECEIVER_ADDRESS,
+      </if>
+      <if test="receiverState != null" >
+        RECEIVER_STATE,
+      </if>
+      <if test="receiverCity != null" >
+        RECEIVER_CITY,
+      </if>
+      <if test="receiverDistrict != null" >
+        RECEIVER_DISTRICT,
+      </if>
+      <if test="logisticsType != null" >
+        LOGISTICS_TYPE,
+      </if>
+      <if test="outerTid != null" >
+        OUTER_TID,
+      </if>
+      <if test="outerShopCode != null" >
+        OUTER_SHOP_CODE,
+      </if>
+      <if test="addTime != null" >
+        ADD_TIME,
+      </if>
+      
+      <if test="receiverPhone != null" >
+        RECEIVER_PHONE,
+      </if>
+      <if test="receiverMobile != null" >
+        RECEIVER_MOBILE,
+      </if>
+      <if test="outerDdly != null" >
+        OUTER_DDLY,
+      </if>
+      <if test="buyerMessage != null" >
+        BUYER_MESSAGE,
+      </if>
+      <if test="storeCode != null" >
+        STORE_CODE,
+      </if>
+      <if test="receiverZip != null" >
+        RECEIVER_ZIP,
+      </if>
+      <if test="logisticsFee != null" >
+        LOGISTICS_FEE,
+      </if>
+      <if test="fptt != null" >
+        FPTT,
+      </if>
+      <if test="syfp != null" >
+        SYFP,
+      </if>
+      <if test="lxdm != null" >
+        LXDM,
+      </if>
+      <if test="ticketNo != null" >
+        TICKET_NO,
+      </if>
+      <if test="payCodes != null" >
+        PAY_CODES,
+      </if>
+      <if test="payMoneys != null" >
+        PAY_MONEYS,
+      </if>
+      <if test="payDatatimes != null" >
+        PAY_DATATIMES,
+      </if>
+      <if test="autosplit != null" >
+        AUTOSPLIT,
+      </if>
+      <if test="tradeMemo != null" >
+        TRADE_MEMO,
+      </if>
+      <if test="toverify != null" >
+        TOVERIFY,
+      </if>
+      <if test="isCod != null" >
+        IS_COD,
+      </if>
+      <if test="ygdm != null" >
+        YGDM,
+      </if>
+      <if test="invoiceContent != null" >
+        INVOICE_CONTENT,
+      </if>
+      <if test="invoiceAmount != null" >
+        INVOICE_AMOUNT,
+      </if>
+      <if test="invoiceNumber != null" >
+        INVOICE_NUMBER,
+      </if>
+      <if test="invoiceDate != null" >
+        INVOICE_DATE,
+      </if>
+      <if test="yfrq != null" >
+        YFRQ,
+      </if>
+      <if test="tbBz != null" >
+        TB_BZ,
+      </if>
+      <if test="codFee != null" >
+        COD_FEE,
+      </if>
+      <if test="totalDiscountFee != null" >
+        TOTAL_DISCOUNT_FEE,
+      </if>
+      <if test="payTradeIds != null" >
+        PAY_TRADE_IDS,
+      </if>
+      <if test="payAccounts != null" >
+        PAY_ACCOUNTS,
+      </if>
+      <if test="payMemos != null" >
+        PAY_MEMOS,
+      </if>
+      <if test="created != null" >
+        CREATED,
+      </if>
+      <if test="tid != null" >
+        TID,
+      </if>
+      <if test="error != null" >
+        ERROR,
+      </if>
+	</trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="mail != null" >
+        #{mail,jdbcType=VARCHAR},
+      </if>
+      <if test="item != null" >
+        #{item,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="nums != null" >
+        #{nums,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverName != null" >
+        #{receiverName,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverAddress != null" >
+        #{receiverAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverState != null" >
+        #{receiverState,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverCity != null" >
+        #{receiverCity,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverDistrict != null" >
+        #{receiverDistrict,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsType != null" >
+        #{logisticsType,jdbcType=VARCHAR},
+      </if>
+      <if test="outerTid != null" >
+        #{outerTid,jdbcType=VARCHAR},
+      </if>
+      <if test="outerShopCode != null" >
+        #{outerShopCode,jdbcType=VARCHAR},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      
+      <if test="receiverPhone != null" >
+        #{receiverPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverMobile != null" >
+        #{receiverMobile,jdbcType=VARCHAR},
+      </if>
+      <if test="outerDdly != null" >
+        #{outerDdly,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerMessage != null" >
+        #{buyerMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="storeCode != null" >
+        #{storeCode,jdbcType=VARCHAR},
+      </if>
+      <if test="receiverZip != null" >
+        #{receiverZip,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsFee != null" >
+        #{logisticsFee,jdbcType=VARCHAR},
+      </if>
+      <if test="fptt != null" >
+        #{fptt,jdbcType=VARCHAR},
+      </if>
+      <if test="syfp != null" >
+        #{syfp,jdbcType=VARCHAR},
+      </if>
+      <if test="lxdm != null" >
+        #{lxdm,jdbcType=VARCHAR},
+      </if>
+      <if test="ticketNo != null" >
+        #{ticketNo,jdbcType=VARCHAR},
+      </if>
+      <if test="payCodes != null" >
+        #{payCodes,jdbcType=VARCHAR},
+      </if>
+      <if test="payMoneys != null" >
+        #{payMoneys,jdbcType=VARCHAR},
+      </if>
+      <if test="payDatatimes != null" >
+        #{payDatatimes,jdbcType=VARCHAR},
+      </if>
+      <if test="autosplit != null" >
+        #{autosplit,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeMemo != null" >
+        #{tradeMemo,jdbcType=VARCHAR},
+      </if>
+      <if test="toverify != null" >
+        #{toverify,jdbcType=VARCHAR},
+      </if>
+      <if test="isCod != null" >
+        #{isCod,jdbcType=VARCHAR},
+      </if>
+      <if test="ygdm != null" >
+        #{ygdm,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceContent != null" >
+        #{invoiceContent,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceAmount != null" >
+        #{invoiceAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNumber != null" >
+        #{invoiceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceDate != null" >
+        #{invoiceDate,jdbcType=VARCHAR},
+      </if>
+      <if test="yfrq != null" >
+        #{yfrq,jdbcType=VARCHAR},
+      </if>
+      <if test="tbBz != null" >
+        #{tbBz,jdbcType=VARCHAR},
+      </if>
+      <if test="codFee != null" >
+        #{codFee,jdbcType=VARCHAR},
+      </if>
+      <if test="totalDiscountFee != null" >
+        #{totalDiscountFee,jdbcType=VARCHAR},
+      </if>
+      <if test="payTradeIds != null" >
+        #{payTradeIds,jdbcType=VARCHAR},
+      </if>
+      <if test="payAccounts != null" >
+        #{payAccounts,jdbcType=VARCHAR},
+      </if>
+      <if test="payMemos != null" >
+        #{payMemos,jdbcType=VARCHAR},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=VARCHAR},
+      </if>
+      <if test="tid != null" >
+        #{tid,jdbcType=VARCHAR},
+      </if>
+      <if test="error != null" >
+        #{error,jdbcType=VARCHAR},
+      </if> 
+    </trim>
+  </insert>
+  
+</mapper>

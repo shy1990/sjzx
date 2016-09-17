@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.pic.dao.PicMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.GoodsPic" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="SKU_ID" property="skuId" jdbcType="VARCHAR" />
+    <result column="PIC_SRC" property="picSrc" jdbcType="VARCHAR" />
+    <result column="STANDARD_PIC_SRC" property="standardPicSrc" jdbcType="VARCHAR" />
+    <result column="THUMB_PIC_SRC" property="thumbPicSrc" jdbcType="VARCHAR" />
+    <result column="PIC_SIZE" property="picSize" jdbcType="DECIMAL" />
+    <result column="WIDTH" property="width" jdbcType="DECIMAL" />
+    <result column="HEIGHT" property="height" jdbcType="DECIMAL" />
+    <result column="GOODS_ID" property="goodsId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SKU_ID, PIC_SRC, STANDARD_PIC_SRC, THUMB_PIC_SRC, PIC_SIZE, WIDTH, HEIGHT, GOODS_ID
+  </sql>
+  <!-- 根据单品id查询图片 -->
+  <select id="gainPic" resultType="com.sanji.sjzx.model.GoodsPic" parameterType="java.lang.String">
+	select p.id,p.sku_id as skuId,p.goods_id as goodsId,p.pic_src as picSrc
+	from sj_tb_goods_pic p                 
+	where p.sku_id = #{skuId,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据商品id获取图片信息 -->
+  <select id="gainPicByGoodsId" resultType="com.sanji.sjzx.model.GoodsPic" parameterType="java.lang.String">
+  	select ID, SKU_ID as skuId, PIC_SRC as picSrc, STANDARD_PIC_SRC as standardPicSrc, THUMB_PIC_SRC as thumbPicSrc, 
+  		   PIC_SIZE as picSize, WIDTH, HEIGHT, GOODS_ID as goodsId from SJ_TB_GOODS_PIC
+  	where GOODS_ID = #{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据单品id获取图片信息 -->
+  <select id="gainPicBySkuId" resultType="com.sanji.sjzx.model.GoodsPic" parameterType="java.lang.String">
+    select ID, SKU_ID as skuId, PIC_SRC as picSrc, STANDARD_PIC_SRC as standardPicSrc, THUMB_PIC_SRC as thumbPicSrc, 
+  		   PIC_SIZE as picSize, WIDTH, HEIGHT, GOODS_ID as goodsId from SJ_TB_GOODS_PIC
+  	where SKU_ID = #{skuId,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加图片 -->
+  <insert id="addPic" parameterType="com.sanji.sjzx.model.GoodsPic" >
+    insert into SJ_TB_GOODS_PIC
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="skuId != null" >
+        SKU_ID,
+      </if>
+      <if test="picSrc != null" >
+        PIC_SRC,
+      </if>
+      <if test="standardPicSrc != null" >
+        STANDARD_PIC_SRC,
+      </if>
+      <if test="thumbPicSrc != null" >
+        THUMB_PIC_SRC,
+      </if>
+      <if test="picSize != null" >
+        PIC_SIZE,
+      </if>
+      <if test="width != null" >
+        WIDTH,
+      </if>
+      <if test="height != null" >
+        HEIGHT,
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="picSrc != null" >
+        #{picSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="standardPicSrc != null" >
+        #{standardPicSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbPicSrc != null" >
+        #{thumbPicSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="picSize != null" >
+        #{picSize,jdbcType=DECIMAL},
+      </if>
+      <if test="width != null" >
+        #{width,jdbcType=DECIMAL},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 修改图片 -->
+  <update id="updatePic" parameterType="java.lang.String" >
+    update SJ_TB_GOODS_PIC
+    <set >
+      <if test="skuId != null" >
+        SKU_ID = #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="picSrc != null" >
+        PIC_SRC = #{picSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="standardPicSrc != null" >
+        STANDARD_PIC_SRC = #{standardPicSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="thumbPicSrc != null" >
+        THUMB_PIC_SRC = #{thumbPicSrc,jdbcType=VARCHAR},
+      </if>
+      <if test="picSize != null" >
+        PIC_SIZE = #{picSize,jdbcType=DECIMAL},
+      </if>
+      <if test="width != null" >
+        WIDTH = #{width,jdbcType=DECIMAL},
+      </if>
+      <if test="height != null" >
+        HEIGHT = #{height,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据商品id删除该商品下的所有图片 -->
+  <delete id="DropPic" parameterType="java.lang.String" >
+  delete from SJ_TB_GOODS_PIC where GOODS_ID = #{goodsId,jdbcType=VARCHAR}
+  </delete>
+  <!-- 根据单品id删除该单品相应的图片 -->
+  <delete id="DropPicBySkuId" parameterType="java.lang.String">
+  delete from SJ_TB_GOODS_PIC where SKU_ID = #{skuId,jdbcType=VARCHAR}
+  </delete>
+</mapper>

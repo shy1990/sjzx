@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.authorityManage.role.dao.RoleModuleMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.RoleModule" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="ROLE_ID" property="roleId" jdbcType="VARCHAR" />
+    <result column="MODULE_ID" property="moduleId" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createtime" jdbcType="DATE" />
+    <result column="MODIFYTIME" property="modifytime" jdbcType="DATE" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ROLE_ID, MODULE_ID, CREATETIME, MODIFYTIME, USER_ID
+  </sql>
+  
+  <!-- 根据角色id查询其权限 -->
+  <select id="gainRoleModuleByRoleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ROLE_MODULE
+    where ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </select>
+
+  <select id="gainRoleModuleByRid" resultType="com.sanji.sjzx.model.RoleModule" parameterType="java.lang.String" >
+	select RM.*,m."NAME" as mname,m."ID" as mid from SJ_TB_ROLE_MODULE rm left join SJ_TB_MODULE m on RM.MODULE_ID = m."ID" 
+	where RM.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 根据模块id查询 -->
+  <select id="gainRoleModuleByMid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ROLE_MODULE
+    where MODULE_ID = #{moduleId,jdbcType=VARCHAR}
+  </select>
+
+  <!-- 根据角色id查询权限id集合 -->
+  <select id="gainModuleIdsByRoleId" parameterType="String" resultType="String"> 
+	select RM.MODULE_ID from SJ_TB_ROLE_MODULE RM where RM.ROLE_ID = #{roleId,jdbcType=VARCHAR}
+  </select>
+    
+  <!-- 根据角色id删除其权限(物理删除) -->  
+  <delete id="dropRoleModuleByRoleId" parameterType="java.lang.String" >
+	delete from SJ_TB_ROLE_MODULE RM2 
+	where RM2."ID" in 
+	(SELECT "ID" from SJ_TB_ROLE_MODULE RM where RM.ROLE_ID = #{roleId,jdbcType=VARCHAR})
+  </delete>
+  
+  <delete id="dropRoleModuleByRids" parameterType="java.util.List" >
+   <![CDATA[delete from SJ_TB_ROLE_MODULE 
+    where ROLE_ID in ]]>         
+       <foreach collection="list" item="rids"  open="(" separator="," close=")">#{rids}</foreach>
+  </delete>
+  
+  <!-- 根据主键ID删除权限信息(物理删除) -->  
+  <delete id="dropRoleModuleByIds" parameterType="java.util.List" >
+   <![CDATA[delete from SJ_TB_ROLE_MODULE 
+    where ID in ]]>         
+       <foreach collection="list" item="ids"  open="(" separator="," close=")">#{ids}</foreach>
+  </delete>  
+  
+  <!-- 添加权限 -->
+  <insert id="addAuthorize" parameterType="java.util.List" >
+    insert into SJ_TB_ROLE_MODULE (ID, ROLE_ID, MODULE_ID, 
+      CREATETIME, MODIFYTIME, USER_ID
+      )
+    <foreach collection="list" item="rm" index="index" separator="union all">
+		select #{rm.id,jdbcType=VARCHAR}, #{rm.roleId,jdbcType=VARCHAR}, #{rm.moduleId,jdbcType=VARCHAR}, 
+	      #{rm.createtime,jdbcType=TIMESTAMP}, #{rm.modifytime,jdbcType=TIMESTAMP}, #{rm.userId,jdbcType=VARCHAR}
+	    from dual
+    </foreach>
+  </insert>
+  
+</mapper>

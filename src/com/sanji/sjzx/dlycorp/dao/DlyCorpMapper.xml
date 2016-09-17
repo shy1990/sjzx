@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.dlycorp.dao.DlyCorpMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.DlyCorp" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="DISABLE" property="disable" jdbcType="VARCHAR" />
+    <result column="ORDERNUM" property="ordernum" jdbcType="DECIMAL" />
+    <result column="WEBSITE" property="website" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, TYPE, DISABLE, ORDERNUM, WEBSITE
+  </sql>
+   <!-- 启用物流公司 -->
+  <update id="openDlyCorpById" parameterType="java.util.List">
+    <![CDATA[update SJ_TB_DLY_CORP  set DISABLE = 'false'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="dids"  open="(" separator="," close=")">#{dids}</foreach>
+  </update>
+  <!-- 禁用物流公司 -->
+  <update id="danDlyCorpById" parameterType="java.util.List">
+    <![CDATA[update SJ_TB_DLY_CORP  set DISABLE = 'true'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="dids"  open="(" separator="," close=")">#{dids}</foreach>
+  </update>
+  <!-- 获取排名最后的物流公司 -->
+  <select id="gainLastDlyCorp" resultType="java.lang.Integer">
+   	select max(ORDERNUM) from SJ_TB_DLY_CORP 
+  </select>
+  
+  <!-- 根据名称和主键判断物流公司是否重复 -->
+  <select id="existDlyCorpByMap" parameterType="map" resultType="java.lang.Long">
+  	select count(ID)
+  	 from SJ_TB_DLY_CORP where NAME = #{name} 
+  	<if test="id != null and id != ''" >
+  	  and ID != #{id}
+  	 </if>
+  </select>
+  <!-- 获取物流公司列表 -->
+  <select id="gainDlyCorpList" parameterType="com.sanji.sjzx.model.DlyCorp" resultMap="BaseResultMap">
+   	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+	  		select 
+		    <include refid="Base_Column_List" />
+		    from SJ_TB_DLY_CORP where ID is not null
+		    <if test="name != null and name != ''" >
+		    and NAME like '%${name}%'
+			</if>		
+			<if test="type != null and type != ''">
+		    and TYPE like '%${type}%'
+			</if>
+			<if test="disable != null and disable != ''">
+		    and DISABLE = #{disable,jdbcType=VARCHAR}
+			</if>	
+			<if test="sort != null">
+			order by ${sort}
+		  	</if>
+			<if test="order != null">
+			${order}
+			</if>
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 单条或批量删除物流公司(逻辑删除) -->
+  <delete id="deleteDlyCorp" parameterType="java.util.List">
+  	<![CDATA[update SJ_TB_DLY_CORP  set  DISABLE = 'true'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="dids"  open="(" separator="," close=")">#{dids}</foreach>    
+  </delete>
+  <!-- 单条或批量删除物流公司(物理删除) -->
+  <delete id="dropDlyCorpByIds" parameterType="java.util.List">
+  	<![CDATA[delete from SJ_TB_DLY_CORP 
+  		where ID in ]]>
+  	 		<foreach collection="list" item="dids"  open="(" separator="," close=")">#{dids}</foreach>    
+  </delete>
+  <!-- 获取总行数 -->
+  <select id="gainDlyCorpCount" parameterType="com.sanji.sjzx.model.DlyCorp" resultType="java.lang.Long">
+  	select count(ID) from SJ_TB_DLY_CORP
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_DLY_CORP
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据主键删除物流公司 -->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_DLY_CORP
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <!-- 增加物流公司 -->
+  <insert id="insert" parameterType="com.sanji.sjzx.model.DlyCorp" >
+    insert into SJ_TB_DLY_CORP (ID, NAME, TYPE, 
+      DISABLE, ORDERNUM, WEBSITE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{disable,jdbcType=VARCHAR}, #{ordernum,jdbcType=DECIMAL}, #{website,jdbcType=VARCHAR}
+      )
+  </insert>
+  <!-- 增加物流公司 -->
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.DlyCorp" >
+    insert into SJ_TB_DLY_CORP
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="disable != null" >
+        DISABLE,
+      </if>
+      <if test="ordernum != null" >
+        ORDERNUM,
+      </if>
+      <if test="website != null" >
+        WEBSITE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disable != null" >
+        #{disable,jdbcType=VARCHAR},
+      </if>
+      <if test="ordernum != null" >
+        #{ordernum,jdbcType=DECIMAL},
+      </if>
+      <if test="website != null" >
+        #{website,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 更新物流公司 -->
+  <update id="modifyDlyCorp" parameterType="com.sanji.sjzx.model.DlyCorp" >
+    update SJ_TB_DLY_CORP
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disable != null" >
+        DISABLE = #{disable,jdbcType=VARCHAR},
+      </if>
+      <if test="ordernum != null" >
+        ORDERNUM = #{ordernum,jdbcType=DECIMAL},
+      </if>
+      <if test="website != null" >
+        WEBSITE = #{website,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据主键更新物流公司 -->
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.DlyCorp" >
+    update SJ_TB_DLY_CORP
+    set NAME = #{name,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=VARCHAR},
+      DISABLE = #{disable,jdbcType=VARCHAR},
+      ORDERNUM = #{ordernum,jdbcType=DECIMAL},
+      WEBSITE = #{website,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

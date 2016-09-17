@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.members.dao.MembersGoodsShowMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.MembersGoodsShow" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="MEMBERS_ID" property="membersId" jdbcType="VARCHAR" />
+    <result column="SKU_ID" property="skuId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="DATE" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- 根据用户id删除其不可见单品(物理删除) -->  
+  <delete id="dropMembersGoodsByMembersId" parameterType="java.lang.String" >
+	delete from SJ_TB_MEMBERS_GOODS_SHOW mg2 
+	where mg2.ID in 
+	(SELECT mg.ID from SJ_TB_MEMBERS_GOODS_SHOW mg where mg.MEMBERS_ID = #{mid,jdbcType=VARCHAR})
+  </delete>
+   <!--添加不可见单品  -->
+  <insert id="addVisibleSku" parameterType="java.util.List" >
+    insert into SJ_TB_MEMBERS_GOODS_SHOW (ID, MEMBERS_ID, SKU_ID, 
+      CREATE_TIME, USER_ID, DISABLED
+      ) <foreach collection="list" item="mg" index="index" separator="union all">
+		select #{mg.id,jdbcType=VARCHAR}, #{mg.membersId,jdbcType=VARCHAR}, #{mg.skuId,jdbcType=VARCHAR}, 
+	      #{mg.createTime,jdbcType=TIMESTAMP}, #{mg.userId,jdbcType=VARCHAR}, #{mg.disabled,jdbcType=VARCHAR}
+	    from dual
+    </foreach>
+    
+  </insert>
+  <!-- 根据用户id查询不可见单品id集合 -->
+  <select id="gainMembersGoodsByMembersId" parameterType="java.util.List" resultType="String"> 
+    <![CDATA[select mg.SKU_ID from SJ_TB_MEMBERS_GOODS_SHOW mg 
+              where mg.MEMBERS_ID in ]]>
+	<foreach collection="list" index="index" item="mids" open="(" separator="," close=")"> 
+		#{mids}
+	</foreach>
+  </select>
+  <!-- 根据單品id查询單品數量 -->
+  <select id="gainMembersGoodsBySkuId" parameterType="java.util.List" resultType="java.lang.Long"> 
+    <![CDATA[select count(mg.SKU_ID) from SJ_TB_MEMBERS_GOODS_SHOW mg 
+              where mg.SKU_ID in ]]>
+	<foreach collection="list" index="index" item="sids" open="(" separator="," close=")"> 
+		#{sids}
+	</foreach>
+  </select>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.MembersGoodsShow" >
+    insert into SJ_TB_MEMBERS_GOODS_SHOW (ID, MEMBERS_ID, SKU_ID, 
+      CREATE_TIME, USER_ID, DISABLED
+      )
+    values (#{id,jdbcType=VARCHAR}, #{membersId,jdbcType=VARCHAR}, #{skuId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=DATE}, #{userId,jdbcType=VARCHAR}, #{disabled,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.MembersGoodsShow" >
+    insert into SJ_TB_MEMBERS_GOODS_SHOW
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="membersId != null" >
+        MEMBERS_ID,
+      </if>
+      <if test="skuId != null" >
+        SKU_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="membersId != null" >
+        #{membersId,jdbcType=VARCHAR},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

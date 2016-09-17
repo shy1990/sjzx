@@ -1,0 +1,25 @@
+[{
+	"id":"",
+	"text":"无"
+},{
+	"id":"TD-LTE",
+	"text":"TD-LTE"	
+},{
+	"id":"FDD-LTE",
+	"text":"FDD-LTE"
+},{
+	"id":"TD-SCDMA",
+	"text":"TD-SCDMA"
+},{
+	"id":"WCDMA",
+	"text":"WCDMA"
+},{
+	"id":"CDMA2000",
+	"text":"CDMA2000"
+},{
+	"id":"GSM",
+	"text":"GSM"
+},{
+	"id":"CDMA1X",
+	"text":"CDMA1X"
+}]

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.news.dao.NewsMapper">
+	<resultMap id="BaseResultMap" type="com.sanji.sjzx.model.News">
+		<id column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="FIRST_TITLE" property="firstTitle" jdbcType="VARCHAR" />
+		<result column="NEWS_CAT_ID" property="newsCatId" jdbcType="VARCHAR" />
+		<result column="CREATETIME" property="createtime" jdbcType="TIMESTAMP" />
+		<result column="MODIFYTIME" property="modifytime" jdbcType="TIMESTAMP" />
+		<result column="SECOND_TITLE" property="secondTitle" jdbcType="VARCHAR" />
+		<result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+		<result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="RESOURCES" property="resources" jdbcType="VARCHAR" />
+		<result column="KEYWORDS" property="keywords" jdbcType="VARCHAR" />
+		<result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+		<result column="AUTHOR" property="author" jdbcType="VARCHAR" />
+		<result column="CONTENT" property="content" jdbcType="CLOB" />
+		<result column="NEWSATTR" property="newsattr" jdbcType="VARCHAR" />
+		<result column="NEWSCATNAME" property="newsCatName" jdbcType="VARCHAR" />
+		<result column="NEWSCATPID" property="newsCatPid" jdbcType="VARCHAR" />
+		<result column="NEWS_PIC" property="newsPic" jdbcType="VARCHAR" />
+		<result column="IS_CALLCENTER" property="isCallCenter"
+			jdbcType="DECIMAL" />
+		<result column="VIEWNUM" property="viewnum" jdbcType="DECIMAL" />
+		<result column="KZ1" property="kz1" jdbcType="VARCHAR" />
+		<result column="KZ2" property="kz2" jdbcType="VARCHAR" />
+		<result column="KZ3" property="kz3" jdbcType="VARCHAR" />
+		<result column="KZ4" property="kz4" jdbcType="VARCHAR" />
+		<result column="KZ5" property="kz5" jdbcType="VARCHAR" />
+		<result column="KZ6" property="kz6" jdbcType="VARCHAR" />
+		<result column="KZ7" property="kz7" jdbcType="VARCHAR" />
+		<result column="KZ9" property="kz9" jdbcType="VARCHAR" />
+		<result column="KZ10" property="kz10" jdbcType="VARCHAR" />
+		<result column="KZ11" property="kz11" jdbcType="VARCHAR" />
+		<result column="KZ12" property="kz12" jdbcType="VARCHAR" />
+		<result column="KZ13" property="kz13" jdbcType="VARCHAR" />
+		<result column="KZ14" property="kz14" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, FIRST_TITLE, NEWS_CAT_ID, CREATETIME, MODIFYTIME, SECOND_TITLE,
+		DISABLED, USER_ID,
+		STATUS, RESOURCES, KEYWORDS, DESCRIPTION, AUTHOR,CONTENT,NEWSATTR,NEWS_PIC,
+		IS_CALLCENTER
+	</sql>
+	<!-- 获取所有有效的文章列表 -->
+	<select id="gainAll" parameterType="com.sanji.sjzx.model.News"
+		resultMap="BaseResultMap">
+		select * from (select * from (
+		select ROWNUM AS RN,s.* from (
+		select t.ID, t.FIRST_TITLE as firstTitle,t.KZ1 as kz1, t.NEWS_CAT_ID, t.CREATETIME,
+		t.MODIFYTIME, t.SECOND_TITLE as secondTitle, t.DISABLED, t.USER_ID,
+		t.STATUS, t.RESOURCES, t.KEYWORDS, t.DESCRIPTION,
+		t.AUTHOR,t.NEWSATTR,x.NAME as NEWSCATNAME from SJ_TB_NEWS t, SJ_TB_NEWS_CAT
+		x
+		where t.NEWS_CAT_ID = x.ID(+) and t.disabled=#{disabled,jdbcType=VARCHAR}
+		<if test="firstTitle !=null and firstTitle !=''">
+			and t.FIRST_TITLE like '%${firstTitle}%'
+		</if>
+		<if test="newsCatName !=null and newsCatName !=''">
+			and x.NAME like '%${newsCatName}%'
+		</if>
+		<if test="kz1 !=null and kz1 !=''">
+			and t.KZ1 = #{kz1,jdbcType=VARCHAR}
+		</if>
+		<if test="_startTime != null">
+			and t.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and t.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+		</if>
+		) s ) where <![CDATA[RN <= #{page}*#{rows}]]>)
+		where RN>(#{page}-1)*#{rows}
+	</select>
+	<!-- 获取所有有效的文章列表的数量 -->
+	<select id="gainAllCount" parameterType="com.sanji.sjzx.model.News"
+		resultType="Long">
+		select count(t.ID) from SJ_TB_NEWS t,SJ_TB_NEWS_CAT x where t.NEWS_CAT_ID = x.ID(+) and t.disabled=#{disabled,jdbcType=VARCHAR}
+		<if test="firstTitle !=null and firstTitle !=''">
+			and t.FIRST_TITLE like '%${firstTitle}%'
+		</if>
+		<if test="newsCatName !=null and newsCatName !=''">
+			and x.NAME like '%${newsCatName}%'
+		</if>
+		<if test="kz1 !=null and kz1 !=''">
+			and t.KZ1 = #{kz1,jdbcType=VARCHAR}
+		</if>
+		<if test="_startTime != null">
+			and t.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and t.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+	</select>
+
+	<!-- 添加文章 -->
+	<insert id="addNews" parameterType="com.sanji.sjzx.model.News">
+		insert into SJ_TB_NEWS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="firstTitle != null and firstTitle!=''">
+				FIRST_TITLE,
+			</if>
+			<if test="newsCatId != null and newsCatId!=''">
+				NEWS_CAT_ID,
+			</if>
+			<if test="createtime != null">
+				CREATETIME,
+			</if>
+			<if test="modifytime != null">
+				MODIFYTIME,
+			</if>
+			<if test="secondTitle != null and secondTitle!=''">
+				SECOND_TITLE,
+			</if>
+			<if test="disabled != null and disabled!=''">
+				DISABLED,
+			</if>
+			<if test="userId != null and userId!=''">
+				USER_ID,
+			</if>
+			<if test="status != null and status!=''">
+				STATUS,
+			</if>
+			<if test="resources != null and resources!=''">
+				RESOURCES,
+			</if>
+			<if test="keywords != null and keywords!=''">
+				KEYWORDS,
+			</if>
+			<if test="description != null and description!=''">
+				DESCRIPTION,
+			</if>
+			<if test="author != null and author!=''">
+				AUTHOR,
+			</if>
+			<if test="content != null and content!=''">
+				CONTENT,
+			</if>
+			<if test="newsattr != null and newsattr!='' ">
+				NEWSATTR,
+			</if>
+			<if test="newsPic != null and newsPic!='' ">
+				NEWS_PIC,
+			</if>
+			<if test="isCallCenter != null and isCallCenter!=''">
+				IS_CALLCENTER,
+			</if>
+			<if test="kz1 != null and kz1!=''">
+				KZ1,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=VARCHAR},
+			</if>
+			<if test="firstTitle != null and firstTitle!=''">
+				#{firstTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="newsCatId != null and newsCatId!=''">
+				#{newsCatId,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				#{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				#{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="secondTitle != null and secondTitle!=''">
+				#{secondTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="disabled != null and disabled!=''">
+				#{disabled,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null and userId!=''">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null and status!=''">
+				#{status,jdbcType=VARCHAR},
+			</if>
+			<if test="resources != null and resources!=''">
+				#{resources,jdbcType=VARCHAR},
+			</if>
+			<if test="keywords != null and keywords!=''">
+				#{keywords,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null and description!='' ">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="author != null and author!=''">
+				#{author,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null and content!=''">
+				#{content,jdbcType=CLOB},
+			</if>
+			<if test="newsattr != null and newsattr!=''">
+				#{newsattr,jdbcType=VARCHAR},
+			</if>
+			<if test="newsPic != null and newsPic!=''">
+				#{newsPic,jdbcType=VARCHAR},
+			</if>
+			<if test="isCallCenter != null and isCallCenter!=''">
+				#{isCallCenter,jdbcType=DECIMAL},
+			</if>
+			<if test="kz1 != null and kz1!=''">
+				#{kz1,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<!-- 更新文章 -->
+	<update id="updateNews" parameterType="com.sanji.sjzx.model.News">
+		update SJ_TB_NEWS
+		<set>
+			<if test="firstTitle != null">
+				FIRST_TITLE = #{firstTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="newsCatId != null">
+				NEWS_CAT_ID = #{newsCatId,jdbcType=VARCHAR},
+			</if>
+			<if test="createtime != null">
+				CREATETIME = #{createtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="modifytime != null">
+				MODIFYTIME = #{modifytime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="secondTitle != null">
+				SECOND_TITLE = #{secondTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="disabled != null">
+				DISABLED = #{disabled,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				USER_ID = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=VARCHAR},
+			</if>
+			<if test="resources != null">
+				RESOURCES = #{resources,jdbcType=VARCHAR},
+			</if>
+			<if test="keywords != null">
+				KEYWORDS = #{keywords,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				DESCRIPTION = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="author != null">
+				AUTHOR = #{author,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null">
+				CONTENT = #{content,jdbcType=CLOB},
+			</if>
+			<if test="newsattr != null">
+				NEWSATTR = #{newsattr,jdbcType=VARCHAR},
+			</if>
+			<if test="newsPic != null">
+				NEWS_PIC= #{newsPic,jdbcType=VARCHAR},
+			</if>
+			<if test="isCallCenter != null">
+				IS_CALLCENTER = #{isCallCenter,jdbcType=DECIMAL},
+			</if>
+			<if test="kz1 != null and kz1!=''">
+				KZ1=#{kz1,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+
+	<update id="updateNewsByProperty" parameterType="com.sanji.sjzx.model.News">
+		update SJ_TB_NEWS SET NEWSATTR='普通' WHERE
+		NEWSATTR=#{newsattr,jdbcType=VARCHAR} AND NEWS_CAT_ID =
+		#{newsCatId,jdbcType=VARCHAR}
+	</update>
+	<select id="gainNewsCountByNewsCatId" parameterType="String"
+		resultType="Long">
+		select count(ID) from SJ_TB_NEWS where NEWS_CAT_ID= #{id,jdbcType=VARCHAR}
+	</select>
+
+	<update id="delete" parameterType="java.util.List">
+		update SJ_TB_NEWS set disabled='true' where id in
+		<foreach collection="list" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+	<delete id="drop" parameterType="java.util.List">
+		delete from SJ_TB_NEWS where id in
+		<foreach collection="list" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<update id="recover" parameterType="java.util.List">
+		update SJ_TB_NEWS set disabled='false' where id in
+		<foreach collection="list" index="index" item="item" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<select id="gainNewsById" parameterType="String" resultMap="BaseResultMap">
+		select t.ID,t.KZ1, t.FIRST_TITLE as firstTitle,t.NEWS_PIC, t.NEWS_CAT_ID,
+		t.CREATETIME, t.MODIFYTIME,t.CONTENT, t.SECOND_TITLE as secondTitle,
+		t.DISABLED, t.USER_ID,
+		t.STATUS, t.RESOURCES, t.KEYWORDS, t.DESCRIPTION, t.AUTHOR,t.NEWSATTR,x.NAME as
+		NEWSCATNAME,x.pid as newsCatPid from SJ_TB_NEWS t left join SJ_TB_NEWS_CAT x
+		on t.NEWS_CAT_ID = x.ID where t.ID = #{id,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 按时间段查询各资讯频道文章数量及阅读次数统计 -->
+	<select id="gainNewsReadCountStatistics" parameterType="java.util.Map" resultType="java.lang.Long">
+		select
+		<if test="statisticsType == 1">
+			COUNT(N."ID") AS COUNT1 
+		</if>
+		<if test="statisticsType == 2">
+			SUM(N.IS_CALLCENTER) AS COUNT1
+		</if>
+		  from SJ_TB_NEWS N,SJ_TB_NEWS_CAT NC where N.NEWS_CAT_ID = NC."ID"(+) 
+		and N.DISABLED = 'false' and NC."NAME" = #{newsCatName} 
+		<if test="_startTime != null">
+			and N.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and N.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>		
+	</select>
+	
+	<!-- 文章阅读排名统计 -->
+	<select id="gainNewsReadRankStatistics" resultMap="BaseResultMap">
+		select N."ID",N.FIRST_TITLE,N.VIEWNUM from SJ_TB_NEWS N where N.DISABLED = 'false' ORDER BY N.VIEWNUM DESC
+	</select>		
+</mapper>

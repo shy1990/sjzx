@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.gift.dao.GiftMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Gift" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="GOODS_ID" property="goodsId" jdbcType="VARCHAR" />
+    <result column="GIFT_ID" property="giftId" jdbcType="VARCHAR" />
+    <result column="GIFT_PRICE" property="giftPrice" jdbcType="DECIMAL" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, GOODS_ID, GIFT_ID, GIFT_PRICE, DISABLED
+  </sql>
+  <!-- 批量添加赠品 -->
+  <insert id="addGiftList" parameterType="java.util.List" >
+     insert into SJ_TB_GIFT
+     (ID, GOODS_ID, GIFT_ID, GIFT_PRICE)
+     <foreach collection="list" item="item" index="index" separator="union all" >  
+     select #{item.id,jdbcType=VARCHAR},#{item.goodsId,jdbcType=VARCHAR},
+     		#{item.giftId,jdbcType=VARCHAR},#{item.giftPrice,jdbcType=DECIMAL},
+     		#{item.disabled,jdbcType=VARCHAR}
+     from dual
+	 </foreach>    
+  </insert>
+  <!-- 单条添加赠品数据 -->
+  <insert id="addGift" parameterType="com.sanji.sjzx.model.Gift">
+  	insert into SJ_TB_GIFT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="goodsId != null" >
+        GOODS_ID,
+      </if>
+      <if test="giftId != null" >
+        GIFT_ID,
+      </if>
+      <if test="giftPrice != null" >
+        GIFT_PRICE,
+      </if>
+      <if test="disabled !=null">
+      	DISABLED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=VARCHAR},
+      </if>
+      <if test="giftId != null" >
+        #{giftId,jdbcType=VARCHAR},
+      </if>
+      <if test="giftPrice != null" >
+        #{giftPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 根据goodsId查询该商品关联的所有赠品 -->
+  <select id="gainGiftList" resultType="com.sanji.sjzx.model.Gift" parameterType="java.lang.String">
+  	select ID, GOODS_ID as goodsId, GIFT_ID as giftId, GIFT_PRICE as giftPrice from SJ_TB_GIFT where disabled='false' 
+  	and GOODS_ID =#{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 批量修改赠品 -->
+  <update id="updateGiftList" parameterType="java.util.List" >
+    update SJ_TB_GIFT
+  	SET ID = #{id,jdbcType=VARCHAR},
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+        GIFT_ID = #{giftId,jdbcType=VARCHAR},
+        GIFT_PRICE = #{giftPrice,jdbcType=DECIMAL},
+        DISABLED = #{disabled,jdbcType=VARCHAR}
+    where ID in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")"> 
+		#{item} 
+	</foreach>
+  </update>
+  <!-- 修改赠品信息 -->
+  <update id="updateGift" parameterType="com.sanji.sjzx.model.Gift">
+    update SJ_TB_GIFT
+    <set>
+      <if test="id != null" >
+        ID = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId !=null">
+        GOODS_ID = #{goodsId,jdbcType=VARCHAR},
+      </if>
+      <if test="giftId != null" >
+        GIFT_ID = #{giftId,jdbcType=VARCHAR},
+      </if>
+      <if test="giftPrice != null" >
+        GIFT_PRICE = #{giftPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="disabled !=null">
+      	DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 删除已选的赠品 -->
+  <delete id="dropGift" parameterType="java.lang.String" >
+    delete from SJ_TB_GIFT
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <!-- 删除一条商品信息时，批量删除该商品下的赠品(物理删除) -->
+  <delete id="dropGifts" parameterType="java.util.List">
+    <![CDATA[delete from SJ_TB_GIFT
+    where GOODS_ID in ]]>
+    <foreach collection="list" item="goodsIds"  open="(" separator="," close=")">#{goodsIds}</foreach> 
+  </delete>
+  <!-- 根据giftId查询是否存在该gift -->
+  <select id="gainGiftByGiftId" resultType="com.sanji.sjzx.model.Gift" parameterType="java.util.Map">
+  	select ID, GOODS_ID as goodsId, GIFT_ID as giftId, GIFT_PRICE as giftPrice,disabled from SJ_TB_GIFT where 
+  	GOODS_ID =#{goodsId,jdbcType=VARCHAR} and GIFT_ID =#{giftId,jdbcType=VARCHAR}
+  </select>
+</mapper>

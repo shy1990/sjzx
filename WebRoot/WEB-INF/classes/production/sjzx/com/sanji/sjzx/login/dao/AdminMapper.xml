@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.login.dao.AdminMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Admin" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="username" jdbcType="VARCHAR" />
+    <result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="DECIMAL" />
+    <result column="CREATETIME" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="MODIFYTIME" property="modifytime" jdbcType="TIMESTAMP" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="TRUENAME" property="truename" jdbcType="VARCHAR" />
+    <result column="LAST_LOGIN_TIME" property="lastLoginTime" jdbcType="TIMESTAMP" />
+    <result column="LAST_LOGIN_IP" property="lastLoginIp" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="TELEPHONE" property="telephone" jdbcType="VARCHAR" />
+    <result column="MOBILEPHONE" property="mobilephone" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="USER_URL" property="userUrl" jdbcType="VARCHAR" />
+    <result column="USER_NUM" property="userNum" jdbcType="VARCHAR" />
+    <result column="YW_ID" property="ywId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, USERNAME, PASSWORD, TYPE, CREATETIME, MODIFYTIME, DISABLED, TRUENAME, LAST_LOGIN_TIME, 
+    LAST_LOGIN_IP, EMAIL, TELEPHONE, MOBILEPHONE, ADDRESS, USER_ID, REMARK,USER_URL,USER_NUM,YW_ID
+  </sql>
+  <!-- 根据用户id查询用户照片url -->
+  <select id="gainAdminByIdForImageUrl" resultType="java.lang.String" parameterType="java.lang.String" >
+      select USER_URL as userUrl from SJ_TB_ADMIN where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据主键查询 密码-->  
+  <select id="gainPwdById" parameterType="java.lang.String" resultType="java.lang.String"> 
+	select PASSWORD from SJ_TB_ADMIN where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 查询用户列表 -->
+  <select id="gainAdminList" parameterType="com.sanji.sjzx.model.Admin" resultType="com.sanji.sjzx.model.Admin">
+  	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+			select a.ID,a.USERNAME,a.TRUENAME,a.USER_NUM as userNum,a.YW_ID as ywId,a.CREATETIME,a.MODIFYTIME,a.MOBILEPHONE,a.ADDRESS,a.USER_URL as userUrl,
+			r."NAME" as roleName,r.id as roleId,AR."ID" as arId from SJ_TB_ADMIN a left join SJ_TB_ADMIN_ROLE AR on AR.ADMIN_ID = a."ID" 
+			join SJ_TB_ROLE r ON r."ID" = AR.ROLE_ID 
+			where a.DISABLED = 'false' 
+			<if test="username != null and username != ''" >
+		    and a.USERNAME like '%${username}%'
+			</if>			
+			<if test="_startTime != null" >
+		    and a.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+			</if>	
+			<if test="_endTime != null" >
+		    and a.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+			</if>					
+			order by a.CREATETIME DESC
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  
+  <!-- 获取总行数 -->  
+  <select id="gainAdminCount" parameterType="com.sanji.sjzx.model.Admin" resultType="Long"> 
+  	select count(ID) from SJ_TB_ADMIN where DISABLED = 'false' 
+  </select>
+  
+  <!-- 根据用户名查询 -->  
+  <select id="gainAdminByUsername" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+  	select <include refid="Base_Column_List" />  
+  	from SJ_TB_ADMIN where USERNAME = #{username,jdbcType=VARCHAR} and DISABLED = 'false'
+  </select>
+  <select id="gainAdminForExceptUsername" parameterType="java.util.Map" resultMap="BaseResultMap">
+	select <include refid="Base_Column_List" /> 
+	from SJ_TB_ADMIN a where a.USERNAME = #{username,jdbcType=VARCHAR} and a."ID" != #{id,jdbcType=VARCHAR} and a.DISABLED = 'false'  	
+  </select>
+  
+  <!-- 根据手机号码查询 -->  
+  <select id="gainAdminByMobilephone" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+  	select <include refid="Base_Column_List" />  
+  	from SJ_TB_ADMIN where MOBILEPHONE = #{mobilephone,jdbcType=VARCHAR} and DISABLED = 'false'
+  </select>
+  <select id="gainAdminForExceptMobilephone" parameterType="java.util.Map" resultMap="BaseResultMap"> 
+	select <include refid="Base_Column_List" /> 
+	from SJ_TB_ADMIN a where a.MOBILEPHONE = #{mobilephone,jdbcType=VARCHAR} and a."ID" != #{id,jdbcType=VARCHAR} and a.DISABLED = 'false'
+  </select>
+    
+  <!-- 根据邮箱查询 -->  
+  <select id="gainAdminByEmail" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+  	select <include refid="Base_Column_List" />  
+  	from SJ_TB_ADMIN where EMAIL = #{email,jdbcType=VARCHAR} and DISABLED = 'false'
+  </select>
+  <select id="gainAdminForExceptEmail" parameterType="java.util.Map" resultMap="BaseResultMap"> 
+	select <include refid="Base_Column_List" /> 
+	from SJ_TB_ADMIN a where a.EMAIL = #{email,jdbcType=VARCHAR} and a."ID" != #{id,jdbcType=VARCHAR} and a.DISABLED = 'false'
+  </select>
+  <!-- 根据主键查询 -->  
+  <select id="gainAdminById" parameterType="java.lang.String" resultMap="BaseResultMap"> 
+	select a.*,r.id as roleId from SJ_TB_ADMIN a left join SJ_TB_ADMIN_ROLE AR on AR.ADMIN_ID = a."ID" join SJ_TB_ROLE r ON
+	 r."ID" = AR.ROLE_ID where a.DISABLED = 'false'	and a.ID =  #{id,jdbcType=VARCHAR}
+  </select>
+    
+  <!-- 单条或批量删除用户(逻辑删除) --> 
+  <delete id="deleteAdmin" parameterType="java.util.List">         
+   <![CDATA[update SJ_TB_ADMIN set DISABLED = 'true'
+    where ID in ]]>         
+       <foreach collection="list" item="aids"  open="(" separator="," close=")">#{aids}</foreach>    
+  </delete>
+  
+  <!-- 单条或批量删除用户(物理删除) --> 
+  <delete id="dropAdmin" parameterType="java.util.List" >
+   <![CDATA[delete from SJ_TB_ADMIN
+    where ID in ]]>         
+       <foreach collection="list" item="aids"  open="(" separator="," close=")">#{aids}</foreach>    
+  </delete>
+  
+  
+  
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.Admin" >
+    insert into SJ_TB_ADMIN
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="username != null" >
+        USERNAME,
+      </if>
+      <if test="password != null" >
+        PASSWORD,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="createtime != null" >
+        CREATETIME,
+      </if>
+      <if test="modifytime != null" >
+        MODIFYTIME,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+      <if test="truename != null" >
+        TRUENAME,
+      </if>
+      <if test="lastLoginTime != null" >
+        LAST_LOGIN_TIME,
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE,
+      </if>
+      <if test="mobilephone != null" >
+        MOBILEPHONE,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="userUrl != null" >
+        USER_URL,
+      </if>
+      <if test="userNum != null" >
+        USER_NUM,
+      </if>
+      <if test="userNum != null" >
+        YW_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=DECIMAL},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=DATE},
+      </if>
+      <if test="modifytime != null" >
+        #{modifytime,jdbcType=DATE},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="truename != null" >
+        #{truename,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        #{lastLoginTime,jdbcType=DATE},
+      </if>
+      <if test="lastLoginIp != null" >
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilephone != null" >
+        #{mobilephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userUrl != null" >
+        #{userUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userNum != null" >
+        #{userNum,jdbcType=VARCHAR},
+      </if>
+       <if test="ywId != null" >
+        #{ywId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.Admin" >
+    update SJ_TB_ADMIN
+    <set >
+      <if test="username != null" >
+        USERNAME = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        PASSWORD = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=DECIMAL},
+      </if>
+      <if test="createtime != null" >
+        CREATETIME = #{createtime,jdbcType=DATE},
+      </if>
+      <if test="modifytime != null" >
+        MODIFYTIME = #{modifytime,jdbcType=DATE},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="truename != null" >
+        TRUENAME = #{truename,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        LAST_LOGIN_TIME = #{lastLoginTime,jdbcType=DATE},
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="mobilephone != null" >
+        MOBILEPHONE = #{mobilephone,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="userUrl != null" >
+        USER_URL = #{userUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="userNum != null" >
+        USER_NUM = #{userNum,jdbcType=VARCHAR},
+      </if>
+       <if test="ywId != null" >
+        YW_ID = #{ywId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.Admin" >
+    update SJ_TB_ADMIN
+    set USERNAME = #{username,jdbcType=VARCHAR},
+      PASSWORD = #{password,jdbcType=VARCHAR},
+      TYPE = #{type,jdbcType=DECIMAL},
+      CREATETIME = #{createtime,jdbcType=DATE},
+      MODIFYTIME = #{modifytime,jdbcType=DATE},
+      DISABLED = #{disabled,jdbcType=VARCHAR},
+      TRUENAME = #{truename,jdbcType=VARCHAR},
+      LAST_LOGIN_TIME = #{lastLoginTime,jdbcType=DATE},
+      LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      TELEPHONE = #{telephone,jdbcType=VARCHAR},
+      MOBILEPHONE = #{mobilephone,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      USER_URL = #{userUrl,jdbcType=VARCHAR},
+      USER_NUM = #{userNum,jdbcType=VARCHAR},
+      YW_ID = #{ywId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  
+  <!-- 根据用户名或邮箱或手机号码和密码查询 -->  
+  <select id="gainAdminByCondition" parameterType="java.util.Map" resultMap="BaseResultMap"> 
+	select <include refid="Base_Column_List" /> from 
+	SJ_TB_ADMIN t where (t.username = #{username,jdbcType=VARCHAR} or t.email = #{username,jdbcType=VARCHAR}
+  	 or t.telephone = #{username,jdbcType=VARCHAR}) and t.password = #{password,jdbcType=VARCHAR}
+  </select>
+</mapper>

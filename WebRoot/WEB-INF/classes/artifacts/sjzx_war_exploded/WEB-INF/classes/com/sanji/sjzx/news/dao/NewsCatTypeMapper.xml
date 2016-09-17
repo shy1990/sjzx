@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.news.dao.NewsCatTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.NewsCatType" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="PORDER" property="porder" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, DISABLED, REMARK, PORDER
+  </sql>
+  <select id="gainNewsCatTypeById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_NEWSCAT_TYPE
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+   <select id="gainAll" parameterType="com.sanji.sjzx.model.NewsCatType" resultMap="BaseResultMap">
+		   	select 
+		    <include refid="Base_Column_List" />
+		    from SJ_TB_NEWSCAT_TYPE where disabled='false'
+  </select>
+  <select id="gainAllList" parameterType="com.sanji.sjzx.model.NewsCatType" resultMap="BaseResultMap">
+	  select * from (select * from (
+			select ROWNUM AS RN,s.* from (
+		   	select 
+		    <include refid="Base_Column_List" />
+		    from SJ_TB_NEWSCAT_TYPE
+		    ) s
+			<if test="sort != null">
+			order by ${sort}
+			</if>
+			<if test="order != null">
+			${order}
+			</if>
+			) where <![CDATA[RN <= #{page}*#{rows}]]>)
+		where RN>(#{page}-1)*#{rows}
+  </select>
+  
+  <select id="gainAllCount" parameterType="com.sanji.sjzx.model.NewsCatType" resultType="Long">
+		   	select 
+		  	count(id)
+		    from SJ_TB_NEWSCAT_TYPE 
+  </select>
+  
+  <insert id="add" parameterType="com.sanji.sjzx.model.NewsCatType">
+  	insert into SJ_TB_NEWSCAT_TYPE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="porder != null" >
+       	PORDER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="porder != null" >
+        #{porder,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="update" parameterType="com.sanji.sjzx.model.NewsCatType" >
+    update SJ_TB_NEWSCAT_TYPE
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+       <if test="porder != null" >
+        PORDER = #{porder,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+    <delete id="drop" parameterType="java.lang.String" >
+	    delete from SJ_TB_NEWSCAT_TYPE
+	    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+</mapper>

@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.members.dao.MembersMapper">
+	<resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Members">
+		<result column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="USERNAME" property="username" jdbcType="VARCHAR" />
+		<result column="PASSWORD" property="password" jdbcType="VARCHAR" />
+		<result column="TRUENAME" property="truename" jdbcType="VARCHAR" />
+		<result column="NICKNAME" property="nickname" jdbcType="VARCHAR" />
+		<result column="AREA" property="area" jdbcType="VARCHAR" />
+		<result column="CITY" property="city" jdbcType="VARCHAR" />
+		<result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+		<result column="TELPHONE" property="telphone" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="ZIP" property="zip" jdbcType="VARCHAR" />
+		<result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+		<result column="GENDER" property="gender" jdbcType="DECIMAL" />
+		<result column="EDUCATION" property="education" jdbcType="VARCHAR" />
+		<result column="ADVANCE" property="advance" jdbcType="DECIMAL" />
+		<result column="POINT" property="point" jdbcType="DECIMAL" />
+		<result column="REG_IP" property="regIp" jdbcType="VARCHAR" />
+		<result column="REG_TIME" property="regTime" jdbcType="TIMESTAMP" />
+		<result column="STATE" property="state" jdbcType="DECIMAL" />
+		<result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="REMARK_TYPE" property="remarkType" jdbcType="VARCHAR" />
+		<result column="CARD" property="card" jdbcType="VARCHAR" />
+		<result column="TYPE" property="type" jdbcType="DECIMAL" />
+		<result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+		<result column="PAY_PASSWORD" property="payPassword" jdbcType="VARCHAR" />
+		<result column="ENGAGEINDUSTRY" property="engageindustry"
+			jdbcType="VARCHAR" />
+		<result column="LAST_LOGIN_TIME" property="lastLoginTime"
+			jdbcType="TIMESTAMP" />
+		<result column="RECOMMEND_USERID" property="recommendUserid"
+			jdbcType="VARCHAR" />
+		<result column="EMAIL_STATUS" property="emailStatus" jdbcType="DECIMAL" />
+		<result column="MOBILE_STATUS" property="mobileStatus"
+			jdbcType="DECIMAL" />
+		<result column="QUESTION_ID" property="questionId" jdbcType="VARCHAR" />
+		<result column="QUESTION_ANSWER" property="questionAnswer"
+			jdbcType="VARCHAR" />
+		<result column="LAST_LOGIN_IP" property="lastLoginIp" jdbcType="VARCHAR" />
+		<result column="BIRTHDAY" property="birthday" jdbcType="VARCHAR" />
+		<result column="BANK_CARD_NO" jdbcType="VARCHAR" property="bankCardNo" />
+        <result column="BANK_DEPOSIT" property="bankDeposit" jdbcType="VARCHAR" />
+        <result column="BANK_ACCOUNT" property="bankAccount" jdbcType="VARCHAR" />
+		<!-- 关联字段 -->
+		<result column="PNAME" property="pname" jdbcType="VARCHAR" />
+		<result column="CNAME" property="cname" jdbcType="VARCHAR" />
+		<result column="ANAME" property="aname" jdbcType="VARCHAR" />
+		<!-- 新添字段 -->
+		<result column="ADMIN_ID" property="adminId" jdbcType="VARCHAR" />
+		<result column="DITCH_ENCODE" property="ditchEncode" jdbcType="VARCHAR" />
+		<!-- 辅助字段 -->
+		<result column="sname" property="sname" jdbcType="VARCHAR" />
+		<result column="smobile" property="smobile" jdbcType="VARCHAR" />
+		<result column="ATYPE" property="aType" jdbcType="VARCHAR" />
+		<result column="SADDRESS" property="saddress" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		ID, USERNAME, PASSWORD,
+		TRUENAME, NICKNAME, AREA,
+		CITY, MOBILE, TELPHONE,
+		EMAIL, ZIP, ADDRESS,
+		GENDER, EDUCATION, ADVANCE,
+		POINT, REG_IP, REG_TIME,
+		STATE, DISABLED, REMARK,
+		REMARK_TYPE, CARD, TYPE,
+		PROVINCE, PAY_PASSWORD, ENGAGEINDUSTRY,
+		LAST_LOGIN_TIME, RECOMMEND_USERID, EMAIL_STATUS,
+		MOBILE_STATUS, QUESTION_ID, QUESTION_ANSWER,
+		LAST_LOGIN_IP, BIRTHDAY,BANK_CARD_NO,BANK_DEPOSIT,BANK_ACCOUNT
+	</sql>
+	<select id="gainMembersByRegions" resultMap="BaseResultMap" parameterType="java.lang.String">
+	     select m.ID, m.USERNAME from  SJ_TB_MEMBERS m where (m.province = #{areaid,jdbcType=VARCHAR} or m.city = #{areaid,jdbcType=VARCHAR} or m.area = #{areaid,jdbcType=VARCHAR} or m.town = #{areaid,jdbcType=VARCHAR})
+	</select> 
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from SJ_TB_MEMBERS
+		where ID = #{id,jdbcType=VARCHAR}
+	</select>
+	 <!-- 未开发移动用户设为可用 -->
+    <update id="enableMembersById" parameterType="java.util.List">
+      <![CDATA[update SJ_TB_MEMBERS  set DISABLED = 'false'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="dids"  open="(" separator="," close=")">#{dids}</foreach>
+    </update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.Members">
+		update SJ_TB_MEMBERS
+		<set>
+			<if test="username != null">
+				USERNAME = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="truename != null">
+				TRUENAME = #{truename,jdbcType=VARCHAR},
+			</if>
+			<if test="nickname != null">
+				NICKNAME = #{nickname,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				AREA = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				CITY = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				MOBILE = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="telphone != null">
+				TELPHONE = #{telphone,jdbcType=VARCHAR},
+			</if>
+			<if test="email != null">
+				EMAIL = #{email,jdbcType=VARCHAR},
+			</if>
+			<if test="zip != null">
+				ZIP = #{zip,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null">
+				ADDRESS = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="gender != null">
+				GENDER = #{gender,jdbcType=DECIMAL},
+			</if>
+			<if test="education != null">
+				EDUCATION = #{education,jdbcType=VARCHAR},
+			</if>
+			<if test="advance != null">
+				ADVANCE = #{advance,jdbcType=DECIMAL},
+			</if>
+			<if test="point != null">
+				POINT = #{point,jdbcType=DECIMAL},
+			</if>
+			<if test="regIp != null">
+				REG_IP = #{regIp,jdbcType=VARCHAR},
+			</if>
+			<if test="regTime != null">
+				REG_TIME = #{regTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="state != null">
+				STATE = #{state,jdbcType=DECIMAL},
+			</if>
+			<if test="disabled != null">
+				DISABLED = #{disabled,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				REMARK = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="remarkType != null">
+				REMARK_TYPE = #{remarkType,jdbcType=VARCHAR},
+			</if>
+			<if test="card != null">
+				CARD = #{card,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=DECIMAL},
+			</if>
+			<if test="province != null">
+				PROVINCE = #{province,jdbcType=VARCHAR},
+			</if>
+			<if test="payPassword != null">
+				PAY_PASSWORD = #{payPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="engageindustry != null">
+				ENGAGEINDUSTRY = #{engageindustry,jdbcType=VARCHAR},
+			</if>
+			<if test="lastLoginTime != null">
+				LAST_LOGIN_TIME = #{lastLoginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recommendUserid != null">
+				RECOMMEND_USERID = #{recommendUserid,jdbcType=VARCHAR},
+			</if>
+			<if test="emailStatus != null">
+				EMAIL_STATUS = #{emailStatus,jdbcType=DECIMAL},
+			</if>
+			<if test="mobileStatus != null">
+				MOBILE_STATUS = #{mobileStatus,jdbcType=DECIMAL},
+			</if>
+			<if test="questionId != null">
+				QUESTION_ID = #{questionId,jdbcType=VARCHAR},
+			</if>
+			<if test="questionAnswer != null">
+				QUESTION_ANSWER = #{questionAnswer,jdbcType=VARCHAR},
+			</if>
+			<if test="lastLoginIp != null">
+				LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+			</if>
+			<if test="birthday != null">
+				BIRTHDAY = #{birthday,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.Members">
+		update SJ_TB_MEMBERS
+		set USERNAME = #{username,jdbcType=VARCHAR},
+		PASSWORD = #{password,jdbcType=VARCHAR},
+		TRUENAME = #{truename,jdbcType=VARCHAR},
+		NICKNAME = #{nickname,jdbcType=VARCHAR},
+		AREA = #{area,jdbcType=VARCHAR},
+		CITY = #{city,jdbcType=VARCHAR},
+		MOBILE = #{mobile,jdbcType=VARCHAR},
+		TELPHONE = #{telphone,jdbcType=VARCHAR},
+		EMAIL = #{email,jdbcType=VARCHAR},
+		ZIP = #{zip,jdbcType=VARCHAR},
+		ADDRESS = #{address,jdbcType=VARCHAR},
+		GENDER = #{gender,jdbcType=DECIMAL},
+		EDUCATION = #{education,jdbcType=VARCHAR},
+		ADVANCE = #{advance,jdbcType=DECIMAL},
+		POINT = #{point,jdbcType=DECIMAL},
+		REG_IP = #{regIp,jdbcType=VARCHAR},
+		REG_TIME = #{regTime,jdbcType=TIMESTAMP},
+		STATE = #{state,jdbcType=DECIMAL},
+		DISABLED = #{disabled,jdbcType=VARCHAR},
+		REMARK = #{remark,jdbcType=VARCHAR},
+		REMARK_TYPE = #{remarkType,jdbcType=VARCHAR},
+		CARD = #{card,jdbcType=VARCHAR},
+		TYPE = #{type,jdbcType=DECIMAL},
+		PROVINCE = #{province,jdbcType=VARCHAR},
+		PAY_PASSWORD = #{payPassword,jdbcType=VARCHAR},
+		ENGAGEINDUSTRY = #{engageindustry,jdbcType=VARCHAR},
+		LAST_LOGIN_TIME = #{lastLoginTime,jdbcType=TIMESTAMP},
+		RECOMMEND_USERID = #{recommendUserid,jdbcType=VARCHAR},
+		EMAIL_STATUS = #{emailStatus,jdbcType=DECIMAL},
+		MOBILE_STATUS = #{mobileStatus,jdbcType=DECIMAL},
+		QUESTION_ID = #{questionId,jdbcType=VARCHAR},
+		QUESTION_ANSWER = #{questionAnswer,jdbcType=VARCHAR},
+		LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+		BIRTHDAY = #{birthday,jdbcType=VARCHAR}
+		where ID = #{id,jdbcType=VARCHAR}
+	</update>
+	<!-- 根据用户名查询会员信息 -->
+	<select id="gainMembersByUsername" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+
+		select m.username,m.address,m.truename,m.province,m.city,m.area,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.PROVINCE) as PNAME,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.CITY) as
+		CNAME,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.area) ANAME
+
+
+		from SJ_TB_MEMBERS m where m.USERNAME = #{userName,jdbcType=VARCHAR}
+	</select>
+	<!-- 查询会员列表 -->
+	<select id="gainMembersList" parameterType="com.sanji.sjzx.model.Members"
+		resultType="com.sanji.sjzx.model.Members">
+		select * from (select * from (
+		select ROWNUM AS RN,t.* from (
+			select m.id,m.username,m.truename,m.mobile,m.telphone,m.reg_time as regTime,aa.name || bb.name || cc.name address,
+        	  aa.name || bb.name || cc.name || dd.name three_a,case when m.atype is null then dd.atype else m.atype end as aType,
+	          m.DITCH_ENCODE as ditchEncode,m.address saddress,a.username as sname,a.mobilephone as smobile
+	          from SJ_TB_MEMBERS m left outer join sj_tb_admin a on m.admin_id = a.id
+	          left join sj_tb_regions aa on m.province = aa.id
+	          left join sj_tb_regions bb on m.city = bb.id
+	          left join sj_tb_regions cc on m.area = cc.id
+	          left join sj_tb_regions dd on m.town = dd.id
+		      where m.DISABLED = 'false'
+		<if test="username != null and username != ''">
+			and m.USERNAME like '%${username}%'
+		</if>
+		<if test="_startTime != null">
+			and m.REG_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and m.REG_TIME&lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="truename != null and truename != ''">
+			and m.truename like '%${truename}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and m.mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="regional != null and regional != ''">
+			and (m.province = #{regional,jdbcType=VARCHAR} or m.city =
+			#{regional,jdbcType=VARCHAR} or m.area = #{regional,jdbcType=VARCHAR})
+		</if>
+		
+		<if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+		</if>
+		
+		)t
+		) where <![CDATA[RN <= #{page}*#{rows}]]>)
+		where RN>(#{page}-1)*#{rows}
+	</select>
+	
+	
+
+	<!-- 获取总行数 -->
+	<select id="gainMembersCount" parameterType="com.sanji.sjzx.model.Members" resultType="Long">
+	 select count(m.ID) from SJ_TB_MEMBERS m where m.DISABLED = 'false'
+		<if test="username != null and username != ''">
+			and m.USERNAME like '%${username}%'
+		</if>
+		<if test="_startTime != null">
+			and m.REG_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and m.REG_TIME&lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="truename != null and truename != ''">
+			and m.truename like '%${truename}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and m.mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="regional != null and regional != ''">
+			and (m.province = #{regional,jdbcType=VARCHAR} or m.city =
+			#{regional,jdbcType=VARCHAR} or m.area = #{regional,jdbcType=VARCHAR})
+		</if>
+	</select>
+	
+	<!-- 查询未注册移动会员列表 -->
+	<select id="gainDisabledMembersList" parameterType="com.sanji.sjzx.model.Members"
+		resultType="com.sanji.sjzx.model.Members">
+		select * from (select * from (
+		select ROWNUM AS RN,t.* from (
+			select m.id,m.username,m.truename,m.mobile,m.telphone,m.reg_time as regTime, aa.name || bb.name || cc.name address,
+			m.DITCH_ENCODE as ditchEncode,a.username as sname,a.mobilephone as smobile
+			from SJ_TB_MEMBERS m left outer join sj_tb_admin a on m.admin_id = a.id
+			left join sj_tb_regions aa on m.province = aa.id
+			left join sj_tb_regions bb on m.city = bb.id
+			left join sj_tb_regions cc on m.area = cc.id
+			where m.DISABLED = 'true'
+		<if test="username != null and username != ''">
+			and m.USERNAME like '%${username}%'
+		</if>
+		<if test="_startTime != null">
+			and m.REG_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and m.REG_TIME&lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="truename != null and truename != ''">
+			and m.truename like '%${truename}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and m.mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="regional != null and regional != ''">
+			and (m.province = #{regional,jdbcType=VARCHAR} or m.city =
+			#{regional,jdbcType=VARCHAR} or m.area = #{regional,jdbcType=VARCHAR})
+		</if>
+		
+		<if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+		</if>
+		
+		)t
+		) where <![CDATA[RN <= #{page}*#{rows}]]>)
+		where RN>(#{page}-1)*#{rows}
+	</select>
+	
+	<!-- 获取未开发移动用户总行数 -->
+	<select id="gainDisabledMembersCount" parameterType="com.sanji.sjzx.model.Members" resultType="Long">
+	 select count(m.ID) from SJ_TB_MEMBERS m where m.DISABLED = 'true'
+		<if test="username != null and username != ''">
+			and m.USERNAME like '%${username}%'
+		</if>
+		<if test="_startTime != null">
+			and m.REG_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and m.REG_TIME&lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="truename != null and truename != ''">
+			and m.truename like '%${truename}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and m.mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="regional != null and regional != ''">
+			and (m.province = #{regional,jdbcType=VARCHAR} or m.city =
+			#{regional,jdbcType=VARCHAR} or m.area = #{regional,jdbcType=VARCHAR})
+		</if>
+	</select>
+
+	<!-- 单条或批量删除用户(逻辑删除) -->
+	<delete id="deleteMembers" parameterType="java.util.List">         
+   <![CDATA[update SJ_TB_MEMBERS set DISABLED = 'true'
+    where ID in ]]>
+		<foreach collection="list" item="mids" open="(" separator=","
+			close=")">#{mids}</foreach>
+	</delete>
+	
+	<!-- 单条或批量删除HDFK用户（物理删除） -->
+	<delete id="deleteBlackMembers" parameterType="java.util.List">         
+   <![CDATA[delete from SJ_TB_PAY_BLACKLIST where MEMBER_ID in ]]>
+		<foreach collection="list" item="mids" open="(" separator=","
+			close=")">#{mids}</foreach>
+	</delete>
+	
+	<!-- 根据ID进行查询 -->
+	<select id="gainMembersById" parameterType="java.lang.String"
+		resultType="com.sanji.sjzx.model.Members">
+		<!-- select ID, USERNAME, TRUENAME, NICKNAME, AREA, CITY, MOBILE, TELPHONE, 
+			EMAIL, ZIP, ADDRESS, GENDER, EDUCATION, ADVANCE, POINT, REG_IP as regIp, 
+			REG_TIME as regTime, STATE, DISABLED, REMARK, REMARK_TYPE as remarkType,TYPE, 
+			PROVINCE, ENGAGEINDUSTRY, LAST_LOGIN_TIME as lastLoginTime, RECOMMEND_USERID 
+			as recommendUserId, EMAIL_STATUS as emailStatus, MOBILE_STATUS as mobileStatus, 
+			QUESTION_ANSWER as questionAnswer, LAST_LOGIN_IP as lastLoginIp, BIRTHDAY 
+			from SJ_TB_MEMBERS -->
+		select n.user_id,n.loginTime as lastLoginTime,n.login_ip as
+		lastLoginIp,m.BANK_DEPOSIT as bankDeposit,m.BANK_ACCOUNT as bankAccount ,m.BANK_CARD_NO as bankCardNo,
+		m.ID, m.USERNAME,m.TRUENAME, m.NICKNAME, m.AREA, m.CITY, m.MOBILE,
+		m.TELPHONE, m.EMAIL, m.ZIP,
+		m.ADDRESS, m.GENDER, m.EDUCATION, m.ADVANCE, m.POINT, m.REG_IP as regIp,
+		m.REG_TIME as regTime,
+		m.STATE, m.DISABLED, m.REMARK, m.REMARK_TYPE as remarkType,m.TYPE, m.PROVINCE,
+		m.ENGAGEINDUSTRY,
+		m.LAST_LOGIN_TIME as lastLoginTime, m.RECOMMEND_USERID as recommendUserId,
+		m.EMAIL_STATUS as emailStatus,
+		m.MOBILE_STATUS as mobileStatus, m.QUESTION_ANSWER as questionAnswer, m.LAST_LOGIN_IP
+		as lastLoginIp, m.BIRTHDAY,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.PROVINCE) as PNAME,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.CITY) as
+		CNAME,
+		(select R1."NAME" from SJ_TB_REGIONS R1 where R1."ID" = m.area) ANAME
+		from
+		(select g.user_id,g.loginTime,b.login_ip from
+		(select user_id,max(login_time) as loginTime from sj_tb_login_log group by
+		user_id)g
+		inner join sj_tb_login_log b on g.user_id=b.user_id where g.loginTime
+		=b.login_time)n
+		right outer join sj_tb_members m on n.user_id=m.id
+		where id=#{id,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 根据memberId查询相应商铺记录 -->
+	  <select id="gainBlackMembersById" parameterType="java.lang.String" resultType="com.sanji.sjzx.model.Members">
+	  	select MEMBER_ID from SJ_TB_PAY_BLACKLIST where MEMBER_ID = #{id,jdbcType=VARCHAR}
+	  </select>
+	
+	<!-- 根据memberId插入相应记录 -->
+	<insert id="insertBlackMembers" parameterType="java.lang.String">
+		 INSERT INTO SJ_TB_PAY_BLACKLIST (MEMBER_ID) values (#{id,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 导出会员列表 -->
+	<select id="gainMembersByExport" parameterType="com.sanji.sjzx.model.Members"
+		resultType="com.sanji.sjzx.model.Members">
+		
+			select m.id,m.username,m.truename,m.mobile,m.telphone,m.reg_time as regTime,aa.name || bb.name || cc.name address,
+        	  aa.name || bb.name || cc.name || dd.name three_a,case when m.atype is null then dd.atype else m.atype end as aType,
+	          m.DITCH_ENCODE as ditchEncode,m.address saddress,a.username as sname,a.mobilephone as smobile
+	          from SJ_TB_MEMBERS m left outer join sj_tb_admin a on m.admin_id = a.id
+	          left join sj_tb_regions aa on m.province = aa.id
+	          left join sj_tb_regions bb on m.city = bb.id
+	          left join sj_tb_regions cc on m.area = cc.id
+	          left join sj_tb_regions dd on m.town = dd.id
+		      where m.DISABLED = 'false'
+		<if test="username != null and username != ''">
+			and m.USERNAME like '%${username}%'
+		</if>
+		<if test="_startTime != null">
+			and m.REG_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and m.REG_TIME&lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="truename != null and truename != ''">
+			and m.truename like '%${truename}%'
+		</if>
+		<if test="mobile != null and mobile != ''">
+			and m.mobile =#{mobile,jdbcType=VARCHAR}
+		</if>
+		<if test="regional != null and regional != ''">
+			and (m.province = #{regional,jdbcType=VARCHAR} or m.city =
+			#{regional,jdbcType=VARCHAR} or m.area = #{regional,jdbcType=VARCHAR})
+		</if>
+		
+		<if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+		</if>
+	</select>
+	
+	<!-- 添加时根据username查询是否存在该单品 -->
+  <select id="gainMembersByName" resultType="com.sanji.sjzx.model.Members" parameterType="java.lang.String">
+   select ID, USERNAME from SJ_TB_MEMBERS where USERNAME like '%'||#{username,jdbcType=VARCHAR}||'%'
+  </select>
+  
+  <!-- 根据手机号码更新地域类型 -->
+  <update id="updateAtypeByMobile" parameterType="com.sanji.sjzx.model.Members">
+  	update SJ_TB_MEMBERS 
+  	<set>
+  		<if test="aType != null" >
+        	ATYPE = #{aType,jdbcType=DECIMAL}
+		</if>
+		
+  	</set> 
+    where MOBILE = #{mobile,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

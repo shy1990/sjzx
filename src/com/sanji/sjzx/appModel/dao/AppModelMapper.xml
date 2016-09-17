@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sanji.sjzx.appModel.dao.AppModelMapper">
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.AppModel">
+    <id column="ID" jdbcType="VARCHAR" property="id" />
+    <result column="ACCESSORIES_ID" jdbcType="VARCHAR" property="accessoriesId" />
+    <result column="GOODS_ID" jdbcType="VARCHAR" property="goodsId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, ACCESSORIES_ID, GOODS_ID
+  </sql>
+  <!-- 根据配件id获取适用机型信息 -->
+  <select id="gainAppModelByAccId" parameterType="java.lang.String" resultType="com.sanji.sjzx.model.AppModel">
+    select ID, ACCESSORIES_ID as accessoriesId, GOODS_ID as goodsId from SJ_TB_APPLICATION_MODEL where ACCESSORIES_ID = #{accessoriesId,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据商品id获取适用机型信息 -->
+  <select id="gainAppModelByGoodsId" parameterType="java.lang.String" resultType="com.sanji.sjzx.model.AppModel">
+  	select ID, ACCESSORIES_ID, GOODS_ID from SJ_TB_APPLICATION_MODEL where GOODS_ID = #{goodsId,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加适配机型信息 -->
+  <insert id="addAppModel" parameterType="com.sanji.sjzx.model.AppModel">
+    insert into SJ_TB_APPLICATION_MODEL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        ID,
+      </if>
+      <if test="accessoriesId != null">
+        ACCESSORIES_ID,
+      </if>
+      <if test="goodsId != null">
+        GOODS_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="accessoriesId != null">
+        #{accessoriesId,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null">
+        #{goodsId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 删除相应记录的适用机型信息 -->
+  <delete id="dropAppModel" parameterType="java.lang.String">
+    delete from SJ_TB_APPLICATION_MODEL where ID = #{id,jdbcType=VARCHAR}
+  </delete> 
+  <!-- 根据商品id删除适用机型信息 -->
+  <delete id="dropAppModelByGoodsId" parameterType="java.util.List">
+  delete from SJ_TB_APPLICATION_MODEL where GOODS_ID = #{goodsId,jdbcType=VARCHAR}
+  </delete>
+  <!-- 根据配件id删除相应适用机型信息 -->
+  <delete id="dropAppModelByAccId" parameterType="java.util.List">
+  delete from SJ_TB_APPLICATION_MODEL where ACCESSORIES_ID = #{accessoriesId,jdbcType=VARCHAR}
+  </delete>
+</mapper>
