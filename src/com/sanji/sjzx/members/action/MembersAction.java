@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +28,11 @@ import com.sanji.sjzx.apps.service.AppsService;
 import com.sanji.sjzx.common.util.BaseAction;
 import com.sanji.sjzx.common.util.ResourceUtil;
 import com.sanji.sjzx.common.util.ToolsUtil;
+import com.sanji.sjzx.members.service.MembersBlackListService;
 import com.sanji.sjzx.members.service.MembersService;
 import com.sanji.sjzx.model.Apps;
 import com.sanji.sjzx.model.Members;
+import com.sanji.sjzx.model.MembersBlackList;
 import com.sanji.sjzx.model.MembersGoodsShow;
 import com.sanji.sjzx.pojo.Json;
 import com.sanji.sjzx.pojo.SessionInfo;
@@ -37,6 +40,7 @@ import com.sanji.sjzx.pojo.SessionInfo;
 @Namespace("/members")
 @Action(value="membersAction", results={
 		@Result(name="toMembersList", location="/admin/members/list.jsp"),
+		@Result(name="toMembersListd", location="/admin/members/listd.jsp"),
 		@Result(name="toShowMembers", location="/admin/members/showMembers.jsp"),
 		@Result(name="disabledList", location="/admin/members/disabledList.jsp"),
 		@Result(name="toImport_Ex_atypeData", location="/admin/members/atype_Ex_Import.jsp"),
@@ -60,6 +64,8 @@ public class MembersAction extends BaseAction
 
   @Resource
   private MembersService membersService;
+//  @Resource
+//  private MembersBlackListService membersBlackListService;
   private Apps apps = new Apps();
 
   @Resource
@@ -111,7 +117,16 @@ public class MembersAction extends BaseAction
     return this.membersService;
   }
 
-  public void setMembersService(MembersService membersService) {
+//  public MembersBlackListService getMembersBlackListService() {
+//	return membersBlackListService;
+//}
+
+//public void setMembersBlackListService(
+//		MembersBlackListService membersBlackListService) {
+//	this.membersBlackListService = membersBlackListService;
+//}
+
+public void setMembersService(MembersService membersService) {
     this.membersService = membersService;
   }
 
@@ -192,12 +207,22 @@ public class MembersAction extends BaseAction
   {
     return "toMembersList";
   }
+  
+  public String toMembersListd()
+  {
+    return "toMembersListd";
+  }
 
   public void gainMembersList()
   {
     try
     {
       super.writeJson(this.membersService.gainMembersList(this.members));
+//      List<MembersBlackList> list = this.membersBlackListService.gainAllMembersBlackList();
+//      for(int i=0;i<list.size();i++){
+//    	 MembersBlackList id = list.get(i);
+//    	  System.out.println();
+//      }
     } catch (Exception e) {
       e.printStackTrace();
       logger.error("gainMembersList() occur error. ", e);
@@ -266,6 +291,7 @@ public class MembersAction extends BaseAction
 
   public void closePay()
   {
+	  SessionInfo sessionInfo = (SessionInfo) this.session.get(ResourceUtil.getSessionInfoName());
     Json j = new Json();
     try {
       String ids = this.request.getParameter("ids");
@@ -279,7 +305,9 @@ public class MembersAction extends BaseAction
           j.setSuccess(Boolean.valueOf(false));
         } else {
           this.membersService.insertBlackMembers(ToolsUtil.StringConvertList(memberId));
-
+          java.util.Date d = new java.util.Date();
+          logger.info(sessionInfo.getLoginName()+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+           .format(d)+"关闭了" + ids+"的货到付款");
           j.setMsg("关闭成功！");
           j.setSuccess(Boolean.valueOf(true));
         }
@@ -296,6 +324,7 @@ public class MembersAction extends BaseAction
 
   public void openPay()
   {
+	  SessionInfo sessionInfo = (SessionInfo) this.session.get(ResourceUtil.getSessionInfoName());
     Json j = new Json();
     try {
       String ids = this.request.getParameter("ids");
@@ -310,6 +339,9 @@ public class MembersAction extends BaseAction
         } else {
           j.setMsg("该会员没有关闭货到付款！");
           j.setSuccess(Boolean.valueOf(false));
+          java.util.Date d = new java.util.Date();
+          logger.info(sessionInfo.getLoginName()+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+          .format(d)+"关闭了" + ids+"的货到付款");
         }
       }
     }

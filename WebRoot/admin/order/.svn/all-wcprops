@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/sanji/!svn/ver/3388/sjzx/WebRoot/admin/order
+END
+edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/sanji/!svn/ver/3380/sjzx/WebRoot/admin/order/edit.jsp
+END
+overOrder.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/sanji/!svn/ver/2115/sjzx/WebRoot/admin/order/overOrder.jsp
+END
+tuisong.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/sanji/!svn/ver/2642/sjzx/WebRoot/admin/order/tuisong.jsp
+END
+list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/sanji/!svn/ver/3388/sjzx/WebRoot/admin/order/list.jsp
+END
+orderItem.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/sanji/!svn/ver/3388/sjzx/WebRoot/admin/order/orderItem.jsp
+END

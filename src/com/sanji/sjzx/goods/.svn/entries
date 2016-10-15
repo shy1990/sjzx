@@ -1,0 +1,37 @@
+10
+
+dir
+3631
+https://192.168.2.141/svn/sanji/sjzx/src/com/sanji/sjzx/goods
+https://192.168.2.141/svn/sanji
+
+
+
+2016-02-18T03:18:01.998237Z
+3427
+songbaozhen
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+6206fc38-8dc6-c543-b362-cfeaca166315
+
+action
+dir
+
+dao
+dir
+
+service
+dir
+

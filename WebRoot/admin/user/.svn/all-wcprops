@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/sanji/!svn/ver/3030/sjzx/WebRoot/admin/user
+END
+setRole.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/sanji/!svn/ver/68/sjzx/WebRoot/admin/user/setRole.jsp
+END
+showUser.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/sanji/!svn/ver/68/sjzx/WebRoot/admin/user/showUser.jsp
+END
+msgAuthorize.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/sanji/!svn/ver/2784/sjzx/WebRoot/admin/user/msgAuthorize.jsp
+END
+edit.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/sanji/!svn/ver/3030/sjzx/WebRoot/admin/user/edit.jsp
+END
+list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/sanji/!svn/ver/2664/sjzx/WebRoot/admin/user/list.jsp
+END
+add.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/sanji/!svn/ver/3029/sjzx/WebRoot/admin/user/add.jsp
+END
+rgeions.json
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/sanji/!svn/ver/1952/sjzx/WebRoot/admin/user/rgeions.json
+END
+editPassword.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/sanji/!svn/ver/68/sjzx/WebRoot/admin/user/editPassword.jsp
+END

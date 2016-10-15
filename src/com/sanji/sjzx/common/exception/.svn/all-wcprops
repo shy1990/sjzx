@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/sanji/!svn/ver/30/sjzx/src/com/sanji/sjzx/common/exception
+END
+SystemException.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/sanji/!svn/ver/30/sjzx/src/com/sanji/sjzx/common/exception/SystemException.java
+END
+ApplicationException.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/sanji/!svn/ver/30/sjzx/src/com/sanji/sjzx/common/exception/ApplicationException.java
+END

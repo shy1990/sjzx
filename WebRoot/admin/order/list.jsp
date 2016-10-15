@@ -163,7 +163,7 @@
 				align :'center',
 				sortable :true,
 				formatter: function(value,row,index){
-					if(value=='yeePay'){
+					/* if(value=='yeePay'){
 						return '易宝网银支付';
 					}else if(value=='LH'){
 						return '联行支付';
@@ -177,7 +177,17 @@
 						return '-';
 					}else {
 						return '未知，代码:'+value;
+					} */
+					if(value=='yeePay'){
+						return '联行支付';
+					}else if(value=='pos'){
+						return 'POS支付';
+					}else if(value=='现金支付'){
+						return '现金支付';
+					}else {
+						return '--';
 					}
+					
 				}
 			},{
 				title : '支付序列号',
@@ -294,7 +304,7 @@
 				field : 'action',
 				width : 150,
 				align :'center',
-				formatter: function(value,row,index){		
+				formatter: function(value,row,index){	
 					return formatString('<img onclick="order_edit(\'{0}\');" src="{1}"/>&nbsp;&nbsp; <button   onclick="tuisong(\'{2}\',\'{3}\',\'{4}\',\'{5}\',\'{6}\');">重新推送</button>', 	
 										 row.id,'style/images/pencil.png',row.id,row.ecerpNo,row.payStatus,row.payMent,row.status);											 
 		        }}]],

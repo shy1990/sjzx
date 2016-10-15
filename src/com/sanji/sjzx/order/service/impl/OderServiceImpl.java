@@ -16,6 +16,7 @@ import jxl.write.WritableWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sanji.sjzx.common.util.MsgUtil;
 import com.sanji.sjzx.model.Order;
 import com.sanji.sjzx.order.dao.OrderMapper;
 import com.sanji.sjzx.order.service.OrderService;
@@ -78,7 +79,7 @@ public class OderServiceImpl implements OrderService {
 	 * @param list
 	 */
 	private void putDataOnOutputStream(OutputStream os, List<?> list) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		if (list == null)
 			try {
 				throw new Exception("list is null in exportDateToExcel method,it mustn't be null.");
@@ -103,9 +104,12 @@ public class OderServiceImpl implements OrderService {
 			sheet.addCell(new jxl.write.Label(9, 0, "支付序列号"));
 			sheet.addCell(new jxl.write.Label(10, 0, "总金额"));
 			sheet.addCell(new jxl.write.Label(11, 0, "管易单据编号"));
-			sheet.addCell(new jxl.write.Label(12, 0, "收货人姓名"));
-			sheet.addCell(new jxl.write.Label(13, 0, "收货人手机"));
-			sheet.addCell(new jxl.write.Label(14, 0, "下单时间"));
+			sheet.addCell(new jxl.write.Label(12, 0, "钱包支付金额"));
+			sheet.addCell(new jxl.write.Label(13, 0, "红宝支付金额"));
+			sheet.addCell(new jxl.write.Label(14, 0, "实际支付金额"));
+			sheet.addCell(new jxl.write.Label(15, 0, "收货人姓名"));
+			sheet.addCell(new jxl.write.Label(16, 0, "收货人手机"));
+			sheet.addCell(new jxl.write.Label(17, 0, "下单时间"));
 			// 循环遍历到数据集
 			for (int i = 0; i < list.size(); i++) {
 				Order o = (Order) list.get(i);
@@ -183,10 +187,13 @@ public class OderServiceImpl implements OrderService {
 				sheet.addCell(new jxl.write.Label(9, i + 1, o.getDealId()));
 				sheet.addCell(new jxl.write.Label(10, i + 1, String.valueOf(o.getTotalCost())));
 				sheet.addCell(new jxl.write.Label(11, i + 1, o.getEcerpNo()));
-				sheet.addCell(new jxl.write.Label(12, i + 1, o.getShipName()));
-				sheet.addCell(new jxl.write.Label(13, i + 1, o.getShipTel()));
+				sheet.addCell(new jxl.write.Label(12, i + 1, String.valueOf(o.getWalletNum())));
+				sheet.addCell(new jxl.write.Label(13, i + 1, String.valueOf(o.getHbNum())));
+				sheet.addCell(new jxl.write.Label(14, i + 1, String.valueOf(o.getActualPayNum())));
+				sheet.addCell(new jxl.write.Label(15, i + 1, o.getShipName()));
+				sheet.addCell(new jxl.write.Label(16, i + 1, o.getShipTel()));
 				if (o.getCreatetime() != null) {
-					sheet.addCell(new jxl.write.Label(14, i + 1, sdf.format(o.getCreatetime())));
+					sheet.addCell(new jxl.write.Label(17, i + 1, sdf.format(o.getCreatetime())));
 				}
 			}
 			workbook.write();
@@ -219,5 +226,6 @@ public class OderServiceImpl implements OrderService {
 
 	public void updateByPrimaryKeySelective(Order order) {
 		orderMapper.updateByPrimaryKeySelective(order);
+		MsgUtil.editOrderPrice(order.getOrderNum(),order.getActualPayNum());
 	}
 }

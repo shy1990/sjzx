@@ -10,6 +10,7 @@
 	<div align="center">
 		<form id="order_editForm" method="post">
 			<input name="id" readonly="readonly" type="hidden"/>
+			<input name="orderNum" readonly="readonly" type="hidden"/>
 			<table class="tableForm" style="margin-left: 10px;margin-top: 15px;" >
 				<tr>
 					<th>实际支付金额：</th>
