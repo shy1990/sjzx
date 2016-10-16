@@ -1,127 +1,0 @@
-10
-
-dir
-3631
-https://192.168.2.141/svn/sanji/sjzx/src/com/sanji/sjzx
-https://192.168.2.141/svn/sanji
-
-
-
-2016-03-09T06:17:44.947498Z
-3483
-songbaozhen
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-6206fc38-8dc6-c543-b362-cfeaca166315
-
-accessories
-dir
-
-aftersale
-dir
-
-annotation
-dir
-
-app
-dir
-
-appModel
-dir
-
-apps
-dir
-
-authorityManage
-dir
-
-brand
-dir
-
-cat
-dir
-
-color
-dir
-
-common
-dir
-
-dict
-dir
-
-dlycorp
-dir
-
-fetch
-dir
-
-gift
-dir
-
-goods
-dir
-
-goodsLabel
-dir
-
-goodssku
-dir
-
-gyts
-dir
-
-integral
-dir
-
-interceptor
-dir
-
-label
-dir
-
-login
-dir
-
-members
-dir
-
-model
-dir
-
-news
-dir
-
-operatelog
-dir
-
-order
-dir
-
-pic
-dir
-
-pojo
-dir
-
-regions
-dir
-
-system
-dir
-
-upload
-dir
-

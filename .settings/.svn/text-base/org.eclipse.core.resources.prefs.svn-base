@@ -1,8 +1,0 @@
-eclipse.preferences.version=1
-encoding//WebRoot/admin/goods/addPrice.jsp=UTF-8
-encoding//WebRoot/admin/goods/list.jsp=UTF-8
-encoding//WebRoot/admin/goods/test.jsp=UTF-8
-encoding//src/com/sanji/sjzx/common/util/DateUtil.java=UTF-8
-encoding//src/com/sanji/sjzx/common/util/FtpUtil.java=UTF-8
-encoding//src/com/sanji/sjzx/common/util/UploaderServlet.java=UTF-8
-encoding/<project>=UTF-8
