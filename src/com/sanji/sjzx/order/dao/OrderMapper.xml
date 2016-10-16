@@ -621,7 +621,7 @@
   <select id="gainOrderByExport" resultType="com.sanji.sjzx.model.Order" parameterType="com.sanji.sjzx.model.Order">
   	select
 		o.ID as id,o.CREATETIME,o.STATUS as status ,o.SHIP_STATUS as shipStatus,o.PAY_STATUS as payStatus,o.PAY_MENT as payMent, o.PAY_TIME as payTime, 
- 		o.TOTAL_COST as totalCost,o.MODIFYTIME,o.ORDER_NUM as orderNum,o.DEAL_ID as dealId,o.ACTUAL_PAY_NUM as actualPayNum,o.WALLET_NUM as totalNum, o.HB_NUM as hbNum, o.DEAL_TYPE as dealType,
+ 		o.TOTAL_COST as totalCost,o.MODIFYTIME,o.ORDER_NUM as orderNum,o.DEAL_ID as dealId,o.ACTUAL_PAY_NUM as actualPayNum,o.WALLET_NUM as walletNum, o.HB_NUM as hbNum, o.DEAL_TYPE as dealType,
  		o.ECERP_NO as ecerpNo,o.SHIP_NAME as shipName,o.SHIP_TEL as shipTel,a.shop_name as shopName,o.ACTUAL_PAY_NUM as actualPayNum
     from SJ_TB_ORDER o left join sj_tb_app a on o.member_id = a.member_id where 1=1 
    

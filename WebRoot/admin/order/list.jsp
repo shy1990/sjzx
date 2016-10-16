@@ -383,11 +383,11 @@
 	/**
 	 * 编辑订单金额
 	 */
-	function order_edit(id) {
+	function order_edit(id,orderNum) {
 	    
 		order_datagrid.datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
 		$('<div/>').dialog({
-			href : 'order/orderAction!toUpdate.action?id='+id,
+			href : 'order/orderAction!toUpdate.action?id='+id+'&orderNum='+orderNum,
 			width : 450,
 			height : 235,
 			modal : true,
