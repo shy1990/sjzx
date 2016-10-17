@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.aftersale.dao.WxItemMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.WxItem" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="QUANTITY" property="quantity" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="FORM_ID" property="formId" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, QUANTITY, REMARK, FORM_ID
+  </sql>
+    <!-- 根据formId查询退货单详情 -->
+  <select id="gainWxItemByFormId" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select 
+     <include refid="Base_Column_List" />
+    from SJ_TB_WX_ITEM where FORM_ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_WX_ITEM
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_WX_ITEM
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.WxItem" >
+    insert into SJ_TB_WX_ITEM (ID, NAME, QUANTITY, 
+      REMARK, FORM_ID)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{quantity,jdbcType=DECIMAL}, 
+      #{remark,jdbcType=VARCHAR}, #{formId,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.WxItem" >
+    insert into SJ_TB_WX_ITEM
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="quantity != null" >
+        QUANTITY,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="formId != null" >
+        FORM_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        #{formId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.WxItem" >
+    update SJ_TB_WX_ITEM
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        QUANTITY = #{quantity,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="formId != null" >
+        FORM_ID = #{formId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.WxItem" >
+    update SJ_TB_WX_ITEM
+    set NAME = #{name,jdbcType=VARCHAR},
+      QUANTITY = #{quantity,jdbcType=DECIMAL},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      FORM_ID = #{formId,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

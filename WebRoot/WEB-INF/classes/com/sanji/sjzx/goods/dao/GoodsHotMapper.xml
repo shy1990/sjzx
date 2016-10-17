@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.goods.dao.GoodsHotMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.GoodsHot" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="TARGET_ID" property="targetId" jdbcType="VARCHAR" />
+    <result column="GOODS_TYPE" property="goodsType" jdbcType="VARCHAR" />
+    <result column="NUM" property="num" jdbcType="DECIMAL" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="HOT_TYPE" property="hotType" jdbcType="VARCHAR" />
+    <!-- 以下是关联字段 -->
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="VARCHAR" />
+    <result column="EDITION" property="edition" jdbcType="VARCHAR"/>
+    <result column="STANDARD" property="standard" jdbcType="VARCHAR"/>
+    <result column="TYPE" property="type" jdbcType="VARCHAR"/>
+    <result column="DISABLE" property="disable" jdbcType="VARCHAR"/>
+    <result column="CATNAME" property="catName" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, TARGET_ID, GOODS_TYPE, NUM, USER_ID, CREATE_TIME, MODIFY_TIME, HOT_TYPE,HOT_SATE
+  </sql>
+  <!-- 获取热销最大排行 -->
+  <select id="gainMaxNum" resultType="java.lang.Integer">
+  	select count(h.num) from sj_tb_goods_hot h
+  </select>
+  <!-- 查询热销品是否已存在-->
+  <select id="gainGoodsHotByMap" resultType="java.lang.Long" parameterType="java.util.Map">
+    select count(ID) from SJ_TB_GOODS_HOT where  NUM = #{num} and TARGET_ID != #{targetId} 
+ 	 
+  </select> 
+  <!-- 根据id获取商品名称 -->
+  <select id="gainGoodsHotById" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	 select sku.id as id, g.name as name,cat.name as catName from SJ_TB_GOODS G right join SJ_TB_GOODS_sku sku on g.id = sku.goods_id left join sj_tb_cat cat on g.cat_id = cat.id where sku.id = #{id}
+
+       union
+
+   select a.id as id, a.name as name, cat.name as catName from SJ_TB_ACCESSORIES a left join sj_tb_cat cat on a.cat_id = cat.id where a.id = #{id}
+  </select>
+  <!-- 批量删除热销产品 -->
+   <delete id="deleteById" parameterType="java.util.List">
+    delete from SJ_TB_GOODS_HOT where TARGET_ID in
+     <foreach collection="list" item="ghids"  open="(" separator="," close=")">#{ghids}</foreach>    
+  </delete>
+  <!-- 查询热销sku产品总数-->
+  <select id="gainGoodsSkuCount" resultType="java.lang.Long" parameterType="com.sanji.sjzx.model.GoodsHot" >
+  		select count(s.id ) from sj_tb_goods_hot h right join sj_tb_goods_sku s  on h.target_id = s.id  
+  	
+  		left join sj_tb_goods g on s.goods_id = g.id  where 1=1  and s.SHELVES = 'true'
+        
+  		<if test="null != state and state == 'true'">
+ 	      and h.hot_type is not null
+ 	    </if> 
+  		<if test="null != state and state == 'false'">
+ 	      and h.hot_type is null
+ 	    </if>
+ 	    <if test="null != name and name != ''">
+ 	      and g.NAME like '%${name}%'
+ 	    </if>
+  		<if test="hotType != null and hotType != '' and state == 'true'">
+ 	      and h.HOT_TYPE = #{hotType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="goodsType != null and goodsType != '' and state == 'true'">
+ 	       and  h.GOODS_TYPE = #{goodsType,jdbcType=VARCHAR}
+ 	    </if> 
+  </select>
+  <!-- 查询热销sku产品列表-->
+  <select id="gainGoodsSkuList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.GoodsHot">
+     select * from (select * from (  
+  	  select ROWNUM AS RN,t.* from (  
+  		 select s.id as id, g.name as name,cat.name as catName,s.price as price,s.standard as standard,s.edition as edition,h.hot_type as hotType,h.num as num, h.goods_type as goodsType from sj_tb_goods_hot h right join sj_tb_goods_sku s  on h.target_id = s.id left join sj_tb_goods g on s.goods_id = g.id left join sj_tb_cat cat on g.cat_id = cat.id
+  		  where 1=1 and s.SHELVES = 'true'
+  		
+  		<if test="null != state and state == 'true'">
+ 	      and h.hot_type is not null
+ 	    </if> 
+  		<if test="null != state and state == 'false'">
+ 	      and h.hot_type is null
+ 	    </if>
+ 	    <if test="null != name and name != ''">
+ 	      and g.NAME like '%${name}%'
+ 	    </if>
+  		<if test="hotType != null and hotType != '' and state == 'true'">
+ 	      and h.HOT_TYPE = #{hotType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="goodsType != null and goodsType != '' and state == 'true'">
+ 	       and  h.GOODS_TYPE = #{goodsType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+	    </if>
+  		
+ 	)t ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows} 
+ 	
+  </select> 
+  <!-- 查询热销配件产品总数 -->
+  <select id="gainAccessoriesCount" resultType="java.lang.Long" parameterType="com.sanji.sjzx.model.GoodsHot">
+  		select count(h.id) from  SJ_TB_GOODS_HOT h inner join SJ_TB_ACCESSORIES a on h.TARGET_ID = a.id
+  		where 1 = 1 and a.disabled = 'false'
+  		
+  		<if test="null != state and state == 'true'">
+ 	      and h.hot_type is not null
+ 	    </if> 
+  		<if test="null != state and state == 'false'">
+ 	      and h.hot_type is null
+ 	    </if>
+ 	     <if test="null != name and name != ''">
+ 	      and a.NAME like '%${name}%'
+ 	    </if>
+  		<if test="hotType != null and hotType != '' and state == 'true'">
+ 	      and h.HOT_TYPE = #{hotType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="goodsType != null and goodsType != '' and state == 'true'">
+ 	       and  h.GOODS_TYPE = #{goodsType,jdbcType=VARCHAR}
+ 	    </if> 
+  </select>
+  <!-- 查询热销配件产品列表 -->
+  <select id="gainAccessoriesList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.GoodsHot">
+     select * from (select * from (  
+  	  select ROWNUM AS RN,t.* from (  
+  		
+        select  h.goods_type as goodsType,h.hot_type as hotType,h.num as num ,a.id as id,a.name as name,cat.name as catName, a.price as price ,a.type as type,a.disabled as disable from  SJ_TB_GOODS_HOT h right join SJ_TB_ACCESSORIES a on h.TARGET_ID = a.id left join sj_tb_cat cat on a.cat_id = cat.id
+  		where 1=1 and a.disabled = 'false'
+  		
+  		<if test="null != state and state == 'true'">
+ 	      and h.hot_type is not null
+ 	    </if> 
+  		<if test="null != state and state == 'false'">
+ 	      and h.hot_type is null
+ 	    </if>
+ 	    <if test="null != name and name != ''">
+ 	      and a.NAME like '%${name}%'
+ 	    </if>
+  		<if test="hotType != null and hotType != '' and state == 'true'">
+ 	      and h.HOT_TYPE = #{hotType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="goodsType != null and goodsType != '' and state == 'true'">
+ 	       and  h.GOODS_TYPE = #{goodsType,jdbcType=VARCHAR}
+ 	    </if> 
+ 	    <if test="sort != null">
+			order by ${sort}
+		</if>
+		<if test="order != null">
+			${order}
+	    </if> 
+  		
+ 	)t ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows} 
+   
+    
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_GOODS_HOT
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据单品id查询热销商品信息 -->
+  <select id="gainGoodsHotsBySkuId" parameterType="java.lang.String" resultType="com.sanji.sjzx.model.GoodsHot">
+  	select h.ID, h.TARGET_ID as targetId, h.GOODS_TYPE as goodsType, h.NUM, h.USER_ID as userId, 
+           h.CREATE_TIME as createTime, h.MODIFY_TIME as modifyTime, h.HOT_TYPE as hotType,
+           s.id as skuId,s.goods_id as goodsId,s.sku_num as skuNum
+  	from SJ_TB_GOODS_HOT h  left outer join sj_tb_goods_sku s on s.id = h.TARGET_ID
+    where h.TARGET_ID=#{targetId,jdbcType=VARCHAR}       
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_GOODS_HOT
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.GoodsHot" >
+    insert into SJ_TB_GOODS_HOT (ID, TARGET_ID, GOODS_TYPE, 
+      NUM, USER_ID, CREATE_TIME, 
+      MODIFY_TIME, HOT_TYPE,HOT_STATE)
+    values (#{id,jdbcType=VARCHAR}, #{targetId,jdbcType=VARCHAR}, #{goodsType,jdbcType=VARCHAR}, 
+      #{num,jdbcType=DECIMAL}, #{userId,jdbcType=VARCHAR}, #{createTime,jdbcType=DATE}, 
+      #{modifyTime,jdbcType=DATE}, #{hotType,jdbcType=VARCHAR},#{hotState,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.GoodsHot" >
+    insert into SJ_TB_GOODS_HOT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="targetId != null" >
+        TARGET_ID,
+      </if>
+      <if test="goodsType != null" >
+        GOODS_TYPE,
+      </if>
+      <if test="num != null" >
+        NUM,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="hotType != null" >
+        HOT_TYPE,
+      </if>
+      <if test="hotState != null" >
+        HOT_STATE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="targetId != null" >
+        #{targetId,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsType != null" >
+        #{goodsType,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=DECIMAL},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="hotType != null" >
+        #{hotType,jdbcType=VARCHAR},
+      </if>
+      <if test="hotState != null" >
+        #{hotState,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.GoodsHot" >
+    update SJ_TB_GOODS_HOT
+    <set >
+      <if test="targetId != null" >
+        TARGET_ID = #{targetId,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsType != null" >
+        GOODS_TYPE = #{goodsType,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null" >
+        NUM = #{num,jdbcType=DECIMAL},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME = #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="hotType != null" >
+        HOT_TYPE = #{hotType,jdbcType=VARCHAR},
+      </if>
+      <if test="hotState != null" >
+        HOT_STATE = #{hotState,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.GoodsHot" >
+    update SJ_TB_GOODS_HOT
+    set TARGET_ID = #{targetId,jdbcType=VARCHAR},
+      GOODS_TYPE = #{goodsType,jdbcType=VARCHAR},
+      NUM = #{num,jdbcType=DECIMAL},
+      USER_ID = #{userId,jdbcType=VARCHAR},
+      CREATE_TIME = #{createTime,jdbcType=DATE},
+      MODIFY_TIME = #{modifyTime,jdbcType=DATE},
+      HOT_TYPE = #{hotType,jdbcType=VARCHAR},
+      HOT_STATE = #{hotState,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据单品id删除相应热销单品 -->
+  <delete id="deleteHotBySkuId" parameterType="java.lang.String">
+  	delete from SJ_TB_GOODS_HOT where TARGET_ID = #{targetId,jdbcType=VARCHAR}
+  </delete>
+</mapper>

@@ -1,0 +1,1346 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.goods.dao.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Goods" >
+    <result column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="GOODS_NUM" property="goodsNum" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="BRAND_ID" property="brandId" jdbcType="VARCHAR" />
+    <result column="CAT_ID" property="catId" jdbcType="VARCHAR" />
+    <result column="SCREEN_SIZE" property="screenSize" jdbcType="VARCHAR" />
+    <result column="RESOLUTION" property="resolution" jdbcType="VARCHAR" />
+    <result column="RAM" property="ram" jdbcType="VARCHAR" />
+    <result column="CPU_NUMBER" property="cpuNumber" jdbcType="VARCHAR" />
+    <result column="CPU_RATE" property="cpuRate" jdbcType="VARCHAR" />
+    <result column="FRONT_CAMERA" property="frontCamera" jdbcType="VARCHAR" />
+    <result column="POST_CAMERA" property="postCamera" jdbcType="VARCHAR" />
+    <result column="TMALL_URL" property="tmallUrl" jdbcType="VARCHAR" />
+    <result column="DEFAULT_IMG" property="defaultImg" jdbcType="VARCHAR" />
+    <result column="EXPOSURE_DATE" property="exposureDate" jdbcType="DATE" />
+    <result column="TOUCHSCREEN_TYPE" property="touchscreenType" jdbcType="VARCHAR" />
+    <result column="SREEN_PIX_DENSITY" property="sreenPixDensity" jdbcType="VARCHAR" />
+    <result column="SCREEN_TECHNOLOGY" property="screenTechnology" jdbcType="VARCHAR" />
+    <result column="NARROW_FRAME" property="narrowFrame" jdbcType="VARCHAR" />
+    <result column="SCREEN_RATIO" property="screenRatio" jdbcType="VARCHAR" />
+    <result column="THEORY_RATE" property="theoryRate" jdbcType="VARCHAR" />
+    <result column="WLAN_FUNCTION" property="wlanFunction" jdbcType="VARCHAR" />
+    <result column="NAVIGATION" property="navigation" jdbcType="VARCHAR" />
+    <result column="CONNECTION_SHARE" property="connectionShare" jdbcType="VARCHAR" />
+    <result column="OPERATION_SYSTEM" property="operationSystem" jdbcType="VARCHAR" />
+    <result column="MEMORY_CARD" property="memoryCard" jdbcType="VARCHAR" />
+    <result column="BATTERY_TYPE" property="batteryType" jdbcType="VARCHAR" />
+    <result column="BATTERY_CAPACITY" property="batteryCapacity" jdbcType="VARCHAR" />
+    <result column="TALK_TIME" property="talkTime" jdbcType="VARCHAR" />
+    <result column="USER_INTERFACE" property="userInterface" jdbcType="VARCHAR" />
+    <result column="EXTENDED_CAPACITY" property="extendedCapacity" jdbcType="VARCHAR" />
+    <result column="CAMERA" property="camera" jdbcType="VARCHAR" />
+    <result column="CAMERA_TYPE" property="cameraType" jdbcType="VARCHAR" />
+    <result column="CAMERA_CERTIFICATION" property="cameraCertification" jdbcType="VARCHAR" />
+    <result column="SENSOR_TYPE" property="sensorType" jdbcType="VARCHAR" />
+    <result column="FLASH_LAMP" property="flashLamp" jdbcType="VARCHAR" />
+    <result column="VIDEO_SHOOT" property="videoShoot" jdbcType="VARCHAR" />
+    <result column="SHOOT_FUNCTION" property="shootFunction" jdbcType="VARCHAR" />
+    <result column="APERTURE" property="aperture" jdbcType="VARCHAR" />
+    <result column="FOCAL_LENGTH" property="focalLength" jdbcType="VARCHAR" />
+    <result column="CAMERA_FEATURES" property="cameraFeatures" jdbcType="VARCHAR" />
+    <result column="CAMERA_OTHERPARAMS" property="cameraOtherparams" jdbcType="VARCHAR" />
+    <result column="MODEL_DESIGN" property="modelDesign" jdbcType="VARCHAR" />
+    <result column="WEIGHT" property="weight" jdbcType="DECIMAL" />
+    <result column="BODY_FEATURES" property="bodyFeatures" jdbcType="VARCHAR" />
+    <result column="OPERATION_TYPE" property="operationType" jdbcType="VARCHAR" />
+    <result column="OUT_SENSOR_TYPE" property="outSensorType" jdbcType="VARCHAR" />
+    <result column="SIM_TYPE" property="simType" jdbcType="VARCHAR" />
+    <result column="BODY_INTERFACE" property="bodyInterface" jdbcType="VARCHAR" />
+    <result column="BODY_MATERIAL" property="bodyMaterial" jdbcType="VARCHAR" />
+    <result column="AUDIO_SUPPORT" property="audioSupport" jdbcType="VARCHAR" />
+    <result column="VIDEO_SUPPORT" property="videoSupport" jdbcType="VARCHAR" />
+    <result column="IMG_SUPPORT" property="imgSupport" jdbcType="VARCHAR" />
+    <result column="COMMON_FUNCTIONS" property="commonFunctions" jdbcType="VARCHAR" />
+    <result column="BUSINESS_FUNCTIONS" property="businessFunctions" jdbcType="VARCHAR" />
+    <result column="OPTIONAL_ACCESSORY" property="optionalAccessory" jdbcType="VARCHAR" />
+    <result column="WARRANTY_POLICY" property="warrantyPolicy" jdbcType="VARCHAR" />
+    <result column="WARRANTY_TIME" property="warrantyTime" jdbcType="DECIMAL" />
+    <result column="WARRANTY_REMARK" property="warrantyRemark" jdbcType="VARCHAR" />
+    <result column="SERVICE_PHONE" property="servicePhone" jdbcType="VARCHAR" />
+    <result column="PHONE_REMARK" property="phoneRemark" jdbcType="VARCHAR" />
+    <result column="DETAIL_CONTENTS" property="detailContents" jdbcType="VARCHAR" />
+    <result column="CELLPHONE_TYPE" property="cellphoneType" jdbcType="VARCHAR" />
+    <result column="CPU_MODEL" property="cpuModel" jdbcType="VARCHAR" />
+    <result column="GPU_MODEL" property="gpuModel" jdbcType="VARCHAR" />
+    <result column="THEORY_STANDBY_TIME" property="theoryStandbyTime" jdbcType="VARCHAR" />
+    <result column="CELLPHONE_SIZE" property="cellphoneSize" jdbcType="VARCHAR" />
+    <result column="CLICK_RATE" property="clickRate" jdbcType="DECIMAL" />
+    <result column="exposure" property="exposure" jdbcType="VARCHAR"/>
+    <result column="IS_SELLING_SUPPLIER" property="isShellingSupplier" jdbcType="VARCHAR"/>
+    <!-- 以下是关联数据 -->
+    <result column="PSTRING" property="pstring" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="DECIMAL" /> 
+    <result column="STOCK" property="stock" jdbcType="VARCHAR" />
+    <result column="sku_num" property="skuNum" jdbcType="VARCHAR" />
+    <!-- 操作人、分类、品牌名称 -->
+    <result column="userName" property="userName" jdbcType="VARCHAR" />
+    <result column="catName" property="catName" jdbcType="VARCHAR" />
+    <result column="brandName" property="brandName" jdbcType="VARCHAR" />
+    <result column="color_name" property="colorName" jdbcType="VARCHAR" />
+    <!-- 新添字段 -->
+    <result column="IS_QUOTATION_HOT" property="isQuotationHot" jdbcType="VARCHAR"/>
+   </resultMap>
+   <resultMap id="ResultMapWithBLOBs" type="com.sanji.sjzx.model.Goods" extends="BaseResultMap" >
+     <result column="GOODS_DETAIL" property="goodsDetail" jdbcType="CLOB" />
+   </resultMap>
+   <sql id="Blob_Column_List" >
+     GOODS_DETAIL
+   </sql>
+   <sql id="Base_Column_List" >
+    ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG
+   </sql>  
+    <!-- 设置单品为电商热销 -->
+  <update id="openGoodsById" parameterType="java.util.List">
+    <![CDATA[update SJ_TB_GOODS  set IS_SELLING_SUPPLIER = 'true'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="sids"  open="(" separator="," close=")">#{sids}</foreach>
+  </update>
+  <!-- 取消单品位电商热销-->
+  <update id="danGoodsById" parameterType="java.util.List">
+    <![CDATA[update SJ_TB_GOODS  set IS_SELLING_SUPPLIER = 'false'
+  		where ID in ]]>
+  	 		<foreach collection="list" item="sids"  open="(" separator="," close=")">#{sids}</foreach>
+  </update>
+  <!-- 获取商品列表 -->
+  <select id="gainGoodsList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.Goods">
+  select * from (select * from (  
+  	select ROWNUM AS RN,t.* from (  
+
+	  	select g.id, g.name,b.name as brandName,g.default_img,g.IS_QUOTATION_HOT as isQuotationHot,g.is_selling_supplier as isShellingSupplier,a.truename as userName,wm_concat(s.price) as PSTRING,wm_concat(s.stock) as STOCK ,
+	  	  wm_concat(s.sku_num) as sku_num,wm_concat(distinct s.sku_code) as goods_num ,wm_concat(c.color_name) as color_name
+		  from sj_tb_goods g
+		  left join sj_tb_goods_sku s on g.id = s.goods_id
+		  left join sj_tb_brand b on g.brand_id = b.id
+		  left join sj_tb_color c on s.color_id=c.id
+		  left join sj_tb_admin a on a.id=g.user_id 
+   where g.disabled='false'<!-- and s.shelves='true'-->
+              
+      <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and s.sku_code like '%${goodsNum}%'
+      </if>     
+      <if test="skuNum !=null and skuNum!=''">
+    		and s.sku_num like '%${skuNum}%'
+      </if>     
+      
+      <if test="brandName !=null and brandName!=''">
+    		and b.name=#{brandName,jdbcType=VARCHAR}
+      </if>  
+      <if test="userName !=null and userName!=''">
+    		and a.truename like '%${userName}%'
+      </if>  
+      <if test="isQuotationHot !=null and isQuotationHot !='' and isQuotationHot !='-1'">
+      		and g.IS_QUOTATION_HOT = #{isQuotationHot,jdbcType=VARCHAR}
+      </if>
+	     group by g.id, g.name,b.name,g.default_img,g.IS_QUOTATION_HOT,a.truename ,g.modify_time,g.create_time,g.is_selling_supplier
+	     order by Nvl(g.modify_time,g.create_time) desc
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取适用机型列表 -->
+  <select id="gainApplicationModelList" resultType="com.sanji.sjzx.model.Goods" parameterType="com.sanji.sjzx.model.Goods">
+  	  select * from (select * from (  
+  	select ROWNUM AS RN,t.* from (  
+	  	select g.id, g.name,g.goods_num as goodsNum,b.name as brandName from sj_tb_goods g 
+	 	left join sj_tb_brand b on g.brand_id = b.id
+    where g.disabled='false'
+      <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and g.goods_num like '%${goodsNum}%'
+      </if>     
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取回收站列表 -->
+  <select id="gainRecycleList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.Goods">
+  select * from (select * from (  
+  	select ROWNUM AS RN,t.* from (  
+  	
+  select g.id, g.name,b.name as brandName,g.default_img,a.truename as userName,wm_concat(s.price) as PSTRING,wm_concat(s.stock) as STOCK ,
+	  		wm_concat(s.sku_num) as sku_num,wm_concat(distinct s.sku_code) as goods_num ,wm_concat(c.color_name) as color_name
+		  from sj_tb_goods g
+		  left join sj_tb_goods_sku s on g.id = s.goods_id
+		  left join sj_tb_brand b on g.brand_id = b.id
+		  left join sj_tb_color c on s.color_id=c.id
+		  left join sj_tb_admin a on a.id=g.user_id 
+   where g.disabled='true'
+              
+      <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and s.sku_code like '%${goodsNum}%'
+      </if>     
+      <if test="skuNum !=null and skuNum!=''">
+    		and s.sku_num like '%${skuNum}%'
+      </if>     
+      
+      <if test="brandName !=null and brandName!=''">
+    		and b.name=#{brandName,jdbcType=VARCHAR}
+      </if>  
+      <if test="userName !=null and userName!=''">
+    		and a.truename like '%${userName}%'
+      </if>  
+	     group by g.id, g.name,b.name,g.default_img,a.truename ,g.modify_time,g.create_time
+	     order by Nvl(g.modify_time,g.create_time) desc
+	      
+		)t	
+  	 )  where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+       
+  </select> 
+  <!-- 获取总行数 -->
+  <select id="gainGoodsCount" resultType="Long" parameterType="com.sanji.sjzx.model.Goods">
+  	select count(distinct g.id)
+		  from sj_tb_goods g
+		  left join sj_tb_goods_sku s on g.id = s.goods_id
+		  left join sj_tb_brand b on g.brand_id = b.id
+		  left join sj_tb_color c on s.color_id=c.id
+		  left join sj_tb_admin a on a.id=g.user_id 
+   where g.disabled='false'
+              
+      <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and s.sku_code like '%${goodsNum}%'
+      </if>     
+      
+      <if test="brandName !=null and brandName!=''">
+    		and b.name=#{brandName,jdbcType=VARCHAR}
+      </if>  
+      <if test="userName !=null and userName!=''">
+    		and a.truename like '%${userName}%'
+      </if>  
+  </select>
+  <!-- 获取回收站列表总行数 -->
+  <select id="gainRecycleCount" resultType="Long" parameterType="com.sanji.sjzx.model.Goods">
+  	select count(distinct g.id)
+		  from sj_tb_goods g
+		  left join sj_tb_goods_sku s on g.id = s.goods_id
+		  left join sj_tb_brand b on g.brand_id = b.id
+		  left join sj_tb_color c on s.color_id=c.id
+		  left join sj_tb_admin a on a.id=g.user_id 
+   where g.disabled='true'
+              
+      <if test="name !=null and name!=''">
+   		 	and g.name like '%${name}%'
+      </if>
+      <if test="goodsNum !=null and goodsNum!=''">
+    		and s.sku_code like '%${goodsNum}%'
+      </if>     
+      
+      <if test="brandName !=null and brandName!=''">
+    		and b.name=#{brandName,jdbcType=VARCHAR}
+      </if>  
+      <if test="userName !=null and userName!=''">
+    		and a.truename like '%${userName}%'
+      </if>  
+  </select>
+  <!-- 获取所有商品品牌名称 -->
+  <select id="gainGoodsBrandName" resultType="com.sanji.sjzx.model.Goods">
+  	select name as brandName,id as brandId from sj_tb_brand where grade=2
+  </select>
+  <!-- 获取所有商品类别名称 -->
+  <select id="gainGoodsCatName" resultType="com.sanji.sjzx.model.Goods">
+  	select name as catName,id as catId from sj_tb_cat
+  </select> 
+  <!-- 根据品牌id获取商品信息（用于品牌管理中删除品牌时判断该品牌是否关联商品） -->
+  <select id="gainGoodsByBrandId" resultType="com.sanji.sjzx.model.Goods" parameterType="com.sanji.sjzx.model.Goods">
+  	select     
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where BRAND_ID=#{brandId,jdbcType=VARCHAR} 
+  </select>
+  <!-- 根据类别id获取类别信息（用于类别管理中删除类别时判断该类别是否关联商品）  -->
+  <select id="gainGoodsByCatId" resultType="com.sanji.sjzx.model.Goods" parameterType="com.sanji.sjzx.model.Goods">    
+    select     
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where CAT_ID =#{catId,jdbcType=VARCHAR}  
+  </select>
+  <!-- 关联(添加了属性list) -->
+  <resultMap type="com.sanji.sjzx.model.Goods" id="goodsResultMap" extends="BaseResultMap">
+  	<collection property="goodsSkus" javaType="list" ofType="com.sanji.sjzx.model.GoodsSku">
+  	   	<id column="ID" property="id" jdbcType="VARCHAR" />
+	    <result column="SKU_NUM" property="skuNum" jdbcType="VARCHAR" />
+	    <result column="PRICE" property="price" jdbcType="DECIMAL" />
+	    <result column="ORIGINAL_PRICE" property="originalPrice" jdbcType="DECIMAL" />
+	    <result column="TMALL_PRICE" property="tmallPrice" jdbcType="DECIMAL" />
+	    <result column="EDITION" property="edition" jdbcType="VARCHAR" />
+	    <result column="STANDARD" property="standard" jdbcType="VARCHAR" />
+	    <result column="COLOR_ID" property="colorId" jdbcType="VARCHAR" />
+	    <result column="STORAGE" property="storage" jdbcType="VARCHAR" />
+	    <result column="GOODS_ID" property="goodsId" jdbcType="VARCHAR" />
+	    <result column="STOCK" property="stock" jdbcType="NUMERIC" />
+	    <result column="SHELVES" property="shelves" jdbcType="VARCHAR" />
+	    <result column="NETWORK_THREE" property="networkThree" jdbcType="VARCHAR" />
+	    <result column="NETWORK_FOUR" property="networkFour" jdbcType="VARCHAR" />
+	    <result column="SUPPORT_CHANNEL" property="supportChannel" jdbcType="VARCHAR" />  
+	    <result column="NET_SUIT_TYPE" property="netsuitType" jdbcType="VARCHAR" />
+	    <result column="CHANGE_NUM" property="changeNum" jdbcType="NUMERIC" />
+    	<result column="CHANGE_PRICE" property="changePrice" jdbcType="DECIMAL" />
+	    <result column="colorName" property="colorName" jdbcType="VARCHAR" />  	
+   	</collection>
+  </resultMap>
+  <!-- 获取某个goods和的所有信息 -->
+  <select id="gainAll" resultType="com.sanji.sjzx.model.Goods" parameterType="java.lang.String">
+  	select
+  	a1.ID, a1.NAME, a1.GOODS_NUM as goodsNum, 
+      a1.TYPE, a1.DISABLED, a1.CREATE_TIME as createTime, 
+      a1.MODIFY_TIME as modifyTime, a1.USER_ID as userId, a1.BRAND_ID as brandId, 
+      a1.CAT_ID as catId, a1.SCREEN_SIZE as screenSize, a1.RESOLUTION, 
+      a1.RAM, a1.CPU_NUMBER as cpuNumber, a1.CPU_RATE as cpuRate, 
+      a1.FRONT_CAMERA as frontCamera, a1.POST_CAMERA as postCamera, a1.TMALL_URL as tmallUrl, 
+      a1.DEFAULT_IMG as defaultImg, a1.EXPOSURE_DATE exposureDate, a1.TOUCHSCREEN_TYPE as touchscreenType, 
+      a1.SREEN_PIX_DENSITY as sreenPixDensity, a1.SCREEN_TECHNOLOGY as screenTechnology, a1.NARROW_FRAME as narrowFrame, 
+      a1.SCREEN_RATIO as screenRatio, a1.THEORY_RATE as theoryRate, a1.WLAN_FUNCTION as wlanFunction, 
+      a1.NAVIGATION, a1.CONNECTION_SHARE as connectionShare, a1.OPERATION_SYSTEM as operationSystem, 
+      a1.MEMORY_CARD as memoryCard, a1.BATTERY_TYPE as batteryType, a1.BATTERY_CAPACITY as batteryCapacity, 
+      a1.TALK_TIME as talkTime, a1.USER_INTERFACE as userInterface, a1.EXTENDED_CAPACITY as extendedCapacity, 
+      a1.CAMERA, a1.CAMERA_TYPE as cameraType, a1.CAMERA_CERTIFICATION as cameraCertification, 
+      a1.SENSOR_TYPE as sensorType, a1.FLASH_LAMP as flashLamp, a1.VIDEO_SHOOT as videoShoot, 
+      a1.SHOOT_FUNCTION as shootFunction, a1.APERTURE, a1.FOCAL_LENGTH as focalLength, 
+      a1.CAMERA_FEATURES as cameraFeatures, a1.CAMERA_OTHERPARAMS as cameraOtherparams, a1.MODEL_DESIGN as modelDesign, 
+      a1.WEIGHT, a1.BODY_FEATURES as bodyFeatures, a1.OPERATION_TYPE as operationType, 
+      a1.OUT_SENSOR_TYPE as outSensorType, a1.SIM_TYPE as simType, a1.BODY_INTERFACE as bodyInterface, 
+      a1.BODY_MATERIAL as bodyMaterial, a1.AUDIO_SUPPORT as audioSupport, a1.VIDEO_SUPPORT as videoSupport, 
+      a1.IMG_SUPPORT as imgSupport, a1.COMMON_FUNCTIONS as commonFunctions, a1.BUSINESS_FUNCTIONS businessFunctions, 
+      a1.OPTIONAL_ACCESSORY as optionalAccessory, a1.WARRANTY_POLICY as warrantyPolicy, a1.WARRANTY_TIME as warrantyTime, 
+      a1.WARRANTY_REMARK as warrantyRemark, a1.SERVICE_PHONE as servicePhone, a1.PHONE_REMARK as phoneRemark, 
+      a1.DETAIL_CONTENTS as detailContents, a1.CELLPHONE_TYPE as cellphoneType, a1.CPU_MODEL as cpuModel, 
+      a1.GPU_MODEL as gpuModel, a1.THEORY_STANDBY_TIME as theoryStandbyTime, a1.CELLPHONE_SIZE as cellphoneSize, 
+      a1.CLICK_RATE as clickRate, a1.GOODS_DETAIL as goodsDetail,a1.IS_QUOTATION_HOT as isQuotationHot
+  from sj_tb_goods a1 left outer join  sj_tb_brand a2 on a1.brand_id=a2.id
+                      left outer join  sj_tb_cat a3 on a1.cat_id=a3.id
+  where a1.disabled='false' and a1.id=#{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据goodsId获取宝贝仓库中某个goods和所属单品的所有信息 -->
+  <select id="gainRecycleGoodsandSku" resultType="com.sanji.sjzx.model.Goods" parameterType="java.lang.String">
+  	select
+  	a1.ID, a1.NAME, a1.GOODS_NUM as goodsNum, 
+      a1.TYPE, a1.DISABLED, a1.CREATE_TIME as createTime, 
+      a1.MODIFY_TIME as modifyTime, a1.USER_ID as userId, a1.BRAND_ID as brandId, 
+      a1.CAT_ID as catId, a1.SCREEN_SIZE as screenSize, a1.RESOLUTION, 
+      a1.RAM, a1.CPU_NUMBER as cpuNumber, a1.CPU_RATE as cpuRate, 
+      a1.FRONT_CAMERA as frontCamera, a1.POST_CAMERA as postCamera, a1.TMALL_URL as tmallUrl, 
+      a1.DEFAULT_IMG as defaultImg, a1.EXPOSURE_DATE exposureDate, a1.TOUCHSCREEN_TYPE as touchscreenType, 
+      a1.SREEN_PIX_DENSITY as sreenPixDensity, a1.SCREEN_TECHNOLOGY as screenTechnology, a1.NARROW_FRAME as narrowFrame, 
+      a1.SCREEN_RATIO as screenRatio, a1.THEORY_RATE as theoryRate, a1.WLAN_FUNCTION as wlanFunction, 
+      a1.NAVIGATION, a1.CONNECTION_SHARE as connectionShare, a1.OPERATION_SYSTEM as operationSystem, 
+      a1.MEMORY_CARD as memoryCard, a1.BATTERY_TYPE as batteryType, a1.BATTERY_CAPACITY as batteryCapacity, 
+      a1.TALK_TIME as talkTime, a1.USER_INTERFACE as userInterface, a1.EXTENDED_CAPACITY as extendedCapacity, 
+      a1.CAMERA, a1.CAMERA_TYPE as cameraType, a1.CAMERA_CERTIFICATION as cameraCertification, 
+      a1.SENSOR_TYPE as sensorType, a1.FLASH_LAMP as flashLamp, a1.VIDEO_SHOOT as videoShoot, 
+      a1.SHOOT_FUNCTION as shootFunction, a1.APERTURE, a1.FOCAL_LENGTH as focalLength, 
+      a1.CAMERA_FEATURES as cameraFeatures, a1.CAMERA_OTHERPARAMS as cameraOtherparams, a1.MODEL_DESIGN as modelDesign, 
+      a1.WEIGHT, a1.BODY_FEATURES as bodyFeatures, a1.OPERATION_TYPE as operationType, 
+      a1.OUT_SENSOR_TYPE as outSensorType, a1.SIM_TYPE as simType, a1.BODY_INTERFACE as bodyInterface, 
+      a1.BODY_MATERIAL as bodyMaterial, a1.AUDIO_SUPPORT as audioSupport, a1.VIDEO_SUPPORT as videoSupport, 
+      a1.IMG_SUPPORT as imgSupport, a1.COMMON_FUNCTIONS as commonFunctions, a1.BUSINESS_FUNCTIONS businessFunctions, 
+      a1.OPTIONAL_ACCESSORY as optionalAccessory, a1.WARRANTY_POLICY as warrantyPolicy, a1.WARRANTY_TIME as warrantyTime, 
+      a1.WARRANTY_REMARK as warrantyRemark, a1.SERVICE_PHONE as servicePhone, a1.PHONE_REMARK as phoneRemark, 
+      a1.DETAIL_CONTENTS as detailContents, a1.CELLPHONE_TYPE as cellphoneType, a1.CPU_MODEL as cpuModel, 
+      a1.GPU_MODEL as gpuModel, a1.THEORY_STANDBY_TIME as theoryStandbyTime, a1.CELLPHONE_SIZE as cellphoneSize, 
+      a1.CLICK_RATE as clickRate, a1.GOODS_DETAIL as goodsDetail
+  from sj_tb_goods a1 left outer join  sj_tb_brand a2 on a1.brand_id=a2.id
+                      left outer join  sj_tb_cat a3 on a1.cat_id=a3.id
+  where a1.disabled='true' and a1.id=#{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加时根据goodsNum进行查询是否存在该goods -->
+  <select id="gainGoodsByGoodsNum" resultType="com.sanji.sjzx.model.Goods" parameterType="java.lang.String">
+  	select 
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where GOODS_NUM=#{goodsNum,jdbcType=VARCHAR} 
+  </select>
+  <!-- 添加时根据name进行查询是否存在该goods -->
+  <select id="gainGoodsByName" resultType="com.sanji.sjzx.model.Goods" parameterType="java.lang.String">
+  	select     
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where NAME=#{name,jdbcType=VARCHAR} 
+  </select>
+  <!-- 修改时根据id和name进行查询该goods是否存在 -->
+  <select id="gainGoodsByNameandId" resultType="com.sanji.sjzx.model.Goods" parameterType="java.util.Map">
+  	select 
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where ID!=#{id,jdbcType=VARCHAR} and NAME=#{name,jdbcType=VARCHAR} 
+  </select>
+  <!-- 修改时根据id和num进行查询该goods是否存在 -->
+  <select id="gainGoodsByNumandId" resultType="com.sanji.sjzx.model.Goods" parameterType="java.util.Map">
+  	select
+  	ID, NAME, GOODS_NUM, TYPE, DISABLED, CREATE_TIME, MODIFY_TIME, USER_ID, BRAND_ID, CAT_ID, 
+    SCREEN_SIZE, RESOLUTION, RAM, CPU_NUMBER, CPU_RATE, FRONT_CAMERA, POST_CAMERA, TMALL_URL,DEFAULT_IMG,
+    GOODS_DETAIL
+  	from SJ_TB_GOODS where ID!=#{id,jdbcType=VARCHAR} and GOODS_NUM=#{goodsNum,jdbcType=VARCHAR} 
+  </select>
+  <!-- 根据适用配件id获取适用机型信息 -->
+  <select id="gainGoodsByAccId" resultType="com.sanji.sjzx.model.Goods" parameterType="java.lang.String">
+  	select g.id,g.name,g.goods_num as goodsNum from sj_tb_goods g 
+  	left outer join sj_tb_application_model a on g.id = a.goods_id 
+  	left outer join sj_tb_accessories a2 on a2.id = a.accessories_id
+  	where g.disabled='false' and a2.id = #{id,jdbcType=VARCHAR}
+  </select>
+  <!-- 添加商品信息 -->
+  <insert id="addGoods" parameterType="com.sanji.sjzx.model.Goods" >
+	<selectKey resultType="String" keyProperty="goodsNum" order="BEFORE">
+    	select seq_goods_num.nextVal from dual
+  	</selectKey>
+	insert into SJ_TB_GOODS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="goodsNum != null" >
+        GOODS_NUM,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="brandId != null" >
+        BRAND_ID,
+      </if>
+      <if test="catId != null" >
+        CAT_ID,
+      </if>
+      <if test="screenSize != null" >
+        SCREEN_SIZE,
+      </if>
+      <if test="resolution != null" >
+        RESOLUTION,
+      </if>
+      <if test="ram != null" >
+        RAM,
+      </if>
+      <if test="cpuNumber != null" >
+        CPU_NUMBER,
+      </if>
+      <if test="cpuRate != null" >
+        CPU_RATE,
+      </if>
+      <if test="frontCamera != null" >
+        FRONT_CAMERA,
+      </if>
+      <if test="postCamera != null" >
+        POST_CAMERA,
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL,
+      </if>
+      <if test="defaultImg != null" >
+        DEFAULT_IMG,
+      </if>
+      <if test="exposureDate != null" >
+        EXPOSURE_DATE,
+      </if>
+      <if test="touchscreenType != null" >
+        TOUCHSCREEN_TYPE,
+      </if>
+      <if test="sreenPixDensity != null" >
+        SREEN_PIX_DENSITY,
+      </if>
+      <if test="screenTechnology != null" >
+        SCREEN_TECHNOLOGY,
+      </if>
+      <if test="narrowFrame != null" >
+        NARROW_FRAME,
+      </if>
+      <if test="screenRatio != null" >
+        SCREEN_RATIO,
+      </if>
+      <if test="theoryRate != null" >
+        THEORY_RATE,
+      </if>
+      <if test="wlanFunction != null" >
+        WLAN_FUNCTION,
+      </if>
+      <if test="navigation != null" >
+        NAVIGATION,
+      </if>
+      <if test="connectionShare != null" >
+        CONNECTION_SHARE,
+      </if>
+      <if test="operationSystem != null" >
+        OPERATION_SYSTEM,
+      </if>
+      <if test="memoryCard != null" >
+        MEMORY_CARD,
+      </if>
+      <if test="batteryType != null" >
+        BATTERY_TYPE,
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY,
+      </if>
+      <if test="talkTime != null" >
+        TALK_TIME,
+      </if>
+      <if test="userInterface != null" >
+        USER_INTERFACE,
+      </if>
+      <if test="extendedCapacity != null" >
+        EXTENDED_CAPACITY,
+      </if>
+      <if test="camera != null" >
+        CAMERA,
+      </if>
+      <if test="cameraType != null" >
+        CAMERA_TYPE,
+      </if>
+      <if test="cameraCertification != null" >
+        CAMERA_CERTIFICATION,
+      </if>
+      <if test="sensorType != null" >
+        SENSOR_TYPE,
+      </if>
+      <if test="flashLamp != null" >
+        FLASH_LAMP,
+      </if>
+      <if test="videoShoot != null" >
+        VIDEO_SHOOT,
+      </if>
+      <if test="shootFunction != null" >
+        SHOOT_FUNCTION,
+      </if>
+      <if test="aperture != null" >
+        APERTURE,
+      </if>
+      <if test="focalLength != null" >
+        FOCAL_LENGTH,
+      </if>
+      <if test="cameraFeatures != null" >
+        CAMERA_FEATURES,
+      </if>
+      <if test="cameraOtherparams != null" >
+        CAMERA_OTHERPARAMS,
+      </if>
+      <if test="modelDesign != null" >
+        MODEL_DESIGN,
+      </if>
+      <if test="weight != null" >
+        WEIGHT,
+      </if>
+      <if test="bodyFeatures != null" >
+        BODY_FEATURES,
+      </if>
+      <if test="operationType != null" >
+        OPERATION_TYPE,
+      </if>
+      <if test="outSensorType != null" >
+        OUT_SENSOR_TYPE,
+      </if>
+      <if test="simType != null" >
+        SIM_TYPE,
+      </if>
+      <if test="bodyInterface != null" >
+        BODY_INTERFACE,
+      </if>
+      <if test="bodyMaterial != null" >
+        BODY_MATERIAL,
+      </if>
+      <if test="audioSupport != null" >
+        AUDIO_SUPPORT,
+      </if>
+      <if test="videoSupport != null" >
+        VIDEO_SUPPORT,
+      </if>
+      <if test="imgSupport != null" >
+        IMG_SUPPORT,
+      </if>
+      <if test="commonFunctions != null" >
+        COMMON_FUNCTIONS,
+      </if>
+      <if test="businessFunctions != null" >
+        BUSINESS_FUNCTIONS,
+      </if>
+      <if test="optionalAccessory != null" >
+        OPTIONAL_ACCESSORY,
+      </if>
+      <if test="warrantyPolicy != null" >
+        WARRANTY_POLICY,
+      </if>
+      <if test="warrantyTime != null" >
+        WARRANTY_TIME,
+      </if>
+      <if test="warrantyRemark != null" >
+        WARRANTY_REMARK,
+      </if>
+      <if test="servicePhone != null" >
+        SERVICE_PHONE,
+      </if>
+      <if test="phoneRemark != null" >
+        PHONE_REMARK,
+      </if>
+      <if test="detailContents != null" >
+        DETAIL_CONTENTS,
+      </if>
+      <if test="cellphoneType != null" >
+        CELLPHONE_TYPE,
+      </if>
+      <if test="cpuModel != null" >
+        CPU_MODEL,
+      </if>
+      <if test="gpuModel != null" >
+        GPU_MODEL,
+      </if>
+      <if test="theoryStandbyTime != null" >
+        THEORY_STANDBY_TIME,
+      </if>
+      <if test="cellphoneSize != null" >
+        CELLPHONE_SIZE,
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE,
+      </if>
+      <if test="goodsDetail != null" >
+        GOODS_DETAIL,
+      </if>
+      <if test="isQuotationHot !=null">
+      	IS_QUOTATION_HOT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsNum != null" >
+        #{goodsNum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        #{brandId,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null" >
+        #{catId,jdbcType=VARCHAR},
+      </if>
+      <if test="screenSize != null" >
+        #{screenSize,jdbcType=DECIMAL},
+      </if>
+      <if test="resolution != null" >
+        #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="ram != null" >
+        #{ram,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuNumber != null" >
+        #{cpuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuRate != null" >
+        #{cpuRate,jdbcType=VARCHAR},
+      </if>
+      <if test="frontCamera != null" >
+        #{frontCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="postCamera != null" >
+        #{postCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallUrl != null" >
+        #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultImg != null" >
+        #{defaultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="exposureDate != null" >
+        #{exposureDate,jdbcType=DATE},
+      </if>
+      <if test="touchscreenType != null" >
+        #{touchscreenType,jdbcType=VARCHAR},
+      </if>
+      <if test="sreenPixDensity != null" >
+        #{sreenPixDensity,jdbcType=VARCHAR},
+      </if>
+      <if test="screenTechnology != null" >
+        #{screenTechnology,jdbcType=VARCHAR},
+      </if>
+      <if test="narrowFrame != null" >
+        #{narrowFrame,jdbcType=VARCHAR},
+      </if>
+      <if test="screenRatio != null" >
+        #{screenRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryRate != null" >
+        #{theoryRate,jdbcType=VARCHAR},
+      </if>
+      <if test="wlanFunction != null" >
+        #{wlanFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="navigation != null" >
+        #{navigation,jdbcType=VARCHAR},
+      </if>
+      <if test="connectionShare != null" >
+        #{connectionShare,jdbcType=VARCHAR},
+      </if>
+      <if test="operationSystem != null" >
+        #{operationSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="memoryCard != null" >
+        #{memoryCard,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryType != null" >
+        #{batteryType,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryCapacity != null" >
+        #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null" >
+        #{talkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="userInterface != null" >
+        #{userInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="extendedCapacity != null" >
+        #{extendedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="camera != null" >
+        #{camera,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraType != null" >
+        #{cameraType,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraCertification != null" >
+        #{cameraCertification,jdbcType=VARCHAR},
+      </if>
+      <if test="sensorType != null" >
+        #{sensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="flashLamp != null" >
+        #{flashLamp,jdbcType=VARCHAR},
+      </if>
+      <if test="videoShoot != null" >
+        #{videoShoot,jdbcType=VARCHAR},
+      </if>
+      <if test="shootFunction != null" >
+        #{shootFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="aperture != null" >
+        #{aperture,jdbcType=VARCHAR},
+      </if>
+      <if test="focalLength != null" >
+        #{focalLength,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraFeatures != null" >
+        #{cameraFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraOtherparams != null" >
+        #{cameraOtherparams,jdbcType=VARCHAR},
+      </if>
+      <if test="modelDesign != null" >
+        #{modelDesign,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="bodyFeatures != null" >
+        #{bodyFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null" >
+        #{operationType,jdbcType=VARCHAR},
+      </if>
+      <if test="outSensorType != null" >
+        #{outSensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="simType != null" >
+        #{simType,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyInterface != null" >
+        #{bodyInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyMaterial != null" >
+        #{bodyMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="audioSupport != null" >
+        #{audioSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="videoSupport != null" >
+        #{videoSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="imgSupport != null" >
+        #{imgSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="commonFunctions != null" >
+        #{commonFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="businessFunctions != null" >
+        #{businessFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="optionalAccessory != null" >
+        #{optionalAccessory,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyPolicy != null" >
+        #{warrantyPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyTime != null" >
+        #{warrantyTime,jdbcType=DECIMAL},
+      </if>
+      <if test="warrantyRemark != null" >
+        #{warrantyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePhone != null" >
+        #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneRemark != null" >
+        #{phoneRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="detailContents != null" >
+        #{detailContents,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneType != null" >
+        #{cellphoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuModel != null" >
+        #{cpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="gpuModel != null" >
+        #{gpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryStandbyTime != null" >
+        #{theoryStandbyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneSize != null" >
+        #{cellphoneSize,jdbcType=VARCHAR},
+      </if>
+      <if test="clickRate != null" >
+        #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsDetail != null" >
+        #{goodsDetail,jdbcType=CLOB},
+      </if>
+      <if test="isQuotationHot !=null">
+      	#{isQuotationHot,jdbcType=VARCHAR},
+      </if>
+    </trim> 
+  </insert>
+  <!-- 修改商品信息 -->
+  <update id="updateGoods" parameterType="com.sanji.sjzx.model.Goods">
+  	  update SJ_TB_GOODS
+     <set >
+     <if test="id != null" >
+        ID = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME = #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        BRAND_ID = #{brandId,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null" >
+        CAT_ID = #{catId,jdbcType=VARCHAR},
+      </if>
+      <if test="screenSize != null" >
+        SCREEN_SIZE = #{screenSize,jdbcType=DECIMAL},
+      </if>
+      <if test="resolution != null" >
+        RESOLUTION = #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="ram != null" >
+        RAM = #{ram,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuNumber != null" >
+        CPU_NUMBER = #{cpuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuRate != null" >
+        CPU_RATE = #{cpuRate,jdbcType=VARCHAR},
+      </if>
+      <if test="frontCamera != null" >
+        FRONT_CAMERA = #{frontCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="postCamera != null" >
+        POST_CAMERA = #{postCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL = #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultImg != null" >
+        DEFAULT_IMG = #{defaultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="exposureDate != null" >
+        EXPOSURE_DATE = #{exposureDate,jdbcType=DATE},
+      </if>
+      <if test="touchscreenType != null" >
+        TOUCHSCREEN_TYPE = #{touchscreenType,jdbcType=VARCHAR},
+      </if>
+      <if test="sreenPixDensity != null" >
+        SREEN_PIX_DENSITY = #{sreenPixDensity,jdbcType=VARCHAR},
+      </if>
+      <if test="screenTechnology != null" >
+        SCREEN_TECHNOLOGY = #{screenTechnology,jdbcType=VARCHAR},
+      </if>
+      <if test="narrowFrame != null" >
+        NARROW_FRAME = #{narrowFrame,jdbcType=VARCHAR},
+      </if>
+      <if test="screenRatio != null" >
+        SCREEN_RATIO = #{screenRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryRate != null" >
+        THEORY_RATE = #{theoryRate,jdbcType=VARCHAR},
+      </if>
+      <if test="wlanFunction != null" >
+        WLAN_FUNCTION = #{wlanFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="navigation != null" >
+        NAVIGATION = #{navigation,jdbcType=VARCHAR},
+      </if>
+      <if test="connectionShare != null" >
+        CONNECTION_SHARE = #{connectionShare,jdbcType=VARCHAR},
+      </if>
+      <if test="operationSystem != null" >
+        OPERATION_SYSTEM = #{operationSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="memoryCard != null" >
+        MEMORY_CARD = #{memoryCard,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryType != null" >
+        BATTERY_TYPE = #{batteryType,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY = #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null" >
+        TALK_TIME = #{talkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="userInterface != null" >
+        USER_INTERFACE = #{userInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="extendedCapacity != null" >
+        EXTENDED_CAPACITY = #{extendedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="camera != null" >
+        CAMERA = #{camera,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraType != null" >
+        CAMERA_TYPE = #{cameraType,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraCertification != null" >
+        CAMERA_CERTIFICATION = #{cameraCertification,jdbcType=VARCHAR},
+      </if>
+      <if test="sensorType != null" >
+        SENSOR_TYPE = #{sensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="flashLamp != null" >
+        FLASH_LAMP = #{flashLamp,jdbcType=VARCHAR},
+      </if>
+      <if test="videoShoot != null" >
+        VIDEO_SHOOT = #{videoShoot,jdbcType=VARCHAR},
+      </if>
+      <if test="shootFunction != null" >
+        SHOOT_FUNCTION = #{shootFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="aperture != null" >
+        APERTURE = #{aperture,jdbcType=VARCHAR},
+      </if>
+      <if test="focalLength != null" >
+        FOCAL_LENGTH = #{focalLength,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraFeatures != null" >
+        CAMERA_FEATURES = #{cameraFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraOtherparams != null" >
+        CAMERA_OTHERPARAMS = #{cameraOtherparams,jdbcType=VARCHAR},
+      </if>
+      <if test="modelDesign != null" >
+        MODEL_DESIGN = #{modelDesign,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        WEIGHT = #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="bodyFeatures != null" >
+        BODY_FEATURES = #{bodyFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null" >
+        OPERATION_TYPE = #{operationType,jdbcType=VARCHAR},
+      </if>
+      <if test="outSensorType != null" >
+        OUT_SENSOR_TYPE = #{outSensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="simType != null" >
+        SIM_TYPE = #{simType,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyInterface != null" >
+        BODY_INTERFACE = #{bodyInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyMaterial != null" >
+        BODY_MATERIAL = #{bodyMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="audioSupport != null" >
+        AUDIO_SUPPORT = #{audioSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="videoSupport != null" >
+        VIDEO_SUPPORT = #{videoSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="imgSupport != null" >
+        IMG_SUPPORT = #{imgSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="commonFunctions != null" >
+        COMMON_FUNCTIONS = #{commonFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="businessFunctions != null" >
+        BUSINESS_FUNCTIONS = #{businessFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="optionalAccessory != null" >
+        OPTIONAL_ACCESSORY = #{optionalAccessory,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyPolicy != null" >
+        WARRANTY_POLICY = #{warrantyPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyTime != null" >
+        WARRANTY_TIME = #{warrantyTime,jdbcType=DECIMAL},
+      </if>
+      <if test="warrantyRemark != null" >
+        WARRANTY_REMARK = #{warrantyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePhone != null" >
+        SERVICE_PHONE = #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneRemark != null" >
+        PHONE_REMARK = #{phoneRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="detailContents != null" >
+        DETAIL_CONTENTS = #{detailContents,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneType != null" >
+        CELLPHONE_TYPE = #{cellphoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuModel != null" >
+        CPU_MODEL = #{cpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="gpuModel != null" >
+        GPU_MODEL = #{gpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryStandbyTime != null" >
+        THEORY_STANDBY_TIME = #{theoryStandbyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneSize != null" >
+        CELLPHONE_SIZE = #{cellphoneSize,jdbcType=VARCHAR},
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE = #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsDetail != null" >
+        GOODS_DETAIL = #{goodsDetail,jdbcType=CLOB},
+      </if>
+      <if test="isQuotationHot !=null">
+      	IS_QUOTATION_HOT = #{isQuotationHot,jdbcType=VARCHAR},
+      </if> 
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>  
+  <!-- 根据商品id更新商品 -->
+    <update id="updateGoodsById" parameterType="com.sanji.sjzx.model.Goods">
+  	  update SJ_TB_GOODS
+     <set >
+     <if test="id != null" >
+        ID = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsNum != null" >
+        GOODS_NUM = #{goodsNum,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        TYPE = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME = #{modifyTime,jdbcType=DATE},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="brandId != null" >
+        BRAND_ID = #{brandId,jdbcType=VARCHAR},
+      </if>
+      <if test="catId != null" >
+        CAT_ID = #{catId,jdbcType=VARCHAR},
+      </if>
+      <if test="screenSize != null" >
+        SCREEN_SIZE = #{screenSize,jdbcType=DECIMAL},
+      </if>
+      <if test="resolution != null" >
+        RESOLUTION = #{resolution,jdbcType=VARCHAR},
+      </if>
+      <if test="ram != null" >
+        RAM = #{ram,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuNumber != null" >
+        CPU_NUMBER = #{cpuNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuRate != null" >
+        CPU_RATE = #{cpuRate,jdbcType=VARCHAR},
+      </if>
+      <if test="frontCamera != null" >
+        FRONT_CAMERA = #{frontCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="postCamera != null" >
+        POST_CAMERA = #{postCamera,jdbcType=VARCHAR},
+      </if>
+      <if test="tmallUrl != null" >
+        TMALL_URL = #{tmallUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="defaultImg != null" >
+        DEFAULT_IMG = #{defaultImg,jdbcType=VARCHAR},
+      </if>
+      <if test="exposureDate != null" >
+        EXPOSURE_DATE = #{exposureDate,jdbcType=DATE},
+      </if>
+      <if test="touchscreenType != null" >
+        TOUCHSCREEN_TYPE = #{touchscreenType,jdbcType=VARCHAR},
+      </if>
+      <if test="sreenPixDensity != null" >
+        SREEN_PIX_DENSITY = #{sreenPixDensity,jdbcType=VARCHAR},
+      </if>
+      <if test="screenTechnology != null" >
+        SCREEN_TECHNOLOGY = #{screenTechnology,jdbcType=VARCHAR},
+      </if>
+      <if test="narrowFrame != null" >
+        NARROW_FRAME = #{narrowFrame,jdbcType=VARCHAR},
+      </if>
+      <if test="screenRatio != null" >
+        SCREEN_RATIO = #{screenRatio,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryRate != null" >
+        THEORY_RATE = #{theoryRate,jdbcType=VARCHAR},
+      </if>
+      <if test="wlanFunction != null" >
+        WLAN_FUNCTION = #{wlanFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="navigation != null" >
+        NAVIGATION = #{navigation,jdbcType=VARCHAR},
+      </if>
+      <if test="connectionShare != null" >
+        CONNECTION_SHARE = #{connectionShare,jdbcType=VARCHAR},
+      </if>
+      <if test="operationSystem != null" >
+        OPERATION_SYSTEM = #{operationSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="memoryCard != null" >
+        MEMORY_CARD = #{memoryCard,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryType != null" >
+        BATTERY_TYPE = #{batteryType,jdbcType=VARCHAR},
+      </if>
+      <if test="batteryCapacity != null" >
+        BATTERY_CAPACITY = #{batteryCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="talkTime != null" >
+        TALK_TIME = #{talkTime,jdbcType=VARCHAR},
+      </if>
+      <if test="userInterface != null" >
+        USER_INTERFACE = #{userInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="extendedCapacity != null" >
+        EXTENDED_CAPACITY = #{extendedCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="camera != null" >
+        CAMERA = #{camera,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraType != null" >
+        CAMERA_TYPE = #{cameraType,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraCertification != null" >
+        CAMERA_CERTIFICATION = #{cameraCertification,jdbcType=VARCHAR},
+      </if>
+      <if test="sensorType != null" >
+        SENSOR_TYPE = #{sensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="flashLamp != null" >
+        FLASH_LAMP = #{flashLamp,jdbcType=VARCHAR},
+      </if>
+      <if test="videoShoot != null" >
+        VIDEO_SHOOT = #{videoShoot,jdbcType=VARCHAR},
+      </if>
+      <if test="shootFunction != null" >
+        SHOOT_FUNCTION = #{shootFunction,jdbcType=VARCHAR},
+      </if>
+      <if test="aperture != null" >
+        APERTURE = #{aperture,jdbcType=VARCHAR},
+      </if>
+      <if test="focalLength != null" >
+        FOCAL_LENGTH = #{focalLength,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraFeatures != null" >
+        CAMERA_FEATURES = #{cameraFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraOtherparams != null" >
+        CAMERA_OTHERPARAMS = #{cameraOtherparams,jdbcType=VARCHAR},
+      </if>
+      <if test="modelDesign != null" >
+        MODEL_DESIGN = #{modelDesign,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        WEIGHT = #{weight,jdbcType=DECIMAL},
+      </if>
+      <if test="bodyFeatures != null" >
+        BODY_FEATURES = #{bodyFeatures,jdbcType=VARCHAR},
+      </if>
+      <if test="operationType != null" >
+        OPERATION_TYPE = #{operationType,jdbcType=VARCHAR},
+      </if>
+      <if test="outSensorType != null" >
+        OUT_SENSOR_TYPE = #{outSensorType,jdbcType=VARCHAR},
+      </if>
+      <if test="simType != null" >
+        SIM_TYPE = #{simType,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyInterface != null" >
+        BODY_INTERFACE = #{bodyInterface,jdbcType=VARCHAR},
+      </if>
+      <if test="bodyMaterial != null" >
+        BODY_MATERIAL = #{bodyMaterial,jdbcType=VARCHAR},
+      </if>
+      <if test="audioSupport != null" >
+        AUDIO_SUPPORT = #{audioSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="videoSupport != null" >
+        VIDEO_SUPPORT = #{videoSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="imgSupport != null" >
+        IMG_SUPPORT = #{imgSupport,jdbcType=VARCHAR},
+      </if>
+      <if test="commonFunctions != null" >
+        COMMON_FUNCTIONS = #{commonFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="businessFunctions != null" >
+        BUSINESS_FUNCTIONS = #{businessFunctions,jdbcType=VARCHAR},
+      </if>
+      <if test="optionalAccessory != null" >
+        OPTIONAL_ACCESSORY = #{optionalAccessory,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyPolicy != null" >
+        WARRANTY_POLICY = #{warrantyPolicy,jdbcType=VARCHAR},
+      </if>
+      <if test="warrantyTime != null" >
+        WARRANTY_TIME = #{warrantyTime,jdbcType=DECIMAL},
+      </if>
+      <if test="warrantyRemark != null" >
+        WARRANTY_REMARK = #{warrantyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePhone != null" >
+        SERVICE_PHONE = #{servicePhone,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneRemark != null" >
+        PHONE_REMARK = #{phoneRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="detailContents != null" >
+        DETAIL_CONTENTS = #{detailContents,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneType != null" >
+        CELLPHONE_TYPE = #{cellphoneType,jdbcType=VARCHAR},
+      </if>
+      <if test="cpuModel != null" >
+        CPU_MODEL = #{cpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="gpuModel != null" >
+        GPU_MODEL = #{gpuModel,jdbcType=VARCHAR},
+      </if>
+      <if test="theoryStandbyTime != null" >
+        THEORY_STANDBY_TIME = #{theoryStandbyTime,jdbcType=VARCHAR},
+      </if>
+      <if test="cellphoneSize != null" >
+        CELLPHONE_SIZE = #{cellphoneSize,jdbcType=VARCHAR},
+      </if>
+      <if test="clickRate != null" >
+        CLICK_RATE = #{clickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsDetail != null" >
+        GOODS_DETAIL = #{goodsDetail,jdbcType=CLOB},
+      </if> 
+      <if test="isQuotationHot !=null">
+      	IS_QUOTATION_HOT = #{isQuotationHot,jdbcType=VARCHAR},
+      </if> 
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>  
+  <!-- 删除相应id的商品记录(逻辑删除) -->
+  <delete id="deleteGoods" parameterType="java.util.List">         
+   <![CDATA[update SJ_TB_GOODS set DISABLED = 'true'
+    where ID in ]]>         
+       <foreach collection="list" item="gids"  open="(" separator="," close=")">#{gids}</foreach>    
+  </delete>
+  <!-- 恢复删除到回收站的商品信息 -->
+  <delete id="recoverGoods" parameterType="java.util.List">         
+   <![CDATA[update SJ_TB_GOODS set DISABLED = 'false'
+    where ID in ]]>         
+       <foreach collection="list" item="gids"  open="(" separator="," close=")">#{gids}</foreach>    
+  </delete> 
+  <!-- 删除相应id的商品记录(物理删除) -->
+  <delete id="dropGoods" parameterType="java.util.List" >
+    <![CDATA[delete from SJ_TB_GOODS
+    where ID in ]]>
+    <foreach collection="list" item="gids"  open="(" separator="," close=")">#{gids}</foreach> 
+  </delete>
+
+</mapper>

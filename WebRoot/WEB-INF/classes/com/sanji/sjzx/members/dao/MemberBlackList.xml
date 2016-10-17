@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.sanji.sjzx.members.dao.MembersBlackListMapper">
+<!-- 查询黑名单列表 -->
+	<select id="gainMembersBlackList" parameterType="com.sanji.sjzx.model.MembersBlackList"
+		resultType="com.sanji.sjzx.model.MembersBlackList">
+		select * from SJ_TB_PAY_BLACKLIST
+	</select>	
+</mapper>	

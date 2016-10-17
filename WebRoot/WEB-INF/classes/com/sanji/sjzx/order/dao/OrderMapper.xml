@@ -1,0 +1,735 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.order.dao.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.Order" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="MEMBER_ID" property="memberId" jdbcType="VARCHAR" />
+    <result column="CREATETIME" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="SOURCE_TYPE" property="sourceType" jdbcType="VARCHAR" />
+    <result column="SALE_TYPE" property="saleType" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="PAY_STATUS" property="payStatus" jdbcType="VARCHAR" />
+    <result column="SHIP_STATUS" property="shipStatus" jdbcType="VARCHAR" />
+    <result column="KESH_STATUS" property="keshStatus" jdbcType="VARCHAR" />
+    <result column="IS_DELIVERY" property="isDelivery" jdbcType="VARCHAR" />
+    <result column="EXPRESS_ID" property="expressId" jdbcType="VARCHAR" />
+    <result column="EXPRESS_NUM" property="expressNum" jdbcType="VARCHAR" />
+    <result column="PAY_MENT" property="payMent" jdbcType="VARCHAR" />
+    <result column="PAY_TIME" property="payTime" jdbcType="TIMESTAMP" />
+    <result column="SHIP_NAME" property="shipName" jdbcType="VARCHAR" />
+    <result column="AREA" property="area" jdbcType="VARCHAR" />
+    <result column="SHIP_ZIP" property="shipZip" jdbcType="VARCHAR" />
+    <result column="SHIP_TEL" property="shipTel" jdbcType="VARCHAR" />
+    <result column="SHIP_EMAIL" property="shipEmail" jdbcType="VARCHAR" />
+    <result column="SHIP_TIME" property="shipTime" jdbcType="DATE" />
+    <result column="TOTAL_COST" property="totalCost" jdbcType="DECIMAL" />
+    <result column="CARRIAGE" property="carriage" jdbcType="DECIMAL" />
+    <result column="ADVANCE" property="advance" jdbcType="DECIMAL" />
+    <result column="EBANK_MON" property="ebankMon" jdbcType="DECIMAL" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="MODIFYTIME" property="modifytime" jdbcType="DATE" />
+    <result column="ORDER_POINTS" property="orderPoints" jdbcType="DECIMAL" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="CITY" property="city" jdbcType="VARCHAR" />
+    <result column="ADDRESS" property="address" jdbcType="VARCHAR" />
+    <result column="MEMBER_TYPE" property="memberType" jdbcType="VARCHAR" />
+    <result column="BILL_TYPE" property="billType" jdbcType="VARCHAR" />
+    <result column="BILL_HEAD" property="billHead" jdbcType="VARCHAR" />
+    <result column="BILL_CONTENT" property="billContent" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="ORDER_NUM" property="orderNum" jdbcType="VARCHAR" />
+    <result column="LOGISTICS_TEL" property="logisticsTel" jdbcType="VARCHAR" />
+    <result column="DEAL_ID" property="dealId" jdbcType="VARCHAR" />
+    <result column="DEAL_TYPE" property="dealType" jdbcType="VARCHAR" />
+    <result column="ECERP_NO" property="ecerpNo" jdbcType="VARCHAR" />
+    <result column="ECERP_CREATED" property="ecerpCreated" jdbcType="VARCHAR" />
+    <result column="ECERP_ERROR" property="ecerpError" jdbcType="VARCHAR" />
+    <!-- 关联字段 -->
+    <result column="SHOP_NAME" property="shopName" jdbcType="VARCHAR" />
+    <!-- 新增字段 -->
+    <result column="ISOVER" property="isover" jdbcType="VARCHAR" />
+    <result column="OVERTIME" property="overtime" jdbcType="TIMESTAMP" />
+    <result column="OVERMAN" property="overman" jdbcType="VARCHAR" />
+
+    <result column="TOTALNUM" property="totalNum" jdbcType="VARCHAR" />
+    <result column="oid" property="oid" jdbcType="VARCHAR"/>
+    <result column="ECERP_NUM" property="ecerpNum" jdbcType="VARCHAR"/>
+     <!-- 下面两个是添加钱包支付新增加的属性 --> 
+    <result column="WALLET_NUM" property="walletNum" jdbcType="DECIMAL" />
+    <result column="ACTUAL_PAY_NUM" property="oid" jdbcType="DECIMAL"/>
+    <result column="WALLET_PAY_NO" property="ecerpNum" jdbcType="VARCHAR"/>
+    <!-- 后来追加红包相关字段 -->
+    <result column="HB_NO" jdbcType="VARCHAR" property="hbNo" />
+    <result column="HB_NUM" jdbcType="DECIMAL" property="hbNum" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, MEMBER_ID, CREATETIME, SOURCE_TYPE, SALE_TYPE, STATUS, PAY_STATUS, SHIP_STATUS, 
+    KESH_STATUS, IS_DELIVERY, EXPRESS_ID, EXPRESS_NUM, PAY_MENT, PAY_TIME, SHIP_NAME, 
+    AREA, SHIP_ZIP, SHIP_TEL, SHIP_EMAIL, SHIP_TIME, TOTAL_COST, CARRIAGE, ADVANCE, EBANK_MON, 
+    REMARK, MODIFYTIME, ORDER_POINTS, PROVINCE, CITY, ADDRESS, MEMBER_TYPE, BILL_TYPE, 
+    BILL_HEAD, BILL_CONTENT, DISABLED, ORDER_NUM, LOGISTICS_TEL, DEAL_ID, DEAL_TYPE,ECERP_NO,
+    ECERP_CREATED,ECERP_ERROR,ISOVER,OVERTIME,OVERMAN,WALLET_NUM,ACTUAL_PAY_NUM,WALLET_PAY_NO,
+    HB_NO,HB_NUM
+  </sql>
+  <!-- 获取订单总数 -->
+  <select id="gainOrderCount" resultType="java.lang.Long" parameterType="com.sanji.sjzx.model.Order">
+  		 select count(o.ID)   from SJ_TB_ORDER o  where  1 = 1
+  		    <if test="id != null and id != ''" >
+		    	and o.ID = #{id,jdbcType=VARCHAR}
+			</if>
+		    <if test="orderNum != null and orderNum != ''" >
+		    	and o.ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+			</if>
+		    <if test="ecerpNo != null and ecerpNo != ''" >
+		    	and o.ECERP_NO = #{ecerpNo,jdbcType=VARCHAR}
+			</if>
+		    <if test="dealId != null and dealId != ''" >
+		    	and o.DEAL_ID = #{dealId,jdbcType=VARCHAR}
+			</if>
+
+			<if test="payStatus != null and payStatus !='' and payStatus != '-1'" >
+		    	and o.PAY_STATUS = #{payStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="dealType != null and dealType != '' and dealType= !'-1'" >
+		    	and o.DEAL_TYPE = #{dealType,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="_startTime != null">
+				and o.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_endTime != null">
+				and o.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_payStartTime != null">
+				and o.PAY_TIME &gt;= #{_payStartTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_payEndTime != null">
+				and o.PAY_TIME &lt;= #{_payEndTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="ecerpNum == 1">
+				and o.ECERP_NO is not null
+			</if>
+			<if test="ecerpNum == 2">
+				and o.ECERP_NO is null
+			</if>
+  </select>
+  <!-- 获取订单列表 -->
+  <select id="gainOrderList" resultType="com.sanji.sjzx.model.Order" parameterType="com.sanji.sjzx.model.Order">
+   		select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+  		  select
+  			o.ID as id,o.CARRIAGE as carriage ,o.CREATETIME,PAY_STATUS as payStatus,o.PAY_MENT as payMent, o.PAY_TIME as payTime, 
+    		o.TOTAL_COST as totalCost,o.MODIFYTIME,o.ORDER_NUM as orderNum,o.DEAL_ID as dealId, o.DEAL_TYPE as dealType,
+    		o.ECERP_NO as ecerpNo,o.SHIP_NAME as shipName,o.SHIP_TEL as shipTel,o.REMARK as remark,o.STATUS as status,o.SHIP_STATUS as shipStatus,
+    		o.DISABLED as disabled,m.username as shopName,oi.num as totalNum,o.ACTUAL_PAY_NUM as actualPayNum,
+    		WALLET_NUM as walletNum,WALLET_PAY_NO as walletPayNo,HB_NO as hbNo,HB_NUM as hbNum
+		    from SJ_TB_ORDER o left join sj_tb_members m on o.member_id = m.id left join (select item.order_id as id,sum(item.nums) as num from sj_tb_order o left join sj_tb_order_items item on o.id = item.order_id where item.target_type = 'sku' group by item.order_id)oi on o.id = oi.id where 1 = 1
+		    <if test="id != null and id != ''" >
+		    	and o.ID = #{id,jdbcType=VARCHAR}
+			</if>
+		    <if test="orderNum != null and orderNum != ''" >
+		    	and o.ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+			</if>
+		    <if test="ecerpNo != null and ecerpNo != ''" >
+		    	and o.ECERP_NO = #{ecerpNo,jdbcType=VARCHAR}
+			</if>
+		    <if test="dealId != null and dealId != ''" >
+		    	and o.DEAL_ID = #{dealId,jdbcType=VARCHAR}
+			</if>
+
+			<if test="payStatus != null and payStatus !='' and payStatus != '-1'" >
+		    	and o.PAY_STATUS = #{payStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="dealType != null and dealType != '' and dealType= !'-1'" >
+		    	and o.DEAL_TYPE = #{dealType,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="_startTime != null">
+				and o.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_endTime != null">
+				and o.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_payStartTime != null">
+				and o.PAY_TIME &gt;= #{_payStartTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_payEndTime != null">
+				and o.PAY_TIME &lt;= #{_payEndTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="ecerpNum == 1">
+				and o.ECERP_NO is not null
+			</if>
+			<if test="ecerpNum == 2">
+				and o.ECERP_NO is null
+			</if>
+			<if test="sort != null">
+				order by ${sort}
+			</if>
+			<if test="order != null">
+			${order}
+			</if>		
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from SJ_TB_ORDER
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from SJ_TB_ORDER
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sanji.sjzx.model.Order" >
+    insert into SJ_TB_ORDER (ID, MEMBER_ID, CREATETIME, 
+      SOURCE_TYPE, SALE_TYPE, STATUS, 
+      PAY_STATUS, SHIP_STATUS, KESH_STATUS, 
+      IS_DELIVERY, EXPRESS_ID, EXPRESS_NUM, 
+      PAY_MENT, PAY_TIME, SHIP_NAME, 
+      AREA, SHIP_ZIP, SHIP_TEL, 
+      SHIP_EMAIL, SHIP_TIME, TOTAL_COST, 
+      CARRIAGE, ADVANCE, EBANK_MON, 
+      REMARK, MODIFYTIME, ORDER_POINTS, 
+      PROVINCE, CITY, ADDRESS, 
+      MEMBER_TYPE, BILL_TYPE, BILL_HEAD, 
+      BILL_CONTENT, DISABLED, ORDER_NUM, 
+      LOGISTICS_TEL, DEAL_ID, DEAL_TYPE
+      )
+    values (#{id,jdbcType=VARCHAR}, #{memberId,jdbcType=VARCHAR}, #{createtime,jdbcType=DATE}, 
+      #{sourceType,jdbcType=VARCHAR}, #{saleType,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{payStatus,jdbcType=VARCHAR}, #{shipStatus,jdbcType=VARCHAR}, #{keshStatus,jdbcType=VARCHAR}, 
+      #{isDelivery,jdbcType=VARCHAR}, #{expressId,jdbcType=VARCHAR}, #{expressNum,jdbcType=VARCHAR}, 
+      #{payMent,jdbcType=VARCHAR}, #{payTime,jdbcType=DATE}, #{shipName,jdbcType=VARCHAR}, 
+      #{area,jdbcType=VARCHAR}, #{shipZip,jdbcType=VARCHAR}, #{shipTel,jdbcType=VARCHAR}, 
+      #{shipEmail,jdbcType=VARCHAR}, #{shipTime,jdbcType=DATE}, #{totalCost,jdbcType=DECIMAL}, 
+      #{carriage,jdbcType=DECIMAL}, #{advance,jdbcType=DECIMAL}, #{ebankMon,jdbcType=DECIMAL}, 
+      #{remark,jdbcType=VARCHAR}, #{modifytime,jdbcType=DATE}, #{orderPoints,jdbcType=DECIMAL}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{memberType,jdbcType=VARCHAR}, #{billType,jdbcType=VARCHAR}, #{billHead,jdbcType=VARCHAR}, 
+      #{billContent,jdbcType=VARCHAR}, #{disabled,jdbcType=VARCHAR}, #{orderNum,jdbcType=VARCHAR}, 
+      #{logisticsTel,jdbcType=VARCHAR}, #{dealId,jdbcType=VARCHAR}, #{dealType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.sanji.sjzx.model.Order" >
+    insert into SJ_TB_ORDER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="memberId != null" >
+        MEMBER_ID,
+      </if>
+      <if test="createtime != null" >
+        CREATETIME,
+      </if>
+      <if test="sourceType != null" >
+        SOURCE_TYPE,
+      </if>
+      <if test="saleType != null" >
+        SALE_TYPE,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS,
+      </if>
+      <if test="shipStatus != null" >
+        SHIP_STATUS,
+      </if>
+      <if test="keshStatus != null" >
+        KESH_STATUS,
+      </if>
+      <if test="isDelivery != null" >
+        IS_DELIVERY,
+      </if>
+      <if test="expressId != null" >
+        EXPRESS_ID,
+      </if>
+      <if test="expressNum != null" >
+        EXPRESS_NUM,
+      </if>
+      <if test="payMent != null" >
+        PAY_MENT,
+      </if>
+      <if test="payTime != null" >
+        PAY_TIME,
+      </if>
+      <if test="shipName != null" >
+        SHIP_NAME,
+      </if>
+      <if test="area != null" >
+        AREA,
+      </if>
+      <if test="shipZip != null" >
+        SHIP_ZIP,
+      </if>
+      <if test="shipTel != null" >
+        SHIP_TEL,
+      </if>
+      <if test="shipEmail != null" >
+        SHIP_EMAIL,
+      </if>
+      <if test="shipTime != null" >
+        SHIP_TIME,
+      </if>
+      <if test="totalCost != null" >
+        TOTAL_COST,
+      </if>
+      <if test="carriage != null" >
+        CARRIAGE,
+      </if>
+      <if test="advance != null" >
+        ADVANCE,
+      </if>
+      <if test="ebankMon != null" >
+        EBANK_MON,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+      <if test="modifytime != null" >
+        MODIFYTIME,
+      </if>
+      <if test="orderPoints != null" >
+        ORDER_POINTS,
+      </if>
+      <if test="province != null" >
+        PROVINCE,
+      </if>
+      <if test="city != null" >
+        CITY,
+      </if>
+      <if test="address != null" >
+        ADDRESS,
+      </if>
+      <if test="memberType != null" >
+        MEMBER_TYPE,
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE,
+      </if>
+      <if test="billHead != null" >
+        BILL_HEAD,
+      </if>
+      <if test="billContent != null" >
+        BILL_CONTENT,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+      <if test="orderNum != null" >
+        ORDER_NUM,
+      </if>
+      <if test="logisticsTel != null" >
+        LOGISTICS_TEL,
+      </if>
+      <if test="dealId != null" >
+        DEAL_ID,
+      </if>
+      <if test="dealType != null" >
+        DEAL_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=DATE},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="saleType != null" >
+        #{saleType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="shipStatus != null" >
+        #{shipStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="keshStatus != null" >
+        #{keshStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelivery != null" >
+        #{isDelivery,jdbcType=VARCHAR},
+      </if>
+      <if test="expressId != null" >
+        #{expressId,jdbcType=VARCHAR},
+      </if>
+      <if test="expressNum != null" >
+        #{expressNum,jdbcType=VARCHAR},
+      </if>
+      <if test="payMent != null" >
+        #{payMent,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=DATE},
+      </if>
+      <if test="shipName != null" >
+        #{shipName,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="shipZip != null" >
+        #{shipZip,jdbcType=VARCHAR},
+      </if>
+      <if test="shipTel != null" >
+        #{shipTel,jdbcType=VARCHAR},
+      </if>
+      <if test="shipEmail != null" >
+        #{shipEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="shipTime != null" >
+        #{shipTime,jdbcType=DATE},
+      </if>
+      <if test="totalCost != null" >
+        #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="carriage != null" >
+        #{carriage,jdbcType=DECIMAL},
+      </if>
+      <if test="advance != null" >
+        #{advance,jdbcType=DECIMAL},
+      </if>
+      <if test="ebankMon != null" >
+        #{ebankMon,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifytime != null" >
+        #{modifytime,jdbcType=DATE},
+      </if>
+      <if test="orderPoints != null" >
+        #{orderPoints,jdbcType=DECIMAL},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="memberType != null" >
+        #{memberType,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="billHead != null" >
+        #{billHead,jdbcType=VARCHAR},
+      </if>
+      <if test="billContent != null" >
+        #{billContent,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        #{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsTel != null" >
+        #{logisticsTel,jdbcType=VARCHAR},
+      </if>
+      <if test="dealId != null" >
+        #{dealId,jdbcType=VARCHAR},
+      </if>
+      <if test="dealType != null" >
+        #{dealType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.sanji.sjzx.model.Order" >
+    update SJ_TB_ORDER
+    <set >
+      <if test="memberId != null" >
+        MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        CREATETIME = #{createtime,jdbcType=DATE},
+      </if>
+      <if test="sourceType != null" >
+        SOURCE_TYPE = #{sourceType,jdbcType=VARCHAR},
+      </if>
+      <if test="saleType != null" >
+        SALE_TYPE = #{saleType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="shipStatus != null" >
+        SHIP_STATUS = #{shipStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="keshStatus != null" >
+        KESH_STATUS = #{keshStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelivery != null" >
+        IS_DELIVERY = #{isDelivery,jdbcType=VARCHAR},
+      </if>
+      <if test="expressId != null" >
+        EXPRESS_ID = #{expressId,jdbcType=VARCHAR},
+      </if>
+      <if test="expressNum != null" >
+        EXPRESS_NUM = #{expressNum,jdbcType=VARCHAR},
+      </if>
+      <if test="payMent != null" >
+        PAY_MENT = #{payMent,jdbcType=VARCHAR},
+      </if>
+      <if test="payTime != null" >
+        PAY_TIME = #{payTime,jdbcType=DATE},
+      </if>
+      <if test="shipName != null" >
+        SHIP_NAME = #{shipName,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        AREA = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="shipZip != null" >
+        SHIP_ZIP = #{shipZip,jdbcType=VARCHAR},
+      </if>
+      <if test="shipTel != null" >
+        SHIP_TEL = #{shipTel,jdbcType=VARCHAR},
+      </if>
+      <if test="shipEmail != null" >
+        SHIP_EMAIL = #{shipEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="shipTime != null" >
+        SHIP_TIME = #{shipTime,jdbcType=DATE},
+      </if>
+      <if test="totalCost != null" >
+        TOTAL_COST = #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="carriage != null" >
+        CARRIAGE = #{carriage,jdbcType=DECIMAL},
+      </if>
+      <if test="advance != null" >
+        ADVANCE = #{advance,jdbcType=DECIMAL},
+      </if>
+      <if test="ebankMon != null" >
+        EBANK_MON = #{ebankMon,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="modifytime != null" >
+        MODIFYTIME = #{modifytime,jdbcType=DATE},
+      </if>
+      <if test="orderPoints != null" >
+        ORDER_POINTS = #{orderPoints,jdbcType=DECIMAL},
+      </if>
+      <if test="province != null" >
+        PROVINCE = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        CITY = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        ADDRESS = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="memberType != null" >
+        MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
+      </if>
+      <if test="billType != null" >
+        BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      </if>
+      <if test="billHead != null" >
+        BILL_HEAD = #{billHead,jdbcType=VARCHAR},
+      </if>
+      <if test="billContent != null" >
+        BILL_CONTENT = #{billContent,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+      <if test="orderNum != null" >
+        ORDER_NUM = #{orderNum,jdbcType=VARCHAR},
+      </if>
+      <if test="logisticsTel != null" >
+        LOGISTICS_TEL = #{logisticsTel,jdbcType=VARCHAR},
+      </if>
+      <if test="dealId != null" >
+        DEAL_ID = #{dealId,jdbcType=VARCHAR},
+      </if>
+      <if test="dealType != null" >
+        DEAL_TYPE = #{dealType,jdbcType=VARCHAR},
+      </if>
+      <if test="actualPayNum != null" >
+        ACTUAL_PAY_NUM = #{actualPayNum,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.sanji.sjzx.model.Order" >
+    update SJ_TB_ORDER
+    set MEMBER_ID = #{memberId,jdbcType=VARCHAR},
+      CREATETIME = #{createtime,jdbcType=DATE},
+      SOURCE_TYPE = #{sourceType,jdbcType=VARCHAR},
+      SALE_TYPE = #{saleType,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=VARCHAR},
+      PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      SHIP_STATUS = #{shipStatus,jdbcType=VARCHAR},
+      KESH_STATUS = #{keshStatus,jdbcType=VARCHAR},
+      IS_DELIVERY = #{isDelivery,jdbcType=VARCHAR},
+      EXPRESS_ID = #{expressId,jdbcType=VARCHAR},
+      EXPRESS_NUM = #{expressNum,jdbcType=VARCHAR},
+      PAY_MENT = #{payMent,jdbcType=VARCHAR},
+      PAY_TIME = #{payTime,jdbcType=DATE},
+      SHIP_NAME = #{shipName,jdbcType=VARCHAR},
+      AREA = #{area,jdbcType=VARCHAR},
+      SHIP_ZIP = #{shipZip,jdbcType=VARCHAR},
+      SHIP_TEL = #{shipTel,jdbcType=VARCHAR},
+      SHIP_EMAIL = #{shipEmail,jdbcType=VARCHAR},
+      SHIP_TIME = #{shipTime,jdbcType=DATE},
+      TOTAL_COST = #{totalCost,jdbcType=DECIMAL},
+      CARRIAGE = #{carriage,jdbcType=DECIMAL},
+      ADVANCE = #{advance,jdbcType=DECIMAL},
+      EBANK_MON = #{ebankMon,jdbcType=DECIMAL},
+      REMARK = #{remark,jdbcType=VARCHAR},
+      MODIFYTIME = #{modifytime,jdbcType=DATE},
+      ORDER_POINTS = #{orderPoints,jdbcType=DECIMAL},
+      PROVINCE = #{province,jdbcType=VARCHAR},
+      CITY = #{city,jdbcType=VARCHAR},
+      ADDRESS = #{address,jdbcType=VARCHAR},
+      MEMBER_TYPE = #{memberType,jdbcType=VARCHAR},
+      BILL_TYPE = #{billType,jdbcType=VARCHAR},
+      BILL_HEAD = #{billHead,jdbcType=VARCHAR},
+      BILL_CONTENT = #{billContent,jdbcType=VARCHAR},
+      DISABLED = #{disabled,jdbcType=VARCHAR},
+      ORDER_NUM = #{orderNum,jdbcType=VARCHAR},
+      LOGISTICS_TEL = #{logisticsTel,jdbcType=VARCHAR},
+      DEAL_ID = #{dealId,jdbcType=VARCHAR},
+      DEAL_TYPE = #{dealType,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <!-- 根据查询条件获取order数据用于导出 -->
+  <select id="gainOrderByExport" resultType="com.sanji.sjzx.model.Order" parameterType="com.sanji.sjzx.model.Order">
+  	select
+		o.ID as id,o.CREATETIME,o.STATUS as status ,o.SHIP_STATUS as shipStatus,o.PAY_STATUS as payStatus,o.PAY_MENT as payMent, o.PAY_TIME as payTime, 
+ 		o.TOTAL_COST as totalCost,o.MODIFYTIME,o.ORDER_NUM as orderNum,o.DEAL_ID as dealId,o.ACTUAL_PAY_NUM as actualPayNum,o.WALLET_NUM as walletNum, o.HB_NUM as hbNum, o.DEAL_TYPE as dealType,
+ 		o.ECERP_NO as ecerpNo,o.SHIP_NAME as shipName,o.SHIP_TEL as shipTel,a.shop_name as shopName,o.ACTUAL_PAY_NUM as actualPayNum
+    from SJ_TB_ORDER o left join sj_tb_app a on o.member_id = a.member_id where 1=1 
+   
+    <if test="orderNum != null and orderNum != ''" >
+   		and o.ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+	</if>
+	<if test="ecerpNo != null and ecerpNo != ''" >
+	   	and o.ECERP_NO = #{ecerpNo,jdbcType=VARCHAR}
+	</if>
+	<if test="dealId != null and dealId != ''" >
+	   	and o.DEAL_ID = #{dealId,jdbcType=VARCHAR}
+	</if>
+	<if test="payStatus != null and payStatus !='' and payStatus != '-1'" >
+	   	and o.PAY_STATUS = #{payStatus,jdbcType=VARCHAR}
+	</if>
+	<if test="dealType != null and dealType != '' and dealType= !'-1'" >
+	   	and o.DEAL_TYPE = #{dealType,jdbcType=VARCHAR}
+	</if>
+	<if test="_startTime != null">
+		and o.CREATETIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+	</if>
+	<if test="_endTime != null">
+		and o.CREATETIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+	</if>
+	<if test="_payStartTime != null">
+		and o.PAY_TIME &gt;= #{_payStartTime,jdbcType=TIMESTAMP}
+	</if>
+	<if test="_payEndTime != null">
+		and o.PAY_TIME &lt;= #{_payEndTime,jdbcType=TIMESTAMP}
+	</if>
+	<if test="ecerpNum == 1">
+	    and o.ECERP_NO is not null
+    </if>
+	<if test="ecerpNum == 2">
+		and o.ECERP_NO is null
+	</if>
+  </select>
+  <!-- 获取终结订单列表(只有支付类型为货到付款的信息) -->
+  <select id="gainOverOrderList" resultType="com.sanji.sjzx.model.Order" parameterType="com.sanji.sjzx.model.Order">
+  	select * from (select * from (  
+  		select ROWNUM AS RN,t.* from (
+  		   select
+  			o.ID as id, o.id as oid,PAY_STATUS as payStatus,o.PAY_MENT as payMent,
+  			o.TOTAL_COST as totalCost,o.ORDER_NUM as orderNum,o.ECERP_NO as ecerpNo,
+  			o.SHIP_STATUS as shipStatus,o.STATUS as status,
+    		o.isover as isover,o.overtime as overtime,o.overman as overman
+		    from SJ_TB_ORDER o 
+		    where o.DISABLED='false' and o.PAY_MENT ='1' and o.ECERP_NO is not null
+		    <if test="oid != null and oid != ''" >
+		    	and o.id = #{oid,jdbcType=VARCHAR}
+			</if>
+		    <if test="orderNum != null and orderNum != ''" >
+		    	and o.ORDER_NUM = #{orderNum,jdbcType=VARCHAR}
+			</if>
+		    <if test="ecerpNo != null and ecerpNo != ''" >
+		    	and o.ECERP_NO = #{ecerpNo,jdbcType=VARCHAR}
+			</if>
+			<if test="payStatus != null and payStatus !='' and payStatus != '-1'" >
+		    	and o.PAY_STATUS = #{payStatus,jdbcType=VARCHAR}
+			</if>
+<!-- 			<if test="shipStatus != null and shipStatus !='' and shipStatus != '-1'" >
+		    	and o.SHIP_STATUS = #{shipStatus,jdbcType=VARCHAR}
+			</if>
+ -->			<if test="_startTime != null">
+				and o.OVERTIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="_endTime != null">
+				and o.OVERTIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="isover !=null and isover !='' and isover !='-1'">
+				and o.ISOVER = #{isover,jdbcType=VARCHAR}
+			</if>
+			<if test="overman != null and overman !=''">
+				and o.OVERMAN like lower('%${overman}%')
+			</if>
+			<if test="sort != null">
+				order by ${sort}
+			</if>
+			<if test="order != null">
+			${order}
+			</if>		
+	    ) t
+     ) where <![CDATA[RN <= #{page}*#{rows}]]>) where  RN>(#{page}-1)*#{rows}
+  </select>
+  <!-- 获取终结订单列表(只有支付类型为货到付款的信息)的行数 -->
+  <select id="gainOverOrderCount" resultType="Long" parameterType="com.sanji.sjzx.model.Order">
+  	select count(ID) from SJ_TB_ORDER o where o.DISABLED='false' and o.PAY_MENT ='1' and o.ECERP_NO is not null
+  </select>
+  <!-- 根据订单id修改终结订单 -->
+  <update id="updateOverOrder" parameterType="com.sanji.sjzx.model.Order">
+  update SJ_TB_ORDER
+    <set >
+      <if test="payStatus != null" >
+        PAY_STATUS = #{payStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="shipStatus != null" >
+        SHIP_STATUS = #{shipStatus,jdbcType=VARCHAR},
+      </if>
+	  <if test="isover != null" >
+        ISOVER = #{isover,jdbcType=VARCHAR},
+      </if>
+	  <if test="overtime != null" >
+        OVERTIME = #{overtime,jdbcType=TIMESTAMP},
+      </if>
+	  <if test="overman != null" >
+        OVERMAN = #{overman,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}	
+  </update>
+</mapper>

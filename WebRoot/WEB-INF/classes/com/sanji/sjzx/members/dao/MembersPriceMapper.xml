@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sanji.sjzx.members.dao.MembersPriceMapper" >
+  <resultMap id="BaseResultMap" type="com.sanji.sjzx.model.MembersPrice" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="GOODS_SKU_ID" property="goodsSkuId" jdbcType="VARCHAR" />
+    <result column="Member_ID" property="memberId" jdbcType="VARCHAR" />
+    <result column="FLOAT_PRICE" property="floatPrice" jdbcType="DECIMAL" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="USER_ID" property="userId" jdbcType="VARCHAR" />
+    <result column="DISABLED" property="disabled" jdbcType="VARCHAR" />
+    <result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+    <result column="CURRENTtIME" property="currentTime" jdbcType="VARCHAR" />
+    <result column="goodsName" property="goodsName" jdbcType="VARCHAR" />
+    <result column="TOTALMNUM" property="totalNum" jdbcType="VARCHAR" />
+    <result column="ITEMNUM" property="itemNum" jdbcType="VARCHAR" />
+    <result column="PCAT" property="pcat" jdbcType="VARCHAR" />
+    <result column="PRICE" property="price" jdbcType="VARCHAR" />
+    <result column="ORIGINAL_PRICE" property="originalPrice" jdbcType="VARCHAR" />
+    <result column="OVERMAN" property="overMan" jdbcType="VARCHAR" />
+    <result column="COLOR_NAME" property="colorName" jdbcType="VARCHAR" />
+    <result column="REGION" property="region" jdbcType="VARCHAR" />
+    <result column="AFTERFLOATPRICE" property="afterFloatPrice" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, GOODS_SKU_ID, Member_ID, FLOAT_PRICE, CREATE_TIME, USER_ID, DISABLED
+  </sql>
+  
+  
+  <select id="gainMembersPriceCount" parameterType="com.sanji.sjzx.model.MembersPrice" resultType="Long">
+          
+  select count(*)
+  from (select to_char(SYSDATE, 'YYYY/MM/DD') as currentTime,
+               t.goodsName as goodsName,
+               t.username as userName,
+               t.price as price,
+               t.original_price as originalPrice,
+               t.nums as itemNum,
+               smp.create_time,
+               t.skuId,
+               t.color_name as colorName,
+               t.pcat as pcat,
+               (smp.FLOAT_PRICE + t.price) as afterFloatPrice,
+               a.username as overMan,
+               t.member_id,
+               t.order_num,
+                t.province,
+                       t.city,
+                       t.area,
+                       t.town
+          from (select o.order_num,
+                       o.member_id,
+                       s.id as skuId,
+                       g.name || s.standard || s.storage as goodsName,
+                       m.username,
+                       s.price,
+                       s.original_price,
+                       i.nums,
+                       c.color_name,
+                       m.province,
+                       m.city,
+                       m.area,
+                       m.town,
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.PROVINCE) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.CITY) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.area) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.town) as pcat
+                  from sj_tb_order o
+                  left join sj_tb_order_items i on i.order_id = o.id
+                  left join sj_tb_goods_sku s on s.id = i.target_id
+                  left join sj_tb_goods g on g.id = s.goods_id
+                  left join sj_tb_color c on c.id = s.color_id
+                  left join sj_tb_members m on m.id = o.member_id
+                 where trunc(o.createtime) = trunc(sysdate)
+                   and o.status != '3'
+                   and o.member_id in
+                       (select smp.member_id from sj_tb_sku_member_price smp)
+                   and s.id in (select smp.goods_sku_id
+                                  from sj_tb_sku_member_price smp)) t
+         inner join sj_tb_sku_member_price smp on smp.member_id =
+                                                  t.member_id
+                                              and smp.goods_sku_id = t.skuId
+          left join sj_tb_admin a on a.id = smp.user_id
+         where 1 = 1) t
+  left join (
+           
+              select sum(t.nums),t.member_id  from (
+     select  i.nums,o.member_id,sku.id as skuId
+                   from sj_tb_order o
+                   left join sj_tb_order_items i on i.order_id = o.id
+                   left join sj_tb_members m on m.id = o.member_id
+                   left join sj_tb_goods_sku sku on sku.id = i.target_id 
+                  
+                  where trunc(o.createtime) = trunc(sysdate)
+                    and o.status != '3'
+                    and o.member_id in
+                        (select smp.member_id from sj_tb_sku_member_price smp)
+                    and i.target_id in
+                        (select smp.goods_sku_id from sj_tb_sku_member_price smp)
+      )t inner join sj_tb_sku_member_price smp on smp.member_id = t.member_id and smp.goods_sku_id = t.skuId
+      group by t.member_id
+  
+  
+  ) totalItemNum on totalItemNum.member_id =   t.member_id
+ where 1 = 1 
+        <if test="userName != null and userName != ''">
+			and t.USERNAME like '%${userName}%'
+		</if>
+		<if test="region != null and region != ''">
+			and (t.province = #{region,jdbcType=VARCHAR} or t.city = #{region,jdbcType=VARCHAR} or t.area = #{region,jdbcType=VARCHAR} or  t.town = #{region,jdbcType=VARCHAR})
+		</if>
+		<if test="_startTime != null">
+			and t.CREATE_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and t.CREATE_TIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		              
+  </select>
+  
+  <select id="gainMemberPriceByExport" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.MembersPrice">
+  		
+select t.* ,totalItemNum.totalNum as totalNum
+  from (select to_char(SYSDATE, 'YYYY/MM/DD') as currentTime,
+               t.goodsName as goodsName,
+               t.username as userName,
+               t.price as price,
+               t.original_price as originalPrice,
+               t.nums as itemNum,
+               smp.create_time,
+               t.skuId,
+               t.color_name as colorName,
+               t.pcat as pcat,
+               (smp.FLOAT_PRICE + t.price) as afterFloatPrice,
+               a.username as overMan,
+               t.member_id,
+               t.order_num,
+               t.province,
+                       t.city,
+                       t.area,
+                       t.town
+          from (select o.order_num,
+                       o.member_id,
+                       s.id as skuId,
+                       g.name || s.standard || s.storage as goodsName,
+                       m.username,
+                       s.price,
+                       s.original_price,
+                       i.nums,
+                       c.color_name,
+                       m.province,
+                       m.city,
+                       m.area,
+                       m.town,
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.PROVINCE) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.CITY) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.area) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.town) as pcat
+                  from sj_tb_order o
+                  left join sj_tb_order_items i on i.order_id = o.id
+                  left join sj_tb_goods_sku s on s.id = i.target_id
+                  left join sj_tb_goods g on g.id = s.goods_id
+                  left join sj_tb_color c on c.id = s.color_id
+                  left join sj_tb_members m on m.id = o.member_id
+                 where trunc(o.createtime) = trunc(sysdate)
+                   and o.status != '3'
+                   and o.member_id in
+                       (select smp.member_id from sj_tb_sku_member_price smp)
+                   and s.id in (select smp.goods_sku_id
+                                  from sj_tb_sku_member_price smp)) t
+         inner join sj_tb_sku_member_price smp on smp.member_id =
+                                                  t.member_id
+                                              and smp.goods_sku_id = t.skuId
+          left join sj_tb_admin a on a.id = smp.user_id
+         where 1 = 1) t
+  left join (
+           
+              select sum(t.nums) as totalNum,t.member_id  from (
+                  select  i.nums,o.member_id,sku.id as skuId
+                   from sj_tb_order o
+                   left join sj_tb_order_items i on i.order_id = o.id
+                   left join sj_tb_members m on m.id = o.member_id
+                   left join sj_tb_goods_sku sku on sku.id = i.target_id 
+                  
+                  where trunc(o.createtime) = trunc(sysdate)
+                    and o.status != '3'
+                    and o.member_id in
+                        (select smp.member_id from sj_tb_sku_member_price smp)
+                    and i.target_id in
+                        (select smp.goods_sku_id from sj_tb_sku_member_price smp)
+      )t inner join sj_tb_sku_member_price smp on smp.member_id = t.member_id and smp.goods_sku_id = t.skuId
+      group by t.member_id
+  
+  
+  ) totalItemNum on totalItemNum.member_id =   t.member_id
+ where 1 = 1 
+		 <if test="userName != null and userName != ''">
+			and t.USERNAME like '%${userName}%'
+		</if>
+		<if test="region != null and region != ''">
+			and (t.province = #{region,jdbcType=VARCHAR} or t.city = #{region,jdbcType=VARCHAR} or t.area = #{region,jdbcType=VARCHAR} or  t.town = #{region,jdbcType=VARCHAR})
+		</if>
+		<if test="_startTime != null">
+			and t.CREATE_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and t.CREATE_TIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		order by t.member_id
+  </select>
+  
+  <select id="gainMembersPriceList" resultMap="BaseResultMap" parameterType="com.sanji.sjzx.model.MembersPrice">
+	select * from (select * from (  
+  	  select ROWNUM AS RN,t.* from (   
+      select t.* ,totalItemNum.totalNum as totalNum
+  from (select to_char(SYSDATE, 'YYYY/MM/DD') as currentTime,
+               t.goodsName as goodsName,
+               t.username as userName,
+               t.price as price,
+               t.original_price as originalPrice,
+               t.nums as itemNum,
+               smp.create_time,
+               t.skuId,
+               t.color_name as colorName,
+               t.pcat as pcat,
+               (smp.FLOAT_PRICE + t.price) as afterFloatPrice,
+               a.username as overMan,
+               t.member_id,
+               t.order_num,
+               t.province,
+                       t.city,
+                       t.area,
+                       t.town
+          from (select o.order_num,
+                       o.member_id,
+                       s.id as skuId,
+                       g.name || s.standard || s.storage as goodsName,
+                       m.username,
+                       s.price,
+                       s.original_price,
+                       i.nums,
+                       c.color_name,
+                       m.province,
+                       m.city,
+                       m.area,
+                       m.town,
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.PROVINCE) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.CITY) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.area) ||
+                       (select R1."NAME"
+                          from SJ_TB_REGIONS R1
+                         where R1."ID" = m.town) as pcat
+                  from sj_tb_order o
+                  left join sj_tb_order_items i on i.order_id = o.id
+                  left join sj_tb_goods_sku s on s.id = i.target_id
+                  left join sj_tb_goods g on g.id = s.goods_id
+                  left join sj_tb_color c on c.id = s.color_id
+                  left join sj_tb_members m on m.id = o.member_id
+                 where trunc(o.createtime) = trunc(sysdate)
+                   and o.status != '3'
+                   and o.member_id in
+                       (select smp.member_id from sj_tb_sku_member_price smp)
+                   and s.id in (select smp.goods_sku_id
+                                  from sj_tb_sku_member_price smp)) t
+         inner join sj_tb_sku_member_price smp on smp.member_id =
+                                                  t.member_id
+                                              and smp.goods_sku_id = t.skuId
+          left join sj_tb_admin a on a.id = smp.user_id
+         where 1 = 1) t
+  left join (
+           
+              select sum(t.nums) as totalNum,t.member_id  from (
+                  select  i.nums,o.member_id,sku.id as skuId
+                   from sj_tb_order o
+                   left join sj_tb_order_items i on i.order_id = o.id
+                   left join sj_tb_members m on m.id = o.member_id
+                   left join sj_tb_goods_sku sku on sku.id = i.target_id 
+                  
+                  where trunc(o.createtime) = trunc(sysdate)
+                    and o.status != '3'
+                    and o.member_id in
+                        (select smp.member_id from sj_tb_sku_member_price smp)
+                    and i.target_id in
+                        (select smp.goods_sku_id from sj_tb_sku_member_price smp)
+      )t inner join sj_tb_sku_member_price smp on smp.member_id = t.member_id and smp.goods_sku_id = t.skuId
+      group by t.member_id
+  
+  
+  ) totalItemNum on totalItemNum.member_id =   t.member_id
+ where 1 = 1 
+		 <if test="userName != null and userName != ''">
+			and t.USERNAME like '%${userName}%'
+		</if>
+		<if test="region != null and region != ''">
+			and (t.province = #{region,jdbcType=VARCHAR} or t.city = #{region,jdbcType=VARCHAR} or t.area = #{region,jdbcType=VARCHAR} or  t.town = #{region,jdbcType=VARCHAR})
+		</if>
+		<if test="_startTime != null">
+			and t.CREATE_TIME &gt;= #{_startTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="_endTime != null">
+			and t.CREATE_TIME &lt;= #{_endTime,jdbcType=TIMESTAMP}
+		</if>
+		 )t
+		   ) where <![CDATA[RN <= #{page}*${rows}]]>)
+		where RN>(${page}-1)*${rows}  
+		
+  </select>
+  <!-- 查询所有数据 -->
+  <select id="gainAllMembersPrice" resultType="com.sanji.sjzx.model.MembersPrice">
+  	select ID, GOODS_SKU_ID as goodsSkuId, Member_ID as memberId, FLOAT_PRICE as floatPrice, CREATE_TIME as createTime, 
+  		   USER_ID as userId, DISABLED from SJ_TB_SKU_Member_PRICE 
+  	where DISABLED='false'
+  </select>
+  <!-- 添加地域价格信息 -->
+  <insert id="addMembersPrice" parameterType="com.sanji.sjzx.model.MembersPrice" >
+    insert into SJ_TB_SKU_Member_PRICE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="goodsSkuId != null" >
+        GOODS_SKU_ID,
+      </if>
+      <if test="memberId != null" >
+        Member_ID,
+      </if>
+      <if test="floatPrice != null" >
+        FLOAT_PRICE,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="disabled != null" >
+        DISABLED,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsSkuId != null" >
+        #{goodsSkuId,jdbcType=VARCHAR},
+      </if>
+      <if test="memberId != null" >
+        #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="floatPrice != null" >
+        #{floatPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        #{disabled,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <!-- 根据单品id即goodsSkuId修改地域价格信息 -->
+  <update id="updateMembersPriceBySkuId" parameterType="com.sanji.sjzx.model.MembersPrice" >
+    update SJ_TB_SKU_Member_PRICE
+    <set >
+<!--       <if test="id != null">
+      	ID = #{id,jdbcType=VARCHAR},
+      </if>
+ -->      <if test="memberId != null" >
+        Member_ID = #{memberId,jdbcType=VARCHAR},
+      </if>
+      <if test="floatPrice != null" >
+        FLOAT_PRICE = #{floatPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where GOODS_SKU_ID = #{goodsSkuId,jdbcType=VARCHAR}
+  </update>
+  
+    <!-- 根据订单区域价格id修改地域价格信息 -->
+  <update id="updateMembersPriceById" parameterType="com.sanji.sjzx.model.MembersPrice" >
+    update SJ_TB_SKU_Member_PRICE
+    <set >
+      <if test="floatPrice != null" >
+        FLOAT_PRICE = #{floatPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="disabled != null" >
+        DISABLED = #{disabled,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 根据单品id即goodsSkuId获取相应单品的地域价格 -->
+  <select id="gainMembersPriceBySkuId" parameterType="java.lang.String" resultType="com.sanji.sjzx.model.MembersPrice">
+  	select  ID as id,Member_ID as memberId, FLOAT_PRICE as floatPrice 
+  		   from SJ_TB_SKU_Member_PRICE 
+  	where DISABLED='false'  and GOODS_SKU_ID = #{goodsSkuId,jdbcType=VARCHAR}
+  </select>
+  <select id="gainMembersPriceBySkuIdAndRegion" parameterType="java.util.Map" resultType="com.sanji.sjzx.model.MembersPrice">
+       select  smp.Member_ID as memberId,smp.FLOAT_PRICE as floatPrice 
+  		   from SJ_TB_SKU_Member_PRICE smp left join sj_tb_members m on m.id = smp.member_id
+ where smp.DISABLED='false'  and smp.GOODS_SKU_ID = #{goodsSkuId,jdbcType=VARCHAR}
+   and ( m.province = #{region,jdbcType=VARCHAR} or m.city = #{region,jdbcType=VARCHAR} or
+       m.area = #{region,jdbcType=VARCHAR} or m.town = #{region,jdbcType=VARCHAR})
+  	
+  </select>
+ </mapper>
