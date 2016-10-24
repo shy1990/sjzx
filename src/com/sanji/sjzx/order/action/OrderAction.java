@@ -74,31 +74,30 @@ public class OrderAction extends BaseAction implements ModelDriven<Order> {
 	 * @return void 返回类型
 	 * @author SongBaozhen
 	 */
-	public void pushOrder() {
+	public void  pushOrder(){
 		Json json = new Json();
 		try {
-			Map<String, String> params = new HashMap<String, String>();
+		Map<String,String> params = new HashMap<String,String>();
 
-			params.put("id", order.getId());
-			String s = HttpClientUtils
-					.sendPostSSLRequest(
-							"http://localhost:8080/mall/order/rePushOrder.html",
-							params);
-			// String s =
-			// HttpClientUtils.sendPostSSLRequest("http://www.3j1688.com/order/rePushOrder.html",
-			// params);
-			if (s != null && !"".equals(s)) {
-				json = (Json) JsonUtil.getObject4JsonString(s, Json.class);
-			} else {
-				json.setMsg("订单推送异常,请联系技术人员!");
-				json.setSuccess(false);
-			}
+		params.put("id", order.getId());
+		//String	s =  HttpClientUtils.sendPostSSLRequest("http://localhost:8080/mall/order/rePushOrder.html", params); 
+		 String	s =  HttpClientUtils.sendPostSSLRequest("http://www.3j1688.com/order/rePushOrder.html", params);
+		if (s != null && !"".equals(s)) {
+		json = (Json) JsonUtil.getObject4JsonString(s, Json.class);
+		} else{
+		json.setMsg("订单推送失败,请联系技术人员!");
+
+		json.setSuccess(false);
+		}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("pushOrder() occur error. ", e);
+
+		json.setMsg("订单推送异常,请联系技术人员!"+e.getMessage());
+
+		json.setSuccess(false);
+		logger.error("pushOrder() occur error. ", e);
 		}
 		writeJson(json);
-	}
+		}
 
 	/**
 	 * 跳转到订单列表页面

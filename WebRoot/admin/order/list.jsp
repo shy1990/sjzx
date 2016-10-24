@@ -324,7 +324,7 @@
 	推送订单
 	*/
 	function tuisong(id,ecerpNo,payStatus,payMent,status){
-	if(ecerpNo == 'undefined' && ((payStatus =='0' && (payMent == '1' || payMent == '2')) || (payStatus =='1' && payMent == '0'))&&(status != '3' && status != '4')){
+	/* if(ecerpNo == 'undefined' && ((payStatus =='0' && (payMent == '1' || payMent == '2')) || (payStatus =='1' && payMent == '0'))&&(status != '3' && status != '4')){ */
 	  order_datagrid.datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
 		$('<div/>').dialog({
 			href : 'order/orderAction!toPush.action?id='+id,
@@ -374,9 +374,9 @@
 				$('#topushpushone').form('load', o);
 			},
 		});		
-	}else{
+	/* }else{
 	$.messager.alert('提示', '此订单已推送成功  或者网上支付未付款  或订单已取消','info');
-	}
+	} */
 	  
 	}
 	
