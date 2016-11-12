@@ -184,7 +184,12 @@
 						return 'POS支付';
 					}else if(value=='现金支付'){
 						return '现金支付';
-					}else {
+					} else if(value=="微信/支付宝"){
+						return "微信/支付宝";
+					} else if (value=="储蓄卡/信用卡"){
+						return "储蓄卡/信用卡";
+					}
+					else {
 						return '--';
 					}
 					
